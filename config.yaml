@@ -1,0 +1,215 @@
+
+# zap logger configuration
+zap:
+  level: 'info'
+  prefix: '[gsafety]'
+  format: 'console'
+  director: 'log'
+  encode-level: 'LowercaseColorLevelEncoder'
+  stacktrace-key: 'stacktrace'
+  max-age: 30 # 默认日志留存默认以天为单位
+  show-line: true
+  log-in-console: true
+
+# casbin configuration
+casbin:
+  model-path: './resource/rbac_model.conf'
+
+# jwt configuration
+jwt:
+  signing-key: 'gsafety'
+  expires-time: 180
+  buffer-time: 120
+  issuer: 'gsafety'
+
+# email configuration
+email:
+  to: 'xxx@qq.com'
+  port: 465
+  from: 'xxx@163.com'
+  host: 'smtp.163.com'
+  is-ssl: true
+  secret: 'xxx'
+  nickname: 'test'
+
+# redis configuration
+redis:
+  cluster-mod: false
+  addr: '192.168.244.142:6379'
+  addrs:
+  - '172.30.0.28:10301'
+  - '172.30.0.28:10302'
+  - '172.30.0.222:10303'
+  - '172.30.0.222:10304'
+  - '172.30.0.105:10305'
+  - '172.30.0.105:10306'
+  username: ''
+  password: ''
+
+# service-mesh 核心配置 host & port
+service-mesh:
+  namespaces:
+  - name: default
+    loadbalance: 0.0.0.0
+    services:
+      - name: facility-service
+        host: 'facility'
+        # v0.1 subset版本预留配置,现阶段未用上
+        subset: v1
+        port: 9998
+        prefix: /gsafety
+      - name: test-service
+        host: 'test'
+        subset: v1
+        port: 9998
+        prefix: /test
+  - name: gsafety-test
+  loadbalance: 0.0.0.0
+  services:
+    - name: facility-service
+      host: 'facility'
+      # v0.1 subset版本预留配置,现阶段未用上
+      subset: v1
+      port: 9998
+      prefix: /gsafety
+    - name: test-service
+      host: 'test'
+      subset: v1
+      port: 9998
+      prefix: /test
+
+# system configuration
+system:
+  application: '/gsafety' # 与main.go中 @BasePath 值保持一致
+  host: '192.168.19.111'
+  port: 7777
+  db-type: 'cockroach'
+  use-cache: true       # 使用缓存组件
+  use-database: true    # 使用数据库
+  auto-migrate: true    # 初始化自动建表，use-database为true时才有效
+  cache-type: 'redis'   # 缓存组件类型
+  oss-type: 'minio'
+  root-path: ""
+  use-multipoint: true
+  # test develop release & develop skip authenticate & test skip all auth
+  mode: "release"
+  time-zone: "Asia/Shanghai"
+  # IP限制次数 一个小时15000次
+  iplimit-count: 15000
+  #  IP限制一个小时
+  iplimit-time: 3600
+
+zinx:
+ # 服务器应用名称
+  name: 'luna'
+  # 服务器IP
+  host: '127.0.0.1'
+  # 服务器监听端口
+  tcp-port: 2777
+  # 允许的客户端链接最大数量
+  max-conn: 10
+  # 工作任务池最大工作Goroutine数量
+  worker-pool-size: 120
+  # 日志文件夹
+  log-dir:
+  # 日志文件名称(如果不提供，则日志信息打印到Stderr)
+  log-file:
+
+# 定义auth用到的一些key值,用于前后端校验时获取请求响应中的token等关键信息
+auth-key:
+  token: "x-token"
+  expires-at: "expiresAt"
+  refresh-token: "new-token"
+  refresh-expires-at: "new-expires-at"
+  user: "clims"
+  user-id: "x-user-id"
+
+# cockroach:
+#   path: '172.30.0.105'
+#   port: '10322'
+#   config: 'TimeZone=Asia/Shanghai'
+#   db-name: 'wisdompark'
+#   username: 'gsafety'
+#   password: 'gsafety.2022'
+#   max-idle-conns: 10
+#   max-open-conns: 100
+#   log-mode: "true"
+#   log-zap: false
+
+cockroach:
+  path: '192.168.244.142'
+  port: '26257'
+  config: 'TimeZone=Asia/Shanghai'
+  db-name: 'test'
+  username: 'root'
+  password: '123123'
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: "true"
+  log-zap: false
+
+mysql:
+  path: ''
+  port: ''
+  config: 'parseTime=True&loc=Local'
+  db-name: ''
+  username: ''
+  password: ''
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: ""
+  log-zap: false
+
+pgsql:
+  path: ''
+  port: ''
+  config: ''
+  db-name: ''
+  username: ''
+  password: ''
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: ""
+  log-zap: false
+
+db-list:
+  - disabled: false # 是否启用
+    type: "" # 数据库的类型,目前支持mysql、pgsql
+    alias-name: "" # 数据库的名称,注意: alias-name 需要在db-list中唯一
+    path: ''
+    port: ''
+    config: ''
+    db-name: ''
+    username: ''
+    password: ''
+    max-idle-conns: 10
+    max-open-conns: 100
+    log-mode: ""
+    log-zap: false
+
+local:
+  path: 'uploads/file' # 访问路径
+  store-path: 'uploads/file' # 存储路径
+
+minio:
+  endpoint: "192.168.244.142:9000"
+  accessKeyID: "admin"
+  secretAccessKey: "admin123"
+  useSSL: false
+  bucketName: "wisdom-park"
+
+# 跨域配置
+# 需要配合 server/initialize/router.go#L32 使用
+cors:
+  mode: whitelist # 放行模式: allow-all, 放行全部; whitelist, 白名单模式, 来自白名单内域名的请求添加 cors 头; strict-whitelist 严格白名单模式, 白名单外的请求一律拒绝
+  whitelist:
+    - allow-origin: example1.com
+      allow-headers: content-type
+      allow-methods: GET, POST
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+      allow-credentials: true # 布尔值
+    - allow-origin: example2.com
+      allow-headers: content-type
+      allow-methods: GET, POST
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+      allow-credentials: true # 布尔值
