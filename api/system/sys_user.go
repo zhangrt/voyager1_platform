@@ -54,9 +54,10 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.SysUser) {
 	claims := j.CreateClaims(auth.BaseClaims{
 		UUID:        user.UUID,
 		ID:          user.ID,
-		NickName:    user.NickName,
-		Username:    user.Username,
+		NickName:    user.Name,
+		Username:    user.Account,
 		AuthorityId: user.AuthorityId,
+		Authority:   user.Authority,
 	})
 	token, err := j.CreateToken(claims)
 	if err != nil {

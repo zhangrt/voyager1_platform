@@ -9,10 +9,9 @@ import (
 	"github.com/zhangrt/voyager1_platform/model/test"
 	"github.com/zhangrt/voyager1_platform/utils"
 
-	"github.com/zhangrt/voyager1_platform/model/test/request"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
+	"github.com/zhangrt/voyager1_platform/model/test/request"
 	"go.uber.org/zap"
 )
 

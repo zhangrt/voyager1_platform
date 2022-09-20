@@ -33,7 +33,7 @@ func ErrorToEmail() gin.HandlerFunc {
 				username = "Unknown"
 				global.GS_LOG.Error(err.Error())
 			} else {
-				username = user.Username
+				username = user.Account
 			}
 		}
 		body, _ := ioutil.ReadAll(c.Request.Body)

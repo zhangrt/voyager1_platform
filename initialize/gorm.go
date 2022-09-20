@@ -55,6 +55,8 @@ func AutoMigrate() {
 		&SystemModels.SysDictionary{},
 		&SystemModels.SysDictionaryDetail{},
 		&SystemModels.SysOperationRecord{},
+		&SystemModels.SysDepartment{},
+		&SystemModels.SysUnit{},
 
 		&auth.JwtBlacklist{},
 

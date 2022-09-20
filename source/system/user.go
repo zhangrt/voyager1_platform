@@ -3,12 +3,12 @@ package system
 import (
 	"context"
 
+	"github.com/pkg/errors"
+	uuid "github.com/satori/go.uuid"
+	"github.com/zhangrt/voyager1_core/global"
 	sysModel "github.com/zhangrt/voyager1_platform/model/system"
 	"github.com/zhangrt/voyager1_platform/service/system"
 	"github.com/zhangrt/voyager1_platform/utils"
-
-	"github.com/pkg/errors"
-	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -51,34 +51,47 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 
 	entities := []sysModel.SysUser{
 		{
-			UUID:        uuid.NewV4(),
-			Username:    "admin",
-			Password:    adminPassword,
-			NickName:    "超级管理员",
-			HeaderImg:   "https://img1.baidu.com/it/u=2838100141,2488760005&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=9f7622bd7a5ab6abda1ec1de3e8797af",
-			AuthorityId: "888",
-			Phone:       "17611111111",
-			Email:       "333333333@qq.com",
+			GS_BASE_USER: global.GS_BASE_USER{
+				UUID:         uuid.NewV4(),
+				Account:      "admin",
+				Password:     adminPassword,
+				Name:         "超级管理员",
+				HeaderImg:    "https://img1.baidu.com/it/u=2838100141,2488760005&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=9f7622bd7a5ab6abda1ec1de3e8797af",
+				AuthorityId:  "888",
+				Phone:        "17611111111",
+				Email:        "333333333@qq.com",
+				DepartMentId: "111",
+				UnitId:       "11",
+			},
 		},
 		{
-			UUID:        uuid.NewV4(),
-			Username:    "zhoujj",
-			Password:    adminPassword,
-			NickName:    "ZHOUJIAJUN",
-			HeaderImg:   "https://img1.baidu.com/it/u=2838100141,2488760005&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=9f7622bd7a5ab6abda1ec1de3e8797af",
-			AuthorityId: "888",
-			Phone:       "18966668888",
-			Email:       "zhoujiajun@github.com/zhangrt/voyager1_platform.com",
+			GS_BASE_USER: global.GS_BASE_USER{
+				UUID:         uuid.NewV4(),
+				Account:      "zhoujj",
+				Password:     adminPassword,
+				Name:         "ZHOUJIAJUN",
+				HeaderImg:    "https://img1.baidu.com/it/u=2838100141,2488760005&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=9f7622bd7a5ab6abda1ec1de3e8797af",
+				AuthorityId:  "888",
+				Phone:        "18966668888",
+				Email:        "zhoujiajun@github.com/zhangrt/voyager1_platform.com",
+				DepartMentId: "111",
+				UnitId:       "11",
+			},
 		},
 		{
-			UUID:        uuid.NewV4(),
-			Username:    "test",
-			Password:    password,
-			NickName:    "BIG Monster",
-			HeaderImg:   "https://img0.baidu.com/it/u=4060770951,4069855872&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=92a8aac26b4757fe849a8a10aaf31d87",
-			AuthorityId: "9528",
-			Phone:       "17611111111",
-			Email:       "333333333@qq.com"},
+			GS_BASE_USER: global.GS_BASE_USER{
+				UUID:         uuid.NewV4(),
+				Account:      "test",
+				Password:     password,
+				Name:         "BIG Monster",
+				HeaderImg:    "https://img0.baidu.com/it/u=4060770951,4069855872&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=92a8aac26b4757fe849a8a10aaf31d87",
+				AuthorityId:  "9528",
+				Phone:        "17611111111",
+				Email:        "333333333@qq.com",
+				DepartMentId: "222",
+				UnitId:       "12",
+			},
+		},
 	}
 	if err = db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysUser{}.TableName()+"表数据初始化失败!")
