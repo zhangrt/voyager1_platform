@@ -24,8 +24,8 @@ func ErrorToEmail() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var username string
 		claims, _ := auth.GetClaims(c)
-		if claims.Username != "" {
-			username = claims.Username
+		if claims.Account != "" {
+			username = claims.Account
 		} else {
 			id, _ := strconv.Atoi(c.Request.Header.Get("x-user-id"))
 			user, err := userService.FindUserById(id)

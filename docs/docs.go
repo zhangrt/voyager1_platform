@@ -539,7 +539,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.CasbinInReceive"
+                            "$ref": "#/definitions/luna.CasbinInReceive"
                         }
                     }
                 ],
@@ -589,7 +589,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.CasbinInReceive"
+                            "$ref": "#/definitions/luna.CasbinInReceive"
                         }
                     }
                 ],
@@ -3942,6 +3942,35 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "config.AUTHKey": {
+            "type": "object",
+            "properties": {
+                "expires-at": {
+                    "description": "Token expires Key    like: expiresAt",
+                    "type": "integer"
+                },
+                "refresh-expires-at": {
+                    "description": "Token Key  \t\t\tlike: new-expires-at",
+                    "type": "string"
+                },
+                "refresh-token": {
+                    "description": "Token Key  \t\t\tlike: new-token",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token Key  \t\t\tlike: x-token",
+                    "type": "string"
+                },
+                "user": {
+                    "description": "User Key   \t\t\tlike: clims",
+                    "type": "string"
+                },
+                "user-id": {
+                    "description": "UserId Key \t\t\tlike: x-user-id",
+                    "type": "string"
+                }
+            }
+        },
         "config.CORS": {
             "type": "object",
             "properties": {
@@ -4225,7 +4254,7 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
-                "cluster": {
+                "cluster-mod": {
                     "description": "cluster",
                     "type": "boolean"
                 },
@@ -4242,6 +4271,9 @@ const docTemplate = `{
         "config.Server": {
             "type": "object",
             "properties": {
+                "auth-key": {
+                    "$ref": "#/definitions/config.AUTHKey"
+                },
                 "casbin": {
                     "$ref": "#/definitions/config.Casbin"
                 },
@@ -4287,6 +4319,10 @@ const docTemplate = `{
                 },
                 "zap": {
                     "$ref": "#/definitions/config.Zap"
+                },
+                "zinx": {
+                    "description": "Zinx",
+                    "$ref": "#/definitions/config.Zinx"
                 }
             }
         },
@@ -4386,6 +4422,10 @@ const docTemplate = `{
                     "description": "自动建表",
                     "type": "boolean"
                 },
+                "cache-type": {
+                    "description": "缓存类型",
+                    "type": "string"
+                },
                 "db-type": {
                     "description": "数据库类型",
                     "type": "string"
@@ -4420,16 +4460,16 @@ const docTemplate = `{
                     "description": "时区",
                     "type": "string"
                 },
+                "use-cache": {
+                    "description": "使用redis",
+                    "type": "boolean"
+                },
                 "use-database": {
                     "description": "使用数据库",
                     "type": "boolean"
                 },
                 "use-multipoint": {
                     "description": "多点登录拦截",
-                    "type": "boolean"
-                },
-                "use-redis": {
-                    "description": "使用redis",
                     "type": "boolean"
                 }
             }
@@ -4475,6 +4515,39 @@ const docTemplate = `{
                 }
             }
         },
+        "config.Zinx": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "description": "服务器IP",
+                    "type": "string"
+                },
+                "log-dir": {
+                    "description": "日志文件夹",
+                    "type": "string"
+                },
+                "log-file": {
+                    "description": "日志文件名称(如果不提供，则日志信息打印到Stderr)",
+                    "type": "string"
+                },
+                "max-conn": {
+                    "description": "允许的客户端链接最大数量",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "服务器应用名称",
+                    "type": "string"
+                },
+                "tcp-port": {
+                    "description": "服务器监听端口",
+                    "type": "integer"
+                },
+                "worker-pool-size": {
+                    "description": "工作任务池最大工作Goroutine数量",
+                    "type": "integer"
+                }
+            }
+        },
         "file.FileUploadAndDownload": {
             "type": "object",
             "properties": {
@@ -4509,6 +4582,34 @@ const docTemplate = `{
                 }
             }
         },
+        "luna.CasbinInReceive": {
+            "type": "object",
+            "properties": {
+                "authorityId": {
+                    "description": "权限id",
+                    "type": "string"
+                },
+                "casbinInfos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/luna.CasbinInfo"
+                    }
+                }
+            }
+        },
+        "luna.CasbinInfo": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "description": "方法",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "路径",
+                    "type": "string"
+                }
+            }
+        },
         "request.AddMenuAuthorityInfo": {
             "type": "object",
             "properties": {
@@ -4524,47 +4625,19 @@ const docTemplate = `{
                 }
             }
         },
-        "request.CasbinInReceive": {
-            "type": "object",
-            "properties": {
-                "authorityId": {
-                    "description": "权限id",
-                    "type": "string"
-                },
-                "casbinInfos": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/request.CasbinInfo"
-                    }
-                }
-            }
-        },
-        "request.CasbinInfo": {
-            "type": "object",
-            "properties": {
-                "method": {
-                    "description": "方法",
-                    "type": "string"
-                },
-                "path": {
-                    "description": "路径",
-                    "type": "string"
-                }
-            }
-        },
         "request.ChangePasswordStruct": {
             "type": "object",
             "properties": {
+                "account": {
+                    "description": "用户名",
+                    "type": "string"
+                },
                 "newPassword": {
                     "description": "新密码",
                     "type": "string"
                 },
                 "password": {
                     "description": "密码",
-                    "type": "string"
-                },
-                "username": {
-                    "description": "用户名",
                     "type": "string"
                 }
             }
@@ -4688,12 +4761,12 @@ const docTemplate = `{
         "request.Login": {
             "type": "object",
             "properties": {
-                "password": {
-                    "description": "密码",
+                "account": {
+                    "description": "用户名",
                     "type": "string"
                 },
-                "username": {
-                    "description": "用户名",
+                "password": {
+                    "description": "密码",
                     "type": "string"
                 }
             }
@@ -4718,6 +4791,9 @@ const docTemplate = `{
         "request.Register": {
             "type": "object",
             "properties": {
+                "account": {
+                    "type": "string"
+                },
                 "authorityId": {
                     "type": "string"
                 },
@@ -4730,13 +4806,10 @@ const docTemplate = `{
                 "headerImg": {
                     "type": "string"
                 },
-                "nickName": {
+                "name": {
                     "type": "string"
                 },
                 "passWord": {
-                    "type": "string"
-                },
-                "userName": {
                     "type": "string"
                 }
             }
@@ -4842,7 +4915,7 @@ const docTemplate = `{
                 "paths": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/request.CasbinInfo"
+                        "$ref": "#/definitions/luna.CasbinInfo"
                     }
                 }
             }
@@ -5169,6 +5242,46 @@ const docTemplate = `{
                 }
             }
         },
+        "system.SysDepartment": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.SysDepartment"
+                    }
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "dataDepartmentId": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.SysDepartment"
+                    }
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "departmentId": {
+                    "description": "部门ID",
+                    "type": "string"
+                },
+                "departmentName": {
+                    "description": "部门名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父级部门ID",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
         "system.SysDictionary": {
             "type": "object",
             "properties": {
@@ -5392,9 +5505,53 @@ const docTemplate = `{
                 }
             }
         },
+        "system.SysUnit": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.SysUnit"
+                    }
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "dataUnitId": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.SysUnit"
+                    }
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父级部门ID",
+                    "type": "string"
+                },
+                "unitId": {
+                    "description": "部门ID",
+                    "type": "string"
+                },
+                "unitName": {
+                    "description": "部门名称",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
         "system.SysUser": {
             "type": "object",
             "properties": {
+                "account": {
+                    "description": "用户名",
+                    "type": "string"
+                },
                 "authorities": {
                     "type": "array",
                     "items": {
@@ -5405,12 +5562,29 @@ const docTemplate = `{
                     "$ref": "#/definitions/system.SysAuthority"
                 },
                 "authorityId": {
-                    "description": "用户角色ID",
+                    "description": "权限ID",
                     "type": "string"
                 },
                 "createdAt": {
                     "description": "创建时间",
                     "type": "string"
+                },
+                "department": {
+                    "$ref": "#/definitions/system.SysDepartment"
+                },
+                "departmentId": {
+                    "description": "部门Id",
+                    "type": "string"
+                },
+                "departmentName": {
+                    "description": "部门名称",
+                    "type": "string"
+                },
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.SysDepartment"
+                    }
                 },
                 "email": {
                     "description": "用户邮箱",
@@ -5425,8 +5599,8 @@ const docTemplate = `{
                     "type": "string",
                     "example": "0"
                 },
-                "nickName": {
-                    "description": "用户昵称",
+                "name": {
+                    "description": "昵称",
                     "type": "string"
                 },
                 "phone": {
@@ -5437,16 +5611,29 @@ const docTemplate = `{
                     "description": "用户侧边主题",
                     "type": "string"
                 },
+                "unit": {
+                    "$ref": "#/definitions/system.SysUnit"
+                },
+                "unitId": {
+                    "description": "单位Id",
+                    "type": "string"
+                },
+                "unitName": {
+                    "description": "单位名称",
+                    "type": "string"
+                },
+                "units": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.SysUnit"
+                    }
+                },
                 "updatedAt": {
                     "description": "更新时间",
                     "type": "string"
                 },
-                "userName": {
-                    "description": "用户登录名",
-                    "type": "string"
-                },
                 "uuid": {
-                    "description": "用户UUID",
+                    "description": "UUID",
                     "type": "string"
                 }
             }
@@ -5494,10 +5681,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.0.1",
 	Host:             "",
-	BasePath:         "/gsafety",
+	BasePath:         "/github.com/zhangrt/voyager1_platform",
 	Schemes:          []string{},
-	Title:            "Swagger Gsafety demo API",
-	Description:      "智慧园区demo后端服务api",
+	Title:            "Swagger github.com/zhangrt/voyager1_platform demo API",
+	Description:      "Platform demo golang 后端服务api",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

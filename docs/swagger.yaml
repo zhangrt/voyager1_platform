@@ -1,5 +1,26 @@
-basePath: /gsafety
+basePath: /github.com/zhangrt/voyager1_platform
 definitions:
+  config.AUTHKey:
+    properties:
+      expires-at:
+        description: 'Token expires Key    like: expiresAt'
+        type: integer
+      refresh-expires-at:
+        description: "Token Key  \t\t\tlike: new-expires-at"
+        type: string
+      refresh-token:
+        description: "Token Key  \t\t\tlike: new-token"
+        type: string
+      token:
+        description: "Token Key  \t\t\tlike: x-token"
+        type: string
+      user:
+        description: "User Key   \t\t\tlike: clims"
+        type: string
+      user-id:
+        description: "UserId Key \t\t\tlike: x-user-id"
+        type: string
+    type: object
   config.CORS:
     properties:
       mode:
@@ -200,7 +221,7 @@ definitions:
         items:
           type: string
         type: array
-      cluster:
+      cluster-mod:
         description: cluster
         type: boolean
       password:
@@ -212,6 +233,8 @@ definitions:
     type: object
   config.Server:
     properties:
+      auth-key:
+        $ref: '#/definitions/config.AUTHKey'
       casbin:
         $ref: '#/definitions/config.Casbin'
       cockroach:
@@ -244,6 +267,9 @@ definitions:
         $ref: '#/definitions/config.System'
       zap:
         $ref: '#/definitions/config.Zap'
+      zinx:
+        $ref: '#/definitions/config.Zinx'
+        description: Zinx
     type: object
   config.Service:
     properties:
@@ -312,6 +338,9 @@ definitions:
       auto-migrate:
         description: 自动建表
         type: boolean
+      cache-type:
+        description: 缓存类型
+        type: string
       db-type:
         description: 数据库类型
         type: string
@@ -337,14 +366,14 @@ definitions:
       time-zone:
         description: 时区
         type: string
+      use-cache:
+        description: 使用redis
+        type: boolean
       use-database:
         description: 使用数据库
         type: boolean
       use-multipoint:
         description: 多点登录拦截
-        type: boolean
-      use-redis:
-        description: 使用redis
         type: boolean
     type: object
   config.Zap:
@@ -377,6 +406,30 @@ definitions:
         description: 栈名
         type: string
     type: object
+  config.Zinx:
+    properties:
+      host:
+        description: 服务器IP
+        type: string
+      log-dir:
+        description: 日志文件夹
+        type: string
+      log-file:
+        description: 日志文件名称(如果不提供，则日志信息打印到Stderr)
+        type: string
+      max-conn:
+        description: 允许的客户端链接最大数量
+        type: integer
+      name:
+        description: 服务器应用名称
+        type: string
+      tcp-port:
+        description: 服务器监听端口
+        type: integer
+      worker-pool-size:
+        description: 工作任务池最大工作Goroutine数量
+        type: integer
+    type: object
   file.FileUploadAndDownload:
     properties:
       createdAt:
@@ -402,6 +455,25 @@ definitions:
         description: 文件地址
         type: string
     type: object
+  luna.CasbinInReceive:
+    properties:
+      authorityId:
+        description: 权限id
+        type: string
+      casbinInfos:
+        items:
+          $ref: '#/definitions/luna.CasbinInfo'
+        type: array
+    type: object
+  luna.CasbinInfo:
+    properties:
+      method:
+        description: 方法
+        type: string
+      path:
+        description: 路径
+        type: string
+    type: object
   request.AddMenuAuthorityInfo:
     properties:
       authorityId:
@@ -412,35 +484,16 @@ definitions:
           $ref: '#/definitions/system.SysBaseMenu'
         type: array
     type: object
-  request.CasbinInReceive:
-    properties:
-      authorityId:
-        description: 权限id
-        type: string
-      casbinInfos:
-        items:
-          $ref: '#/definitions/request.CasbinInfo'
-        type: array
-    type: object
-  request.CasbinInfo:
-    properties:
-      method:
-        description: 方法
-        type: string
-      path:
-        description: 路径
-        type: string
-    type: object
   request.ChangePasswordStruct:
     properties:
+      account:
+        description: 用户名
+        type: string
       newPassword:
         description: 新密码
         type: string
       password:
         description: 密码
-        type: string
-      username:
-        description: 用户名
         type: string
     type: object
   request.Empty:
@@ -527,11 +580,11 @@ definitions:
     type: object
   request.Login:
     properties:
+      account:
+        description: 用户名
+        type: string
       password:
         description: 密码
-        type: string
-      username:
-        description: 用户名
         type: string
     type: object
   request.PageInfo:
@@ -548,6 +601,8 @@ definitions:
     type: object
   request.Register:
     properties:
+      account:
+        type: string
       authorityId:
         type: string
       authorityIds:
@@ -556,11 +611,9 @@ definitions:
         type: array
       headerImg:
         type: string
-      nickName:
+      name:
         type: string
       passWord:
-        type: string
-      userName:
         type: string
     type: object
   request.SetUserAuth:
@@ -630,7 +683,7 @@ definitions:
     properties:
       paths:
         items:
-          $ref: '#/definitions/request.CasbinInfo'
+          $ref: '#/definitions/luna.CasbinInfo'
         type: array
     type: object
   response.Response:
@@ -855,6 +908,34 @@ definitions:
         description: 地址栏携带参数的值
         type: string
     type: object
+  system.SysDepartment:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/system.SysDepartment'
+        type: array
+      createdAt:
+        description: 创建时间
+        type: string
+      dataDepartmentId:
+        items:
+          $ref: '#/definitions/system.SysDepartment'
+        type: array
+      deletedAt:
+        type: string
+      departmentId:
+        description: 部门ID
+        type: string
+      departmentName:
+        description: 部门名称
+        type: string
+      parentId:
+        description: 父级部门ID
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
   system.SysDictionary:
     properties:
       createdAt:
@@ -1017,8 +1098,39 @@ definitions:
         description: 用户id
         type: integer
     type: object
+  system.SysUnit:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/system.SysUnit'
+        type: array
+      createdAt:
+        description: 创建时间
+        type: string
+      dataUnitId:
+        items:
+          $ref: '#/definitions/system.SysUnit'
+        type: array
+      deletedAt:
+        type: string
+      parentId:
+        description: 父级部门ID
+        type: string
+      unitId:
+        description: 部门ID
+        type: string
+      unitName:
+        description: 部门名称
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
   system.SysUser:
     properties:
+      account:
+        description: 用户名
+        type: string
       authorities:
         items:
           $ref: '#/definitions/system.SysAuthority'
@@ -1026,11 +1138,23 @@ definitions:
       authority:
         $ref: '#/definitions/system.SysAuthority'
       authorityId:
-        description: 用户角色ID
+        description: 权限ID
         type: string
       createdAt:
         description: 创建时间
         type: string
+      department:
+        $ref: '#/definitions/system.SysDepartment'
+      departmentId:
+        description: 部门Id
+        type: string
+      departmentName:
+        description: 部门名称
+        type: string
+      departments:
+        items:
+          $ref: '#/definitions/system.SysDepartment'
+        type: array
       email:
         description: 用户邮箱
         type: string
@@ -1041,8 +1165,8 @@ definitions:
         description: 主键ID
         example: "0"
         type: string
-      nickName:
-        description: 用户昵称
+      name:
+        description: 昵称
         type: string
       phone:
         description: 用户手机号
@@ -1050,14 +1174,23 @@ definitions:
       sideMode:
         description: 用户侧边主题
         type: string
+      unit:
+        $ref: '#/definitions/system.SysUnit'
+      unitId:
+        description: 单位Id
+        type: string
+      unitName:
+        description: 单位名称
+        type: string
+      units:
+        items:
+          $ref: '#/definitions/system.SysUnit'
+        type: array
       updatedAt:
         description: 更新时间
         type: string
-      userName:
-        description: 用户登录名
-        type: string
       uuid:
-        description: 用户UUID
+        description: UUID
         type: string
     type: object
   system.System:
@@ -1082,8 +1215,8 @@ definitions:
     type: object
 info:
   contact: {}
-  description: 智慧园区demo后端服务api
-  title: Swagger Gsafety demo API
+  description: Platform demo golang 后端服务api
+  title: Swagger github.com/zhangrt/voyager1_platform demo API
   version: 0.0.1
 paths:
   /authority/copyAuthority:
@@ -1377,7 +1510,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.CasbinInReceive'
+          $ref: '#/definitions/luna.CasbinInReceive'
       produces:
       - application/json
       responses:
@@ -1405,7 +1538,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.CasbinInReceive'
+          $ref: '#/definitions/luna.CasbinInReceive'
       produces:
       - application/json
       responses:

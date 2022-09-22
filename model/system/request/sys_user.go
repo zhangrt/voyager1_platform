@@ -4,9 +4,9 @@ import model "github.com/zhangrt/voyager1_platform/model/system"
 
 // User register structure
 type Register struct {
-	Username     string   `json:"userName"`
+	Account      string   `json:"account"`
 	Password     string   `json:"passWord"`
-	NickName     string   `json:"nickName" gorm:"default:'Big Monster'"`
+	Name         string   `json:"name" gorm:"default:'Big Monster'"`
 	HeaderImg    string   `json:"headerImg" gorm:"default:'https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg'"`
 	AuthorityId  string   `json:"authorityId" gorm:"default:888"`
 	AuthorityIds []string `json:"authorityIds"`
@@ -14,7 +14,7 @@ type Register struct {
 
 // User login structure
 type Login struct {
-	Username string `json:"username"` // 用户名
+	Account  string `json:"account"`  // 用户名
 	Password string `json:"password"` // 密码
 	// Captcha   string `json:"captcha"`   // 验证码
 	// CaptchaId string `json:"captchaId"` // 验证码ID
@@ -22,7 +22,7 @@ type Login struct {
 
 // Modify password structure
 type ChangePasswordStruct struct {
-	Username    string `json:"username"`    // 用户名
+	Account     string `json:"account"`     // 用户名
 	Password    string `json:"password"`    // 密码
 	NewPassword string `json:"newPassword"` // 新密码
 }
@@ -40,7 +40,7 @@ type SetUserAuthorities struct {
 
 type ChangeUserInfo struct {
 	ID           uint                 `gorm:"primarykey"`                                                                                                                     // 主键ID
-	NickName     string               `json:"nickName" gorm:"default:系统用户;comment:用户昵称"`                                                                                      // 用户昵称
+	Name         string               `json:"name" gorm:"default:系统用户;comment:用户昵称"`                                                                                          // 用户昵称
 	Phone        string               `json:"phone"  gorm:"comment:用户手机号"`                                                                                                    // 用户角色ID
 	AuthorityIds []string             `json:"authorityIds" gorm:"-"`                                                                                                          // 角色ID
 	Email        string               `json:"email"  gorm:"comment:用户邮箱"`                                                                                                     // 用户邮箱
