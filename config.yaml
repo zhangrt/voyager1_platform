@@ -99,6 +99,7 @@ system:
   #  IP限制一个小时
   iplimit-time: 3600
 
+# 此处配置已迁移至./conf/zinx.json
 zinx:
  # 服务器应用名称
   name: 'luna'

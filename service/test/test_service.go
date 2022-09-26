@@ -20,7 +20,7 @@ func (testService *TestService) TestPost(id uint, name string) (data string, err
 	test.TestName = name
 	err = global.GS_DB.Create(&test).Error
 	if err == nil {
-		err = cache.Set(strconv.Itoa(int(id)), name, 0)
+		_ = cache.Set(strconv.Itoa(int(id)), name, 0)
 	}
 	if err != nil {
 		return err.Error(), err

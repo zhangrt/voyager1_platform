@@ -12,6 +12,7 @@ import (
 	gallery "github.com/zhangrt/voyager1_core"
 	auth "github.com/zhangrt/voyager1_core/auth/luna"
 	config "github.com/zhangrt/voyager1_core/config"
+	s "github.com/zhangrt/voyager1_core/zinx/server"
 
 	"go.uber.org/zap"
 )
@@ -62,6 +63,9 @@ func RunServer() {
 		ConfigZinx(global.GS_CONFIG.Zinx)
 
 	auth.LoadAll()
+
+	// 启动 Luan TCP Server
+	go s.Luna()
 
 	// 时区
 	time.LoadLocation(global.GS_CONFIG.System.TimeZone)

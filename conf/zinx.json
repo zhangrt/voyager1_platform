@@ -1,0 +1,9 @@
+{
+  "Name":"Luna Server",
+  "Host":"127.0.0.1",
+  "TcpPort":2777,
+  "MaxConn":3000,
+  "WorkerPoolSize":10,
+  "LogDir": "./test_log",
+  "LogFile":"test.log"
+}
