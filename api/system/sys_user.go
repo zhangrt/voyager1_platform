@@ -80,7 +80,7 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.SysUser) {
 		return
 	}
 
-	var jwtService = auth.JwtService{}
+	var jwtService = auth.NewJWT()
 
 	if jwtStr, err := jwtService.GetCacheJWT(user.Account); err == redis.Nil {
 		if err := jwtService.SetCacheJWT(token, user.Account); err != nil {

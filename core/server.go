@@ -5,14 +5,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zhangrt/voyager1_platform/global"
-	initialize "github.com/zhangrt/voyager1_platform/initialize"
-
 	"github.com/gin-gonic/gin"
 	gallery "github.com/zhangrt/voyager1_core"
-	auth "github.com/zhangrt/voyager1_core/auth/luna"
 	config "github.com/zhangrt/voyager1_core/config"
 	s "github.com/zhangrt/voyager1_core/zinx/server"
+	"github.com/zhangrt/voyager1_platform/global"
+	initialize "github.com/zhangrt/voyager1_platform/initialize"
 
 	"go.uber.org/zap"
 )
@@ -49,10 +47,10 @@ func RunServer() {
 	gallery.NewInit().
 		Viper(global.GS_VP).
 		Zap(global.GS_LOG).
-		DB(global.GS_DB).
+		// DB(global.GS_DB). // core组件去除了数据库相关代码
 		SetRedisMod(global.GS_CONFIG.Redis.ClusterMod).
 		RedisStandalone(global.GS_REDIS_STANDALONE).
-		BlackCache(global.BlackCache).
+		// BlackCache(global.BlackCache).
 		Config(config.Server{
 			System:  config.System(global.GS_CONFIG.System),
 			JWT:     global.GS_CONFIG.JWT,
@@ -61,8 +59,6 @@ func RunServer() {
 		}).
 		ConfigMinio(global.GS_CONFIG.Minio).
 		ConfigZinx(global.GS_CONFIG.Zinx)
-
-	auth.LoadAll()
 
 	// 启动 Luan TCP Server
 	go s.Luna()
