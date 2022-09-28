@@ -90,7 +90,7 @@ system:
   cache-type: 'redis'   # 缓存组件类型
   oss-type: 'minio'
   root-path: ""
-  use-multipoint: true # 单点登录
+  use-multipoint: false # 多点登录
   # test develop release & develop skip authenticate & test skip all auth
   mode: "release"
   time-zone: "Asia/Shanghai"
@@ -98,6 +98,15 @@ system:
   iplimit-count: 15000
   #  IP限制一个小时
   iplimit-time: 3600
+
+grpc:
+  server:
+    network: "tcp"
+    host: "127.0.0.1"
+    port: 2567
+  client:
+    host: "127.0.0.1"
+    port: 2567
 
 # 此处配置已迁移至./conf/zinx.json
 zinx:

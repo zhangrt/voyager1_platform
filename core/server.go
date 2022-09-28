@@ -7,8 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	gallery "github.com/zhangrt/voyager1_core"
+	grpc "github.com/zhangrt/voyager1_core/auth/grpc"
+	"github.com/zhangrt/voyager1_core/auth/grpc/service"
 	config "github.com/zhangrt/voyager1_core/config"
-	s "github.com/zhangrt/voyager1_core/zinx/server"
 	"github.com/zhangrt/voyager1_platform/global"
 	initialize "github.com/zhangrt/voyager1_platform/initialize"
 
@@ -58,10 +59,13 @@ func RunServer() {
 			AUTHKey: global.GS_CONFIG.AUTHKey,
 		}).
 		ConfigMinio(global.GS_CONFIG.Minio).
-		ConfigZinx(global.GS_CONFIG.Zinx)
+		ConfigZinx(global.GS_CONFIG.Zinx).
+		ConfigGrpc(global.GS_CONFIG.Grpc)
 
-	// 启动 Luan TCP Server
-	go s.Luna()
+	// 启动 Luan Server(Grpc/Tcp)
+	go grpc.NewServer().
+		RegisterAuthServiceServer(new(service.AuthService)).
+		LunchGrpcServer()
 
 	// 时区
 	time.LoadLocation(global.GS_CONFIG.System.TimeZone)
@@ -90,9 +94,9 @@ func RunServer() {
                          | w----|\\
                         /\\     |/
 
-	welcome to gin-github.com/zhangrt/voyager1_platform
+	welcome to Platform
 	version:v0.1
-	email:zhoujiajun@github.com/zhangrt/voyager1_platform.com
+	email:zhoujiajun@gsafety.com
 	default docs:http://%s/swagger/index.html
 
 `, Addr)

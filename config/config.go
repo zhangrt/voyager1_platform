@@ -28,6 +28,8 @@ type Server struct {
 	// Zinx
 	Zinx config.Zinx `mapstructure:"zinx" json:"zinx" yaml:"zinx"`
 
+	Grpc config.Grpc `mapstructure:"grpc" json:"grpc" yaml:"grpc"`
+
 	// 服务网格
 	ServiceMesh ServiceMesh `mapstructure:"service-mesh" json:"service-mesh" yaml:"service-mesh"`
 }
