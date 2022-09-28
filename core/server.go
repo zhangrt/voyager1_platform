@@ -7,8 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	gallery "github.com/zhangrt/voyager1_core"
-	grpc "github.com/zhangrt/voyager1_core/auth/grpc"
-	"github.com/zhangrt/voyager1_core/auth/grpc/service"
 	config "github.com/zhangrt/voyager1_core/config"
 	"github.com/zhangrt/voyager1_platform/global"
 	initialize "github.com/zhangrt/voyager1_platform/initialize"
@@ -61,11 +59,6 @@ func RunServer() {
 		ConfigMinio(global.GS_CONFIG.Minio).
 		ConfigZinx(global.GS_CONFIG.Zinx).
 		ConfigGrpc(global.GS_CONFIG.Grpc)
-
-	// 启动 Luan Server(Grpc/Tcp)
-	go grpc.NewServer().
-		RegisterAuthServiceServer(new(service.AuthService)).
-		LunchGrpcServer()
 
 	// 时区
 	time.LoadLocation(global.GS_CONFIG.System.TimeZone)

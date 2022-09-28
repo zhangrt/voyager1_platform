@@ -4,14 +4,13 @@ import (
 	"net/http"
 	"time"
 
-	auth "github.com/zhangrt/voyager1_core/auth/luna"
 	_ "github.com/zhangrt/voyager1_platform/docs"
 	"github.com/zhangrt/voyager1_platform/global"
 	middleware "github.com/zhangrt/voyager1_platform/middleware"
 	"github.com/zhangrt/voyager1_platform/router"
-	service "github.com/zhangrt/voyager1_platform/service/auth"
 
-	handler "github.com/zhangrt/voyager1_core/auth/luna/handler"
+	handler "github.com/zhangrt/voyager1_core/auth/star/handler"
+	"github.com/zhangrt/voyager1_core/constant"
 
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -73,11 +72,8 @@ func Routers() *gin.Engine {
 	PrivateGroup := Router.Group(global.GS_CONFIG.System.Application)
 	// 权限管理 test模式下跳过
 	if global.GS_CONFIG.System.Mode != "test" {
-		// 注册权限管理模块，注入实现类
-		auth.RegisterCasbin(&service.CasbinService{})                    //注入Casbin实现类
-		auth.RegisterJwt(&service.JwtService{})                          // 注入Jwt实现类
-		auth.NewJWT().LoadAll()                                          // 加载黑名单
-		PrivateGroup.Use(handler.JWTAuth()).Use(handler.CasbinHandler()) // 注入拦截器
+		// 注册权限star管理模块
+		PrivateGroup.Use(handler.JWTAuth(constant.GPRC)).Use(handler.CasbinHandler(constant.GPRC)) // 注入拦截器
 	}
 
 	{

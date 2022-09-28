@@ -1,0 +1,14 @@
+# example link : https://github.com/golangci/golangci-lint/blob/master/.golangci.example.yml
+run:
+  timeout: 1m
+  skip-dirs-use-default: true
+
+linters-settings:
+  dupl:
+    # tokens count to trigger issue, 150 by default
+    threshold: 100
+
+linters:
+  enable:
+    - dupl
+    - golint
