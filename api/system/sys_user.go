@@ -3,6 +3,7 @@ package system
 import (
 	"strconv"
 
+	core "github.com/zhangrt/voyager1_core/global"
 	"github.com/zhangrt/voyager1_platform/global"
 	"github.com/zhangrt/voyager1_platform/model/common/request"
 	"github.com/zhangrt/voyager1_platform/model/common/response"
@@ -36,7 +37,12 @@ func (b *UserApi) Login(c *gin.Context) {
 		return
 	}
 	// if store.Verify(l.CaptchaId, l.Captcha, true) {
-	u := &system.SysUser{Username: l.Username, Password: l.Password}
+	u := &system.SysUser{
+		GS_BASE_USER: core.GS_BASE_USER{
+			Account:  l.Account,
+			Password: l.Password,
+		},
+	}
 	if user, err := userService.Login(u); err != nil {
 		global.GS_LOG.Error("登陆失败! 用户名不存在或者密码错误!", zap.Error(err))
 		response.FailWithMessage("用户名不存在或者密码错误", c)
@@ -54,8 +60,8 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.SysUser) {
 	claims := j.CreateClaims(auth.BaseClaims{
 		UUID:        user.UUID,
 		ID:          user.ID,
-		NickName:    user.Name,
-		Username:    user.Account,
+		Name:        user.Name,
+		Account:     user.Account,
 		AuthorityId: user.AuthorityId,
 		Authority:   user.Authority,
 	})
@@ -74,10 +80,10 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.SysUser) {
 		return
 	}
 
-	var jwtService = auth.JwtService{}
+	var jwtService = auth.NewJWT()
 
-	if jwtStr, err := jwtService.GetCacheJWT(user.Username); err == redis.Nil {
-		if err := jwtService.SetCacheJWT(token, user.Username); err != nil {
+	if jwtStr, err := jwtService.GetCacheJWT(user.Account); err == redis.Nil {
+		if err := jwtService.SetCacheJWT(token, user.Account); err != nil {
 			global.GS_LOG.Error("设置登录状态失败!", zap.Error(err))
 			response.FailWithMessage("设置登录状态失败", c)
 			return
@@ -97,7 +103,7 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.SysUser) {
 			response.FailWithMessage("jwt作废失败", c)
 			return
 		}
-		if err := jwtService.SetCacheJWT(token, user.Username); err != nil {
+		if err := jwtService.SetCacheJWT(token, user.Account); err != nil {
 			response.FailWithMessage("设置登录状态失败", c)
 			return
 		}
@@ -128,7 +134,15 @@ func (b *UserApi) Register(c *gin.Context) {
 			AuthorityId: v,
 		})
 	}
-	user := &system.SysUser{Username: r.Username, NickName: r.NickName, Password: r.Password, HeaderImg: r.HeaderImg, AuthorityId: r.AuthorityId, Authorities: authorities}
+
+	user := &system.SysUser{
+		Authorities: authorities,
+	}
+	user.Account = r.Account
+	user.Name = r.Name
+	user.Password = r.Password
+	user.HeaderImg = r.HeaderImg
+	user.AuthorityId = r.AuthorityId
 	userReturn, err := userService.Register(*user)
 	if err != nil {
 		global.GS_LOG.Error("注册失败!", zap.Error(err))
@@ -152,7 +166,9 @@ func (b *UserApi) ChangePassword(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	u := &system.SysUser{Username: user.Username, Password: user.Password}
+	u := &system.SysUser{}
+	u.Account = user.Account
+	u.Password = user.Password
 	if _, err := userService.ChangePassword(u, user.NewPassword); err != nil {
 		global.GS_LOG.Error("修改失败!", zap.Error(err))
 		response.FailWithMessage("修改失败，原密码与当前账户不符", c)
@@ -297,14 +313,14 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 	}
 
 	if err := userService.SetUserInfo(system.SysUser{
-		GS_BASE_MODEL: global.GS_BASE_MODEL{
-			ID: user.ID,
+		GS_BASE_USER: core.GS_BASE_USER{
+			ID:        user.ID,
+			Name:      user.Name,
+			HeaderImg: user.HeaderImg,
+			Phone:     user.Phone,
+			Email:     user.Email,
+			SideMode:  user.SideMode,
 		},
-		NickName:  user.NickName,
-		HeaderImg: user.HeaderImg,
-		Phone:     user.Phone,
-		Email:     user.Email,
-		SideMode:  user.SideMode,
 	}); err != nil {
 		global.GS_LOG.Error("设置失败!", zap.Error(err))
 		response.FailWithMessage("设置失败", c)
@@ -326,14 +342,14 @@ func (b *UserApi) SetSelfInfo(c *gin.Context) {
 	_ = c.ShouldBindJSON(&user)
 	user.ID = auth.GetUserID(c)
 	if err := userService.SetUserInfo(system.SysUser{
-		GS_BASE_MODEL: global.GS_BASE_MODEL{
-			ID: user.ID,
+		GS_BASE_USER: core.GS_BASE_USER{
+			ID:        user.ID,
+			Name:      user.Name,
+			HeaderImg: user.HeaderImg,
+			Phone:     user.Phone,
+			Email:     user.Email,
+			SideMode:  user.SideMode,
 		},
-		NickName:  user.NickName,
-		HeaderImg: user.HeaderImg,
-		Phone:     user.Phone,
-		Email:     user.Email,
-		SideMode:  user.SideMode,
 	}); err != nil {
 		global.GS_LOG.Error("设置失败!", zap.Error(err))
 		response.FailWithMessage("设置失败", c)

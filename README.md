@@ -65,6 +65,8 @@
 
 * `swag init`
 
+* `swag init --parseDependency --parseInternal 项目引入了基础组件需要识别外部依赖`
+
 * `import _ "go_code/docs" => router.go`
 
 * 通过 Addr/swagger/doc.json 地址可直接手动导入Apifox

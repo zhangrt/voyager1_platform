@@ -14,7 +14,7 @@ import (
 type TestRepository struct{}
 
 func (tTestRepository *TestRepository) TestGet(ctx context.Context, id string) (data string, err error) {
-	get_back, err := cache.GetResult(id)
+	get_back := cache.Get(id)
 	return get_back, err
 }
 
