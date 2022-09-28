@@ -82,7 +82,7 @@ service-mesh:
 system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
   host: '192.168.19.111'
-  port: 6666
+  port: 7777
   db-type: 'cockroach'
   use-cache: true       # 使用缓存组件
   use-database: true    # 使用数据库
@@ -101,9 +101,9 @@ system:
 
 grpc:
   server:
-    network:
-    host:
-    port:
+    network: "tcp"
+    host: "127.0.0.1"
+    port: 2567
   client:
     host: "127.0.0.1"
     port: 2567
