@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// 自定义SQL
+// 自定义SQL 非并发安全
 type SQLBuilder struct {
 	hasDB bool
 }

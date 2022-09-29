@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	gallery "github.com/zhangrt/voyager1_core"
+	core "github.com/zhangrt/voyager1_core"
 	grpc "github.com/zhangrt/voyager1_core/auth/grpc"
 	"github.com/zhangrt/voyager1_core/auth/grpc/service"
 	config "github.com/zhangrt/voyager1_core/config"
@@ -45,7 +45,7 @@ func RunServer() {
 	}
 
 	// 基础组件对象初始化
-	gallery.NewInit().
+	core.NewInit().
 		Viper(global.GS_VP).
 		Zap(global.GS_LOG).
 		// DB(global.GS_DB). // core组件去除了数据库相关代码
@@ -73,7 +73,7 @@ func RunServer() {
 	// 路由
 	Router := initialize.Routers()
 
-	Addr := global.GS_CONFIG.System.Host + ":" + global.GS_CONFIG.System.Port
+	Addr := fmt.Sprintf("%s:%s", global.GS_CONFIG.System.Host, global.GS_CONFIG.System.Port)
 	// init
 	s := func(address string, router *gin.Engine) server {
 		return &http.Server{

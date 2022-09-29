@@ -64,9 +64,8 @@ func Routers() *gin.Engine {
 	{
 		testRouter.InitTestRouter(PublicGroup)     // 测试路由
 		demoRouter.InitFacilityRouter(PublicGroup) // 演示demo测试路由
-		// login
-		systemRouter.InitBaseRouter(PublicGroup) // 注册登录基础路由 不做鉴权
-		systemRouter.InitInitRouter(PublicGroup) // 初始化相关路由
+		systemRouter.InitBaseRouter(PublicGroup)   // 注册登录基础路由 不做鉴权
+		systemRouter.InitInitRouter(PublicGroup)   // 初始化相关路由
 
 	}
 
@@ -74,7 +73,7 @@ func Routers() *gin.Engine {
 	// 权限管理 test模式下跳过
 	if global.GS_CONFIG.System.Mode != "test" {
 		// 注册权限管理模块，注入实现类
-		auth.RegisterCasbin(&service.CasbinService{})                    //注入Casbin实现类
+		auth.RegisterCasbin(&service.CasbinService{})                    // 注入Casbin实现类
 		auth.RegisterJwt(&service.JwtService{})                          // 注入Jwt实现类
 		auth.NewJWT().LoadAll()                                          // 加载黑名单
 		PrivateGroup.Use(handler.JWTAuth()).Use(handler.CasbinHandler()) // 注入拦截器
