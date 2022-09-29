@@ -21,7 +21,7 @@ require (
 	github.com/spf13/viper v1.13.0
 	github.com/swaggo/gin-swagger v1.3.2
 	github.com/swaggo/swag v1.8.2
-	github.com/zhangrt/voyager1_core v0.1.7-beta
+	github.com/zhangrt/voyager1_core v0.1.7-stable
 	go.uber.org/zap v1.23.0
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
 	golang.org/x/sync v0.0.0-20220907140024-f12130a52804
@@ -55,6 +55,7 @@ require (
 	github.com/golang-sql/sqlexp v0.0.0-20170517235910-f1bb20e5a188 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/guanguans/id-validator v1.2.8 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.1 // indirect
