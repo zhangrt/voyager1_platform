@@ -2,7 +2,7 @@
 package system
 
 import (
-	"github.com/zhangrt/voyager1_platform/global"
+	"github.com/zhangrt/voyager1_core/global"
 )
 
 // 如果含有time.Time 请自行import time包
@@ -16,5 +16,5 @@ type SysDictionary struct {
 }
 
 func (SysDictionary) TableName() string {
-	return "sys_dictionaries"
+	return "vo1_dictionary"
 }

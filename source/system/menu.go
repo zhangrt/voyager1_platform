@@ -31,7 +31,6 @@ func (i *initMenu) MigrateTable(ctx context.Context) (context.Context, error) {
 	return ctx, db.AutoMigrate(
 		&SysBaseMenu{},
 		&SysBaseMenuParameter{},
-		&SysBaseMenuBtn{},
 	)
 }
 
@@ -42,8 +41,7 @@ func (i *initMenu) TableCreated(ctx context.Context) bool {
 	}
 	m := db.Migrator()
 	return m.HasTable(&SysBaseMenu{}) &&
-		m.HasTable(&SysBaseMenuParameter{}) &&
-		m.HasTable(&SysBaseMenuBtn{})
+		m.HasTable(&SysBaseMenuParameter{})
 }
 
 func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, err error) {

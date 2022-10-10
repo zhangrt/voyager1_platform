@@ -4092,6 +4092,47 @@ const docTemplate = `{
                 }
             }
         },
+        "config.Grpc": {
+            "type": "object",
+            "properties": {
+                "client": {
+                    "$ref": "#/definitions/config.GrpcClient"
+                },
+                "server": {
+                    "$ref": "#/definitions/config.GrpcServer"
+                }
+            }
+        },
+        "config.GrpcClient": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "description": "服务器IP",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "服务器port",
+                    "type": "integer"
+                }
+            }
+        },
+        "config.GrpcServer": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "description": "服务器IP",
+                    "type": "string"
+                },
+                "network": {
+                    "description": "网络, tcp、udp等",
+                    "type": "string"
+                },
+                "port": {
+                    "description": "服务器port",
+                    "type": "integer"
+                }
+            }
+        },
         "config.JWT": {
             "type": "object",
             "properties": {
@@ -4292,6 +4333,9 @@ const docTemplate = `{
                 },
                 "email": {
                     "$ref": "#/definitions/config.Email"
+                },
+                "grpc": {
+                    "$ref": "#/definitions/config.Grpc"
                 },
                 "jwt": {
                     "$ref": "#/definitions/config.JWT"
@@ -5242,46 +5286,6 @@ const docTemplate = `{
                 }
             }
         },
-        "system.SysDepartment": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysDepartment"
-                    }
-                },
-                "createdAt": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "dataDepartmentId": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysDepartment"
-                    }
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "departmentId": {
-                    "description": "部门ID",
-                    "type": "string"
-                },
-                "departmentName": {
-                    "description": "部门名称",
-                    "type": "string"
-                },
-                "parentId": {
-                    "description": "父级部门ID",
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "description": "更新时间",
-                    "type": "string"
-                }
-            }
-        },
         "system.SysDictionary": {
             "type": "object",
             "properties": {
@@ -5505,46 +5509,6 @@ const docTemplate = `{
                 }
             }
         },
-        "system.SysUnit": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysUnit"
-                    }
-                },
-                "createdAt": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
-                "dataUnitId": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysUnit"
-                    }
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "parentId": {
-                    "description": "父级部门ID",
-                    "type": "string"
-                },
-                "unitId": {
-                    "description": "部门ID",
-                    "type": "string"
-                },
-                "unitName": {
-                    "description": "部门名称",
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "description": "更新时间",
-                    "type": "string"
-                }
-            }
-        },
         "system.SysUser": {
             "type": "object",
             "properties": {
@@ -5569,9 +5533,6 @@ const docTemplate = `{
                     "description": "创建时间",
                     "type": "string"
                 },
-                "department": {
-                    "$ref": "#/definitions/system.SysDepartment"
-                },
                 "departmentId": {
                     "description": "部门Id",
                     "type": "string"
@@ -5579,12 +5540,6 @@ const docTemplate = `{
                 "departmentName": {
                     "description": "部门名称",
                     "type": "string"
-                },
-                "departments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysDepartment"
-                    }
                 },
                 "email": {
                     "description": "用户邮箱",
@@ -5611,9 +5566,6 @@ const docTemplate = `{
                     "description": "用户侧边主题",
                     "type": "string"
                 },
-                "unit": {
-                    "$ref": "#/definitions/system.SysUnit"
-                },
                 "unitId": {
                     "description": "单位Id",
                     "type": "string"
@@ -5621,12 +5573,6 @@ const docTemplate = `{
                 "unitName": {
                     "description": "单位名称",
                     "type": "string"
-                },
-                "units": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysUnit"
-                    }
                 },
                 "updatedAt": {
                     "description": "更新时间",
@@ -5681,7 +5627,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.0.1",
 	Host:             "",
-	BasePath:         "/github.com/zhangrt/voyager1_platform",
+	BasePath:         "/gsafety",
 	Schemes:          []string{},
 	Title:            "Swagger github.com/zhangrt/voyager1_platform demo API",
 	Description:      "Platform demo golang 后端服务api",

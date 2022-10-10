@@ -45,7 +45,7 @@ func RunServer() {
 	}
 
 	// 基础组件对象初始化
-	core.NewInit().
+	core.New().
 		Viper(global.GS_VP).
 		Zap(global.GS_LOG).
 		// DB(global.GS_DB). // core组件去除了数据库相关代码

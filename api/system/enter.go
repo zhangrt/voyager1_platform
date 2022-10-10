@@ -12,7 +12,6 @@ type ApiGroup struct {
 	AuthorityMenuApi
 	OperationRecordApi
 	DictionaryDetailApi
-	AuthorityBtnApi
 	UserApi
 	WeatherApi
 }
@@ -27,6 +26,5 @@ var (
 	systemConfigService     = service.ServiceGroupApp.SystemServiceGroup.SystemConfigService
 	operationRecordService  = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
 	dictionaryDetailService = service.ServiceGroupApp.SystemServiceGroup.DictionaryDetailService
-	authorityBtnService     = service.ServiceGroupApp.SystemServiceGroup.AuthorityBtnService
 	weatherService          = service.ServiceGroupApp.SystemServiceGroup.WeatherService
 )

@@ -62,8 +62,8 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.SysUser) {
 		ID:          user.ID,
 		Name:        user.Name,
 		Account:     user.Account,
-		AuthorityId: user.AuthorityId,
-		Authority:   user.Authority,
+		AuthorityId: user.RoleId,
+		Authority:   user.Role,
 	})
 	token, err := j.CreateToken(claims)
 	if err != nil {
@@ -131,18 +131,18 @@ func (b *UserApi) Register(c *gin.Context) {
 	var authorities []system.SysAuthority
 	for _, v := range r.AuthorityIds {
 		authorities = append(authorities, system.SysAuthority{
-			AuthorityId: v,
+			RoleId: v,
 		})
 	}
 
 	user := &system.SysUser{
-		Authorities: authorities,
+		Roles: authorities,
 	}
 	user.Account = r.Account
 	user.Name = r.Name
 	user.Password = r.Password
 	user.HeaderImg = r.HeaderImg
-	user.AuthorityId = r.AuthorityId
+	user.RoleId = r.AuthorityId
 	userReturn, err := userService.Register(*user)
 	if err != nil {
 		global.GS_LOG.Error("注册失败!", zap.Error(err))

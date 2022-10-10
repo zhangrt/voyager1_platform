@@ -27,7 +27,7 @@ func (systemConfigService *SystemConfigService) GetSystemConfig() (conf config.S
 //@param: system model.System
 //@return: err error
 
-func (systemConfigService *SystemConfigService) SetSystemConfig(system system.System) (err error) {
+func (systemConfigService *SystemConfigService) SetSystemConfig(system system.Config) (err error) {
 	cs := utils.StructToMap(system.Config)
 	for k, v := range cs {
 		global.GS_VP.Set(k, v)

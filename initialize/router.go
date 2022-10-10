@@ -90,7 +90,6 @@ func Routers() *gin.Engine {
 		systemRouter.InitSysDictionaryDetailRouter(PrivateGroup) // 字典详情相关路由
 		systemRouter.InitCasbinRouter(PrivateGroup)              // 权限相关路由
 		systemRouter.InitAuthorityRouter(PrivateGroup)           // 注册角色相关路由
-		systemRouter.InitAuthorityBtnRouterRouter(PrivateGroup)  // 注册角色按钮相关路由
 		systemRouter.InitWeatherrRouter(PrivateGroup)            // 天气信息相关路由
 		statisticsRouter.InitStatisticesRouter(PrivateGroup)     // 统计数据相关路由
 	}

@@ -9,5 +9,5 @@ type SysMenu struct {
 }
 
 func (s SysMenu) TableName() string {
-	return "authority_menu"
+	return "vo1_role_mtm_menu"
 }

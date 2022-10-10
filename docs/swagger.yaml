@@ -1,4 +1,4 @@
-basePath: /github.com/zhangrt/voyager1_platform
+basePath: /gsafety
 definitions:
   config.AUTHKey:
     properties:
@@ -105,6 +105,34 @@ definitions:
       to:
         description: 收件人:多个以英文逗号分隔
         type: string
+    type: object
+  config.Grpc:
+    properties:
+      client:
+        $ref: '#/definitions/config.GrpcClient'
+      server:
+        $ref: '#/definitions/config.GrpcServer'
+    type: object
+  config.GrpcClient:
+    properties:
+      host:
+        description: 服务器IP
+        type: string
+      port:
+        description: 服务器port
+        type: integer
+    type: object
+  config.GrpcServer:
+    properties:
+      host:
+        description: 服务器IP
+        type: string
+      network:
+        description: 网络, tcp、udp等
+        type: string
+      port:
+        description: 服务器port
+        type: integer
     type: object
   config.JWT:
     properties:
@@ -248,6 +276,8 @@ definitions:
         type: array
       email:
         $ref: '#/definitions/config.Email'
+      grpc:
+        $ref: '#/definitions/config.Grpc'
       jwt:
         $ref: '#/definitions/config.JWT'
       minio:
@@ -908,34 +938,6 @@ definitions:
         description: 地址栏携带参数的值
         type: string
     type: object
-  system.SysDepartment:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/system.SysDepartment'
-        type: array
-      createdAt:
-        description: 创建时间
-        type: string
-      dataDepartmentId:
-        items:
-          $ref: '#/definitions/system.SysDepartment'
-        type: array
-      deletedAt:
-        type: string
-      departmentId:
-        description: 部门ID
-        type: string
-      departmentName:
-        description: 部门名称
-        type: string
-      parentId:
-        description: 父级部门ID
-        type: string
-      updatedAt:
-        description: 更新时间
-        type: string
-    type: object
   system.SysDictionary:
     properties:
       createdAt:
@@ -1098,34 +1100,6 @@ definitions:
         description: 用户id
         type: integer
     type: object
-  system.SysUnit:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/system.SysUnit'
-        type: array
-      createdAt:
-        description: 创建时间
-        type: string
-      dataUnitId:
-        items:
-          $ref: '#/definitions/system.SysUnit'
-        type: array
-      deletedAt:
-        type: string
-      parentId:
-        description: 父级部门ID
-        type: string
-      unitId:
-        description: 部门ID
-        type: string
-      unitName:
-        description: 部门名称
-        type: string
-      updatedAt:
-        description: 更新时间
-        type: string
-    type: object
   system.SysUser:
     properties:
       account:
@@ -1143,18 +1117,12 @@ definitions:
       createdAt:
         description: 创建时间
         type: string
-      department:
-        $ref: '#/definitions/system.SysDepartment'
       departmentId:
         description: 部门Id
         type: string
       departmentName:
         description: 部门名称
         type: string
-      departments:
-        items:
-          $ref: '#/definitions/system.SysDepartment'
-        type: array
       email:
         description: 用户邮箱
         type: string
@@ -1174,18 +1142,12 @@ definitions:
       sideMode:
         description: 用户侧边主题
         type: string
-      unit:
-        $ref: '#/definitions/system.SysUnit'
       unitId:
         description: 单位Id
         type: string
       unitName:
         description: 单位名称
         type: string
-      units:
-        items:
-          $ref: '#/definitions/system.SysUnit'
-        type: array
       updatedAt:
         description: 更新时间
         type: string

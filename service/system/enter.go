@@ -10,6 +10,5 @@ type ServiceGroup struct {
 	SystemConfigService
 	OperationRecordService
 	DictionaryDetailService
-	AuthorityBtnService
 	WeatherService
 }

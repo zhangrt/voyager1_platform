@@ -6,5 +6,5 @@ type SysUseAuthority struct {
 }
 
 func (s *SysUseAuthority) TableName() string {
-	return "sys_user_authority"
+	return "vo1_person_mtm_role"
 }

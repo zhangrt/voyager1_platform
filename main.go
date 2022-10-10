@@ -12,7 +12,7 @@ import (
 // @version 0.0.1
 // @description Platform demo golang 后端服务api
 // @in header
-// @BasePath /github.com/zhangrt/voyager1_platform
+// @BasePath /gsafety
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name x-token

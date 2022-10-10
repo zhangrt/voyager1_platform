@@ -5,10 +5,12 @@ import (
 
 	luna "github.com/zhangrt/voyager1_core/auth/luna"
 	redis "github.com/zhangrt/voyager1_core/cache"
+	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_platform/global"
 	"go.uber.org/zap"
 )
 
+// JWT Service
 type JwtService struct{}
 
 //@function: JsonInBlacklist
@@ -44,7 +46,7 @@ func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 //@return: redisJWT string, err error
 
 func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err error) {
-	redisJWT = redis.Get(userName)
+	redisJWT = redis.Get(decorateKey(userName))
 	return redisJWT, err
 }
 
@@ -56,7 +58,7 @@ func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err
 func (jwtService *JwtService) SetCacheJWT(jwt string, userName string) (err error) {
 	// 此处过期时间等于jwt过期时间
 	timer := time.Duration(global.GS_CONFIG.JWT.ExpiresTime) * time.Second
-	_ = redis.Set(userName, jwt, timer)
+	_ = redis.Set(decorateKey(userName), jwt, timer)
 	return err
 }
 
@@ -71,4 +73,9 @@ func (jwtService *JwtService) LoadAll() error {
 		global.BlackCache.SetDefault(data[i], struct{}{})
 	} // jwt黑名单 加入 BlackCache 中
 	return nil
+}
+
+// 缓存前缀
+func decorateKey(k string) string {
+	return constant.CACHE_TOKEN_PREFIX + k
 }

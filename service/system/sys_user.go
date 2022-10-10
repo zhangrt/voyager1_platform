@@ -46,14 +46,20 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 
 	var user system.SysUser
 	err = global.GS_DB.Where("account = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
+	if err != nil {
+		err = global.GS_DB.Where("phone = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
+		if err != nil {
+			err = global.GS_DB.Where("email = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
+		}
+	}
 	if err == nil {
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
 			return nil, errors.New("密码错误")
 		}
 		var am system.SysMenu
-		ferr := global.GS_DB.First(&am, "name = ? AND authority_id = ?", user.Authority.DefaultRouter, user.AuthorityId).Error
+		ferr := global.GS_DB.First(&am, "name = ? AND role_id = ?", user.Role.DefaultRouter, user.RoleId).Error
 		if errors.Is(ferr, gorm.ErrRecordNotFound) {
-			user.Authority.DefaultRouter = "404"
+			user.Role.DefaultRouter = "404"
 		}
 	}
 
@@ -185,9 +191,9 @@ func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.SysUser
 		return reqUser, err
 	}
 	var am system.SysMenu
-	ferr := global.GS_DB.First(&am, "name = ? AND authority_id = ?", reqUser.Authority.DefaultRouter, reqUser.AuthorityId).Error
+	ferr := global.GS_DB.First(&am, "name = ? AND authority_id = ?", reqUser.Role.DefaultRouter, reqUser.RoleId).Error
 	if errors.Is(ferr, gorm.ErrRecordNotFound) {
-		reqUser.Authority.DefaultRouter = "404"
+		reqUser.Role.DefaultRouter = "404"
 	}
 	return reqUser, err
 }

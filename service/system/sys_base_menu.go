@@ -26,14 +26,6 @@ func (baseMenuService *BaseMenuService) DeleteBaseMenu(id int) (err error) {
 		if err != nil {
 			global.GS_LOG.Error(err.Error())
 		}
-		err = global.GS_DB.Delete(&system.SysBaseMenuBtn{}, "sys_base_menu_id = ?", id).Error
-		if err != nil {
-			global.GS_LOG.Error(err.Error())
-		}
-		err = global.GS_DB.Delete(&system.SysAuthorityBtn{}, "sys_menu_id = ?", id).Error
-		if err != nil {
-			return err
-		}
 		if len(menu.SysAuthoritys) > 0 {
 			err = global.GS_DB.Model(&menu).Association("SysAuthoritys").Delete(&menu.SysAuthoritys)
 		} else {
@@ -82,27 +74,11 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) 
 			global.GS_LOG.Debug(txErr.Error())
 			return txErr
 		}
-		txErr = tx.Unscoped().Delete(&system.SysBaseMenuBtn{}, "sys_base_menu_id = ?", menu.ID).Error
-		if txErr != nil {
-			global.GS_LOG.Debug(txErr.Error())
-			return txErr
-		}
 		if len(menu.Parameters) > 0 {
 			for k := range menu.Parameters {
 				menu.Parameters[k].SysBaseMenuID = menu.ID
 			}
 			txErr = tx.Create(&menu.Parameters).Error
-			if txErr != nil {
-				global.GS_LOG.Debug(txErr.Error())
-				return txErr
-			}
-		}
-
-		if len(menu.MenuBtn) > 0 {
-			for k := range menu.MenuBtn {
-				menu.MenuBtn[k].SysBaseMenuID = menu.ID
-			}
-			txErr = tx.Create(&menu.MenuBtn).Error
 			if txErr != nil {
 				global.GS_LOG.Debug(txErr.Error())
 				return txErr

@@ -47,16 +47,14 @@ func AutoMigrate() {
 		&SystemModels.SysUser{},
 		&SystemModels.SysUseAuthority{},
 		&SystemModels.SysAuthority{},
-		&SystemModels.SysAuthorityBtn{},
 		&SystemModels.SysBaseMenu{},
 		&SystemModels.SysBaseMenuParameter{},
-		&SystemModels.SysBaseMenuBtn{},
 		&SystemModels.SysMenu{},
 		&SystemModels.SysDictionary{},
 		&SystemModels.SysDictionaryDetail{},
 		&SystemModels.SysOperationRecord{},
 		&SystemModels.SysDepartment{},
-		&SystemModels.SysUnit{},
+		&SystemModels.SysOrganization{},
 
 		&auth.JwtBlacklist{},
 

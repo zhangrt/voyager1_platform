@@ -5,6 +5,6 @@ import (
 )
 
 // 配置文件结构体
-type System struct {
+type Config struct {
 	Config config.Server `json:"config"`
 }

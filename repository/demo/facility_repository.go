@@ -42,17 +42,17 @@ func (facilityRepository *FacilityRepository) GetFacilityInfoList(info request.F
 
 	// 如果有条件搜索 下方会自动创建搜索语句
 
-	db := builder.Adapter(global.GS_DB).
-		Model(&demo.Facility{}).
-		Where("name", "like", info.Name).
-		Where("code", "like", info.Code).
-		Where("type", "in", info.Type).
-		Where("status", "in", strings.Split(info.Status, ",")).
-		Where("alarm_time", ">=", info.StartTime).
-		Where("alarm_time", "<=", info.EndTime).
-		Page(info.Page, info.PageSize).
-		Order(info.Keyword).
-		Go()
+	db := builder.Adapter("facility", global.GS_DB).
+		Model("facility", &demo.Facility{}).
+		Where("facility", "name", "like", info.Name).
+		Where("facility", "code", "like", info.Code).
+		Where("facility", "type", "in", info.Type).
+		Where("facility", "status", "in", strings.Split(info.Status, ",")).
+		Where("facility", "alarm_time", ">=", info.StartTime).
+		Where("facility", "alarm_time", "<=", info.EndTime).
+		Page("facility", info.Page, info.PageSize).
+		Order("facility", info.Keyword).
+		Go("facility")
 
 	err = db.Count(&total).Find(&facilityList).Error
 	if err != nil {

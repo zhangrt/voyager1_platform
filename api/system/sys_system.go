@@ -36,7 +36,7 @@ func (s *SystemApi) GetSystemConfig(c *gin.Context) {
 // @Success 200 {object} response.Response{data=string} "设置配置文件内容"
 // @Router /system/setSystemConfig [post]
 func (s *SystemApi) SetSystemConfig(c *gin.Context) {
-	var sys system.System
+	var sys system.Config
 	_ = c.ShouldBindJSON(&sys)
 	if err := systemConfigService.SetSystemConfig(sys); err != nil {
 		global.GS_LOG.Error("设置失败!", zap.Error(err))
