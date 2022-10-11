@@ -19,15 +19,15 @@ var ErrRoleExistence = errors.New("存在相同角色id")
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: CreateAuthority
 //@description: 创建一个角色
-//@param: auth model.SysAuthority
-//@return: authority system.SysAuthority, err error
+//@param: auth model.Vo1Role
+//@return: authority system.Vo1Role, err error
 
 type AuthorityService struct{}
 
 var AuthorityServiceApp = new(AuthorityService)
 
-func (authorityService *AuthorityService) CreateAuthority(auth system.SysAuthority) (authority system.SysAuthority, err error) {
-	var authorityBox system.SysAuthority
+func (authorityService *AuthorityService) CreateAuthority(auth system.Vo1Role) (authority system.Vo1Role, err error) {
+	var authorityBox system.Vo1Role
 	if !errors.Is(global.GS_DB.Where("authority_id = ?", auth.RoleId).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
 		return auth, ErrRoleExistence
 	}
@@ -39,15 +39,15 @@ func (authorityService *AuthorityService) CreateAuthority(auth system.SysAuthori
 //@function: CopyAuthority
 //@description: 复制一个角色
 //@param: copyInfo response.SysAuthorityCopyResponse
-//@return: authority system.SysAuthority, err error
+//@return: authority system.Vo1Role, err error
 
-func (authorityService *AuthorityService) CopyAuthority(copyInfo response.SysAuthorityCopyResponse) (authority system.SysAuthority, err error) {
-	var authorityBox system.SysAuthority
-	if !errors.Is(global.GS_DB.Where("authority_id = ?", copyInfo.Authority.RoleId).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
+func (authorityService *AuthorityService) CopyAuthority(copyInfo response.SysAuthorityCopyResponse) (authority system.Vo1Role, err error) {
+	var authorityBox system.Vo1Role
+	if !errors.Is(global.GS_DB.Where("authority_id = ?", copyInfo.Role.RoleId).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
 		return authority, ErrRoleExistence
 	}
-	copyInfo.Authority.Children = []system.SysAuthority{}
-	menus, err := MenuServiceApp.GetMenuAuthority(&request.GetAuthorityId{AuthorityId: copyInfo.OldAuthorityId})
+	copyInfo.Role.Children = []system.Vo1Role{}
+	menus, err := MenuServiceApp.GetMenuAuthority(&request.GetAuthorityId{AuthorityId: copyInfo.OldRoleId})
 	if err != nil {
 		return
 	}
@@ -57,52 +57,52 @@ func (authorityService *AuthorityService) CopyAuthority(copyInfo response.SysAut
 		v.SysBaseMenu.ID = uint(intNum)
 		baseMenu = append(baseMenu, v.SysBaseMenu)
 	}
-	copyInfo.Authority.SysBaseMenus = baseMenu
-	err = global.GS_DB.Create(&copyInfo.Authority).Error
+	copyInfo.Role.SysBaseMenus = baseMenu
+	err = global.GS_DB.Create(&copyInfo.Role).Error
 	if err != nil {
 		return
 	}
 
 	auth := authentation.NewCasbin()
-	paths := auth.GetPolicyPathByAuthorityId(copyInfo.OldAuthorityId)
-	err = auth.UpdateCasbin(copyInfo.Authority.RoleId, paths)
+	paths := auth.GetPolicyPathByAuthorityId(copyInfo.OldRoleId)
+	err = auth.UpdateCasbin(copyInfo.Role.RoleId, paths)
 	if err != nil {
-		_ = authorityService.DeleteAuthority(&copyInfo.Authority)
+		_ = authorityService.DeleteAuthority(&copyInfo.Role)
 	}
-	return copyInfo.Authority, err
+	return copyInfo.Role, err
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateAuthority
 //@description: 更改一个角色
-//@param: auth model.SysAuthority
-//@return: authority system.SysAuthority, err error
+//@param: auth model.Vo1Role
+//@return: authority system.Vo1Role, err error
 
-func (authorityService *AuthorityService) UpdateAuthority(auth system.SysAuthority) (authority system.SysAuthority, err error) {
-	err = global.GS_DB.Where("authority_id = ?", auth.RoleId).First(&system.SysAuthority{}).Updates(&auth).Error
+func (authorityService *AuthorityService) UpdateAuthority(auth system.Vo1Role) (authority system.Vo1Role, err error) {
+	err = global.GS_DB.Where("authority_id = ?", auth.RoleId).First(&system.Vo1Role{}).Updates(&auth).Error
 	return auth, err
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteAuthority
+//@function: DeleteRole
 //@description: 删除角色
-//@param: auth *model.SysAuthority
+//@param: auth *model.Vo1Role
 //@return: err error
 
-func (authorityService *AuthorityService) DeleteAuthority(auth *system.SysAuthority) (err error) {
-	if errors.Is(global.GS_DB.Debug().Preload("Users").First(&auth).Error, gorm.ErrRecordNotFound) {
+func (authorityService *AuthorityService) DeleteAuthority(auth *system.Vo1Role) (err error) {
+	if errors.Is(global.GS_DB.Debug().Preload("Persons").First(&auth).Error, gorm.ErrRecordNotFound) {
 		return errors.New("该角色不存在")
 	}
-	if len(auth.Users) != 0 {
+	if len(auth.Persons) != 0 {
 		return errors.New("此角色有用户正在使用禁止删除")
 	}
-	if !errors.Is(global.GS_DB.Where("authority_id = ?", auth.RoleId).First(&system.SysUser{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GS_DB.Where("authority_id = ?", auth.RoleId).First(&system.Vo1Person{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("此角色有用户正在使用禁止删除")
 	}
-	if !errors.Is(global.GS_DB.Where("parent_id = ?", auth.RoleId).First(&system.SysAuthority{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GS_DB.Where("parent_id = ?", auth.RoleId).First(&system.Vo1Role{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("此角色存在子角色不允许删除")
 	}
-	db := global.GS_DB.Preload("SysBaseMenus").Where("authority_id = ?", auth.RoleId).First(auth)
+	db := global.GS_DB.Preload("SysBaseMenus").Where("role_id = ?", auth.RoleId).First(auth)
 	err = db.Unscoped().Delete(auth).Error
 	if err != nil {
 		return
@@ -119,7 +119,7 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.SysAuthor
 			return
 		}
 	}
-	err = global.GS_DB.Delete(&[]system.SysUseAuthority{}, "sys_authority_authority_id = ?", auth.RoleId).Error
+	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "vo1_role_id = ?", auth.RoleId).Error
 	if err != nil {
 		global.GS_LOG.Error(err.Error())
 	}
@@ -138,9 +138,9 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.SysAuthor
 func (authorityService *AuthorityService) GetAuthorityInfoList(info request.PageInfo) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.GS_DB.Model(&system.SysAuthority{})
+	db := global.GS_DB.Model(&system.Vo1Role{})
 	err = db.Where("parent_id = ?", "0").Count(&total).Error
-	var authority []system.SysAuthority
+	var authority []system.Vo1Role
 	err = db.Limit(limit).Offset(offset).Preload("DataAuthorityId").Where("parent_id = ?", "0").Find(&authority).Error
 	if len(authority) > 0 {
 		for k := range authority {
@@ -153,10 +153,10 @@ func (authorityService *AuthorityService) GetAuthorityInfoList(info request.Page
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetAuthorityInfo
 //@description: 获取所有角色信息
-//@param: auth model.SysAuthority
-//@return: sa system.SysAuthority, err error
+//@param: auth model.Vo1Role
+//@return: sa system.Vo1Role, err error
 
-func (authorityService *AuthorityService) GetAuthorityInfo(auth system.SysAuthority) (sa system.SysAuthority, err error) {
+func (authorityService *AuthorityService) GetAuthorityInfo(auth system.Vo1Role) (sa system.Vo1Role, err error) {
 	err = global.GS_DB.Preload("DataAuthorityId").Where("authority_id = ?", auth.RoleId).First(&sa).Error
 	return sa, err
 }
@@ -164,11 +164,11 @@ func (authorityService *AuthorityService) GetAuthorityInfo(auth system.SysAuthor
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetDataAuthority
 //@description: 设置角色资源权限
-//@param: auth model.SysAuthority
+//@param: auth model.Vo1Role
 //@return: error
 
-func (authorityService *AuthorityService) SetDataAuthority(auth system.SysAuthority) error {
-	var s system.SysAuthority
+func (authorityService *AuthorityService) SetDataAuthority(auth system.Vo1Role) error {
+	var s system.Vo1Role
 	global.GS_DB.Preload("DataAuthorityId").First(&s, "authority_id = ?", auth.RoleId)
 	err := global.GS_DB.Model(&s).Association("DataAuthorityId").Replace(&auth.DataRoleId)
 	return err
@@ -177,11 +177,11 @@ func (authorityService *AuthorityService) SetDataAuthority(auth system.SysAuthor
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetMenuAuthority
 //@description: 菜单与角色绑定
-//@param: auth *model.SysAuthority
+//@param: auth *model.Vo1Role
 //@return: error
 
-func (authorityService *AuthorityService) SetMenuAuthority(auth *system.SysAuthority) error {
-	var s system.SysAuthority
+func (authorityService *AuthorityService) SetMenuAuthority(auth *system.Vo1Role) error {
+	var s system.Vo1Role
 	global.GS_DB.Preload("SysBaseMenus").First(&s, "authority_id = ?", auth.RoleId)
 	err := global.GS_DB.Model(&s).Association("SysBaseMenus").Replace(&auth.SysBaseMenus)
 	return err
@@ -190,10 +190,10 @@ func (authorityService *AuthorityService) SetMenuAuthority(auth *system.SysAutho
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: findChildrenAuthority
 //@description: 查询子角色
-//@param: authority *model.SysAuthority
+//@param: authority *model.Vo1Role
 //@return: err error
 
-func (authorityService *AuthorityService) findChildrenAuthority(authority *system.SysAuthority) (err error) {
+func (authorityService *AuthorityService) findChildrenAuthority(authority *system.Vo1Role) (err error) {
 	err = global.GS_DB.Preload("DataAuthorityId").Where("parent_id = ?", authority.RoleId).Find(&authority.Children).Error
 	if len(authority.Children) > 0 {
 		for k := range authority.Children {

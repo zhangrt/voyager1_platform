@@ -5,7 +5,7 @@ import (
 	"github.com/zhangrt/voyager1_platform/model/system"
 )
 
-type SysDictionarySearch struct {
-	system.SysDictionary
+type Vo1DictionarySearch struct {
+	system.Vo1Dictionary
 	request.PageInfo
 }

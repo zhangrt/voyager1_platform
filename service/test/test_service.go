@@ -8,10 +8,12 @@ import (
 	"github.com/zhangrt/voyager1_platform/model/test"
 	"github.com/zhangrt/voyager1_platform/model/test/request"
 
-	"github.com/zhangrt/voyager1_core/cache"
+	redis "github.com/zhangrt/voyager1_core/cache"
 )
 
-type TestService struct{}
+type TestService struct {
+	cache redis.Cacher
+}
 
 func (testService *TestService) TestPost(id uint, name string) (data string, err error) {
 	// uint => string
@@ -20,7 +22,7 @@ func (testService *TestService) TestPost(id uint, name string) (data string, err
 	test.TestName = name
 	err = global.GS_DB.Create(&test).Error
 	if err == nil {
-		_ = cache.Set(strconv.Itoa(int(id)), name, 0)
+		_ = testService.cache.Set(strconv.Itoa(int(id)), name, 0)
 	}
 	if err != nil {
 		return err.Error(), err

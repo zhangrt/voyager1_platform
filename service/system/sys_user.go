@@ -16,13 +16,13 @@ import (
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: Register
 //@description: 用户注册
-//@param: u model.SysUser
-//@return: userInter system.SysUser, err error
+//@param: u model.Vo1Person
+//@return: userInter system.Vo1Person, err error
 
 type UserService struct{}
 
-func (userService *UserService) Register(u system.SysUser) (userInter system.SysUser, err error) {
-	var user system.SysUser
+func (userService *UserService) Register(u system.Vo1Person) (userInter system.Vo1Person, err error) {
+	var user system.Vo1Person
 	if !errors.Is(global.GS_DB.Where("account = ?", u.Account).First(&user).Error, gorm.ErrRecordNotFound) { // 判断用户名是否注册
 		return userInter, errors.New("用户名已注册")
 	}
@@ -36,15 +36,15 @@ func (userService *UserService) Register(u system.SysUser) (userInter system.Sys
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: Login
 //@description: 用户登录
-//@param: u *model.SysUser
-//@return: err error, userInter *model.SysUser
+//@param: u *model.Vo1Person
+//@return: err error, userInter *model.Vo1Person
 
-func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysUser, err error) {
+func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo1Person, err error) {
 	if nil == global.GS_DB {
 		return nil, fmt.Errorf("db not init")
 	}
 
-	var user system.SysUser
+	var user system.Vo1Person
 	err = global.GS_DB.Where("account = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
 	if err != nil {
 		err = global.GS_DB.Where("phone = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
@@ -56,7 +56,7 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
 			return nil, errors.New("密码错误")
 		}
-		var am system.SysMenu
+		var am system.Vo1Menu
 		ferr := global.GS_DB.First(&am, "name = ? AND role_id = ?", user.Role.DefaultRouter, user.RoleId).Error
 		if errors.Is(ferr, gorm.ErrRecordNotFound) {
 			user.Role.DefaultRouter = "404"
@@ -69,11 +69,11 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: ChangePassword
 //@description: 修改用户密码
-//@param: u *model.SysUser, newPassword string
-//@return: userInter *model.SysUser,err error
+//@param: u *model.Vo1Person, newPassword string
+//@return: userInter *model.Vo1Person,err error
 
-func (userService *UserService) ChangePassword(u *system.SysUser, newPassword string) (userInter *system.SysUser, err error) {
-	var user system.SysUser
+func (userService *UserService) ChangePassword(u *system.Vo1Person, newPassword string) (userInter *system.Vo1Person, err error) {
+	var user system.Vo1Person
 	err = global.GS_DB.Where("account = ?", u.Account).First(&user).Error
 	if err != nil {
 		return nil, err
@@ -96,8 +96,8 @@ func (userService *UserService) ChangePassword(u *system.SysUser, newPassword st
 func (userService *UserService) GetUserInfoList(info request.PageInfo) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	db := global.GS_DB.Model(&system.SysUser{})
-	var userList []system.SysUser
+	db := global.GS_DB.Model(&system.Vo1Person{})
+	var userList []system.Vo1Person
 	err = db.Count(&total).Error
 	if err != nil {
 		return
@@ -113,11 +113,11 @@ func (userService *UserService) GetUserInfoList(info request.PageInfo) (list int
 //@return: err error
 
 func (userService *UserService) SetUserAuthority(id uint, uuid uuid.UUID, authorityId string) (err error) {
-	assignErr := global.GS_DB.Where("sys_user_id = ? AND sys_authority_authority_id = ?", id, authorityId).First(&system.SysUseAuthority{}).Error
+	assignErr := global.GS_DB.Where("sys_user_id = ? AND sys_authority_authority_id = ?", id, authorityId).First(&system.Vo1PersonRole{}).Error
 	if errors.Is(assignErr, gorm.ErrRecordNotFound) {
 		return errors.New("该用户无此角色")
 	}
-	err = global.GS_DB.Where("uuid = ?", uuid).First(&system.SysUser{}).Update("authority_id", authorityId).Error
+	err = global.GS_DB.Where("uuid = ?", uuid).First(&system.Vo1Person{}).Update("authority_id", authorityId).Error
 	return err
 }
 
@@ -129,21 +129,21 @@ func (userService *UserService) SetUserAuthority(id uint, uuid uuid.UUID, author
 
 func (userService *UserService) SetUserAuthorities(id uint, authorityIds []string) (err error) {
 	return global.GS_DB.Transaction(func(tx *gorm.DB) error {
-		TxErr := tx.Delete(&[]system.SysUseAuthority{}, "sys_user_id = ?", id).Error
+		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "sys_user_id = ?", id).Error
 		if TxErr != nil {
 			return TxErr
 		}
-		useAuthority := []system.SysUseAuthority{}
+		useAuthority := []system.Vo1PersonRole{}
 		for _, v := range authorityIds {
-			useAuthority = append(useAuthority, system.SysUseAuthority{
-				SysUserId: id, SysAuthorityAuthorityId: v,
+			useAuthority = append(useAuthority, system.Vo1PersonRole{
+				PersonId: id, RoleId: v,
 			})
 		}
 		TxErr = tx.Create(&useAuthority).Error
 		if TxErr != nil {
 			return TxErr
 		}
-		TxErr = tx.Where("id = ?", id).First(&system.SysUser{}).Update("authority_id", authorityIds[0]).Error
+		TxErr = tx.Where("id = ?", id).First(&system.Vo1Person{}).Update("authority_id", authorityIds[0]).Error
 		if TxErr != nil {
 			return TxErr
 		}
@@ -159,22 +159,22 @@ func (userService *UserService) SetUserAuthorities(id uint, authorityIds []strin
 //@return: err error
 
 func (userService *UserService) DeleteUser(id int) (err error) {
-	var user system.SysUser
+	var user system.Vo1Person
 	err = global.GS_DB.Where("id = ?", id).Delete(&user).Error
 	if err != nil {
 		return err
 	}
-	err = global.GS_DB.Delete(&[]system.SysUseAuthority{}, "sys_user_id = ?", id).Error
+	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
 	return err
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetUserInfo
 //@description: 设置用户信息
-//@param: reqUser model.SysUser
-//@return: err error, user model.SysUser
+//@param: reqUser model.Vo1Person
+//@return: err error, user model.Vo1Person
 
-func (userService *UserService) SetUserInfo(req system.SysUser) error {
+func (userService *UserService) SetUserInfo(req system.Vo1Person) error {
 	return global.GS_DB.Updates(&req).Error
 }
 
@@ -182,15 +182,15 @@ func (userService *UserService) SetUserInfo(req system.SysUser) error {
 //@function: GetUserInfo
 //@description: 获取用户信息
 //@param: uuid uuid.UUID
-//@return: err error, user system.SysUser
+//@return: err error, user system.Vo1Person
 
-func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.SysUser, err error) {
-	var reqUser system.SysUser
+func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.Vo1Person, err error) {
+	var reqUser system.Vo1Person
 	err = global.GS_DB.Preload("Authorities").Preload("Authority").First(&reqUser, "uuid = ?", uuid).Error
 	if err != nil {
 		return reqUser, err
 	}
-	var am system.SysMenu
+	var am system.Vo1Menu
 	ferr := global.GS_DB.First(&am, "name = ? AND authority_id = ?", reqUser.Role.DefaultRouter, reqUser.RoleId).Error
 	if errors.Is(ferr, gorm.ErrRecordNotFound) {
 		reqUser.Role.DefaultRouter = "404"
@@ -202,10 +202,10 @@ func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.SysUser
 //@function: FindUserById
 //@description: 通过id获取用户信息
 //@param: id int
-//@return: err error, user *model.SysUser
+//@return: err error, user *model.Vo1Person
 
-func (userService *UserService) FindUserById(id int) (user *system.SysUser, err error) {
-	var u system.SysUser
+func (userService *UserService) FindUserById(id int) (user *system.Vo1Person, err error) {
+	var u system.Vo1Person
 	err = global.GS_DB.Where("`id` = ?", id).First(&u).Error
 	return &u, err
 }
@@ -214,10 +214,10 @@ func (userService *UserService) FindUserById(id int) (user *system.SysUser, err 
 //@function: FindUserByUuid
 //@description: 通过uuid获取用户信息
 //@param: uuid string
-//@return: err error, user *model.SysUser
+//@return: err error, user *model.Vo1Person
 
-func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUser, err error) {
-	var u system.SysUser
+func (userService *UserService) FindUserByUuid(uuid string) (user *system.Vo1Person, err error) {
+	var u system.Vo1Person
 	if err = global.GS_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil {
 		return &u, errors.New("用户不存在")
 	}
@@ -231,6 +231,6 @@ func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUse
 //@return: err error
 
 func (userService *UserService) ResetPassword(ID uint) (err error) {
-	err = global.GS_DB.Model(&system.SysUser{}).Where("id = ?", ID).Update("password", utils.BcryptHash("123456")).Error
+	err = global.GS_DB.Model(&system.Vo1Person{}).Where("id = ?", ID).Update("password", utils.BcryptHash("123456")).Error
 	return err
 }

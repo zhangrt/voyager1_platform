@@ -80,18 +80,17 @@ func Routers() *gin.Engine {
 	}
 
 	{
-		fileRouter.InitFileRouter(PrivateGroup)                  // 文件上传下载相关路由
-		systemRouter.InitSystemRouter(PrivateGroup)              // system相关路由
-		systemRouter.InitUserRouter(PrivateGroup)                // 用户相关路由
-		systemRouter.InitMenuRouter(PrivateGroup)                // 菜单相关路由
-		systemRouter.InitJwtRouter(PrivateGroup)                 // jwt相关路由
-		systemRouter.InitSysOperationRecordRouter(PrivateGroup)  // 操作记录
-		systemRouter.InitSysDictionaryRouter(PrivateGroup)       // 字典管理相关路由
-		systemRouter.InitSysDictionaryDetailRouter(PrivateGroup) // 字典详情相关路由
-		systemRouter.InitCasbinRouter(PrivateGroup)              // 权限相关路由
-		systemRouter.InitAuthorityRouter(PrivateGroup)           // 注册角色相关路由
-		systemRouter.InitWeatherrRouter(PrivateGroup)            // 天气信息相关路由
-		statisticsRouter.InitStatisticesRouter(PrivateGroup)     // 统计数据相关路由
+		fileRouter.InitFileRouter(PrivateGroup)                 // 文件上传下载相关路由
+		systemRouter.InitSystemRouter(PrivateGroup)             // system相关路由
+		systemRouter.InitUserRouter(PrivateGroup)               // 用户相关路由
+		systemRouter.InitMenuRouter(PrivateGroup)               // 菜单相关路由
+		systemRouter.InitJwtRouter(PrivateGroup)                // jwt相关路由
+		systemRouter.InitSysOperationRecordRouter(PrivateGroup) // 操作记录
+		systemRouter.InitVo1DictionaryRouter(PrivateGroup)      // 字典管理相关路由
+		systemRouter.InitCasbinRouter(PrivateGroup)             // 权限相关路由
+		systemRouter.InitAuthorityRouter(PrivateGroup)          // 注册角色相关路由
+		systemRouter.InitWeatherrRouter(PrivateGroup)           // 天气信息相关路由
+		statisticsRouter.InitStatisticesRouter(PrivateGroup)    // 统计数据相关路由
 	}
 
 	InstallPlugin(PublicGroup, PrivateGroup) // 安装插件

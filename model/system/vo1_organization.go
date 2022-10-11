@@ -11,7 +11,7 @@ type SysOrganization struct {
 	ParentId           string             `json:"parentId" gorm:"comment:父组织机构ID"`                                          // 父级组织机构ID
 	DataOrganizationId []*SysOrganization `json:"dataOrganizationId,omitempty" gorm:"many2many:sys_data_organization_id;"`
 	Children           []SysOrganization  `json:"children,omitempty" gorm:"-"`
-	Users              []SysUser          `json:"-" gorm:"many2many:sys_user_organization;"`
+	Users              []Vo1Person        `json:"-" gorm:"many2many:sys_user_organization;"`
 }
 
 func (SysOrganization) TableName() string {

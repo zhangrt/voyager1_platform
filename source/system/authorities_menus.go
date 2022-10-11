@@ -36,7 +36,7 @@ func (i *initMenuAuthority) InitializeData(ctx context.Context) (next context.Co
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
-	authorities, ok := ctx.Value(initAuthority{}.InitializerName()).([]sysModel.SysAuthority)
+	authorities, ok := ctx.Value(initAuthority{}.InitializerName()).([]sysModel.Vo1Role)
 	if !ok {
 		return ctx, errors.Wrap(system.ErrMissingDependentContext, "创建 [菜单-权限] 关联失败, 未找到权限表初始化数据")
 	}
@@ -76,7 +76,7 @@ func (i *initMenuAuthority) DataInserted(ctx context.Context) bool {
 		return false
 	}
 	var count int64
-	if err := db.Model(&sysModel.SysAuthority{}).
+	if err := db.Model(&sysModel.Vo1Role{}).
 		Where("authority_id = ?", "9528").Preload("SysBaseMenus").Count(&count); err != nil {
 		return count == 16
 	}

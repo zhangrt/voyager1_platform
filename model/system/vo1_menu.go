@@ -4,6 +4,13 @@ import (
 	"github.com/zhangrt/voyager1_platform/global"
 )
 
+type Vo1Menu struct {
+	SysBaseMenu `gorm:"-"`
+	MenuId      string    `json:"menuId" gorm:"comment:菜单ID"`
+	AuthorityId string    `json:"-" gorm:"comment:角色ID"`
+	Children    []Vo1Menu `json:"children" gorm:"-"`
+}
+
 type SysBaseMenu struct {
 	global.GS_BASE_MODEL
 	MenuId        uint                   `gorm:"column:menu_id" json:"menu_id,string" form:"menu_id"` //菜单ID
@@ -15,7 +22,7 @@ type SysBaseMenu struct {
 	Component     string                 `json:"component" gorm:"comment:对应前端文件路径"` // 对应前端文件路径
 	Sort          int                    `json:"sort" gorm:"comment:排序标记"`          // 排序标记
 	Meta          Meta                   `json:"meta" gorm:"embedded;comment:附加属性"` // 附加属性
-	SysAuthoritys []SysAuthority         `json:"authoritys" gorm:"many2many:sys_authority_menus;"`
+	SysAuthoritys []Vo1Role              `json:"authoritys" gorm:"many2many:sys_authority_menus;"`
 	Children      []SysBaseMenu          `json:"children" gorm:"-"`
 	Parameters    []SysBaseMenuParameter `json:"parameters"`
 }

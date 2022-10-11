@@ -26,7 +26,7 @@ type AuthorityApi struct{}
 // @Success 200 {object} response.Response{data=systemRes.SysAuthorityResponse,msg=string} "创建角色,返回包括系统角色详情"
 // @Router /authority/createAuthority [post]
 func (a *AuthorityApi) CreateAuthority(c *gin.Context) {
-	var authority system.SysAuthority
+	var authority system.Vo1Role
 	_ = c.ShouldBindJSON(&authority)
 	if err := utils.Verify(authority, utils.AuthorityVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -39,7 +39,7 @@ func (a *AuthorityApi) CreateAuthority(c *gin.Context) {
 		_ = menuService.AddMenuAuthority(systemReq.DefaultMenu(), authority.RoleId)
 		casbin := auth.NewCasbin()
 		_ = casbin.UpdateCasbin(authority.RoleId, auth.DefaultCasbin())
-		response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authBack}, "创建成功", c)
+		response.OkWithDetailed(systemRes.SysAuthorityResponse{Role: authBack}, "创建成功", c)
 	}
 }
 
@@ -58,7 +58,7 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := utils.Verify(copyInfo.Authority, utils.AuthorityVerify); err != nil {
+	if err := utils.Verify(copyInfo.Role, utils.AuthorityVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -66,7 +66,7 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 		global.GS_LOG.Error("拷贝失败!", zap.Error(err))
 		response.FailWithMessage("拷贝失败"+err.Error(), c)
 	} else {
-		response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authBack}, "拷贝成功", c)
+		response.OkWithDetailed(systemRes.SysAuthorityResponse{Role: authBack}, "拷贝成功", c)
 	}
 }
 
@@ -79,7 +79,7 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 // @Success 200 {object} response.Response{msg=string} "删除角色"
 // @Router /authority/deleteAuthority [post]
 func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
-	var authority system.SysAuthority
+	var authority system.Vo1Role
 	_ = c.ShouldBindJSON(&authority)
 	if err := utils.Verify(authority, utils.AuthorityIdVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -102,7 +102,7 @@ func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
 // @Success 200 {object} response.Response{data=systemRes.SysAuthorityResponse,msg=string} "更新角色信息,返回包括系统角色详情"
 // @Router /authority/updateAuthority [post]
 func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
-	var auth system.SysAuthority
+	var auth system.Vo1Role
 	_ = c.ShouldBindJSON(&auth)
 	if err := utils.Verify(auth, utils.AuthorityVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
@@ -112,7 +112,7 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 		global.GS_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败"+err.Error(), c)
 	} else {
-		response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authority}, "更新成功", c)
+		response.OkWithDetailed(systemRes.SysAuthorityResponse{Role: authority}, "更新成功", c)
 	}
 }
 
@@ -153,7 +153,7 @@ func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
 // @Success 200 {object} response.Response{msg=string} "设置角色资源权限"
 // @Router /authority/setDataAuthority [post]
 func (a *AuthorityApi) SetDataAuthority(c *gin.Context) {
-	var auth system.SysAuthority
+	var auth system.Vo1Role
 	_ = c.ShouldBindJSON(&auth)
 	if err := utils.Verify(auth, utils.AuthorityIdVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)

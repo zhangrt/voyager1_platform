@@ -11,7 +11,9 @@ import (
 )
 
 // JWT Service
-type JwtService struct{}
+type JwtService struct {
+	cache redis.Cacher
+}
 
 //@function: JsonInBlacklist
 //@description: 拉黑jwt
@@ -46,7 +48,7 @@ func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 //@return: redisJWT string, err error
 
 func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err error) {
-	redisJWT = redis.Get(decorateKey(userName))
+	redisJWT = jwtService.cache.Get(decorateKey(userName))
 	return redisJWT, err
 }
 
@@ -58,7 +60,7 @@ func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err
 func (jwtService *JwtService) SetCacheJWT(jwt string, userName string) (err error) {
 	// 此处过期时间等于jwt过期时间
 	timer := time.Duration(global.GS_CONFIG.JWT.ExpiresTime) * time.Second
-	_ = redis.Set(decorateKey(userName), jwt, timer)
+	_ = jwtService.cache.Set(decorateKey(userName), jwt, timer)
 	return err
 }
 

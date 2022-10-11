@@ -30,7 +30,7 @@ func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
 		response.FailWithMessage("获取失败", c)
 	} else {
 		if menus == nil {
-			menus = []system.SysMenu{}
+			menus = []system.Vo1Menu{}
 		}
 		response.OkWithDetailed(systemRes.SysMenusResponse{Menus: menus}, "获取成功", c)
 	}

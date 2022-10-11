@@ -24,7 +24,7 @@ func (i *initAuthority) MigrateTable(ctx context.Context) (context.Context, erro
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
-	return ctx, db.AutoMigrate(&sysModel.SysAuthority{})
+	return ctx, db.AutoMigrate(&sysModel.Vo1Role{})
 }
 
 func (i *initAuthority) TableCreated(ctx context.Context) bool {
@@ -32,11 +32,11 @@ func (i *initAuthority) TableCreated(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	return db.Migrator().HasTable(&sysModel.SysAuthority{})
+	return db.Migrator().HasTable(&sysModel.Vo1Role{})
 }
 
 func (i initAuthority) InitializerName() string {
-	return sysModel.SysAuthority{}.TableName()
+	return sysModel.Vo1Role{}.TableName()
 }
 
 func (i *initAuthority) InitializeData(ctx context.Context) (context.Context, error) {
@@ -44,18 +44,18 @@ func (i *initAuthority) InitializeData(ctx context.Context) (context.Context, er
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
-	entities := []sysModel.SysAuthority{
+	entities := []sysModel.Vo1Role{
 		{RoleId: "888", RoleName: "普通用户", ParentId: "0", DefaultRouter: "dashboard"},
 		{RoleId: "9528", RoleName: "测试角色", ParentId: "0", DefaultRouter: "dashboard"},
 		{RoleId: "8881", RoleName: "普通用户子角色", ParentId: "888", DefaultRouter: "dashboard"},
 	}
 
 	if err := db.Create(&entities).Error; err != nil {
-		return ctx, errors.Wrapf(err, "%s表数据初始化失败!", sysModel.SysAuthority{}.TableName())
+		return ctx, errors.Wrapf(err, "%s表数据初始化失败!", sysModel.Vo1Role{}.TableName())
 	}
 	// data authority
 	// if err := db.Model(&entities[0]).Association("DataAuthorityId").Replace(
-	// 	[]*sysModel.SysAuthority{
+	// 	[]*sysModel.Vo1Role{
 	// 		{AuthorityId: "888"},
 	// 		{AuthorityId: "9528"},
 	// 		{AuthorityId: "8881"},
@@ -64,7 +64,7 @@ func (i *initAuthority) InitializeData(ctx context.Context) (context.Context, er
 	// 		db.Model(&entities[0]).Association("DataAuthorityId").Relationship.JoinTable.Name)
 	// }
 	// if err := db.Model(&entities[1]).Association("DataAuthorityId").Replace(
-	// 	[]*sysModel.SysAuthority{
+	// 	[]*sysModel.Vo1Role{
 	// 		{AuthorityId: "9528"},
 	// 		{AuthorityId: "8881"},
 	// 	}); err != nil {
@@ -82,7 +82,7 @@ func (i *initAuthority) DataInserted(ctx context.Context) bool {
 		return false
 	}
 	if errors.Is(db.Where("authority_id = ?", "8881").
-		First(&sysModel.SysAuthority{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
+		First(&sysModel.Vo1Role{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
 		return false
 	}
 	return true

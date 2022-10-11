@@ -26,7 +26,7 @@ func (i *initUser) MigrateTable(ctx context.Context) (context.Context, error) {
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
-	return ctx, db.AutoMigrate(&sysModel.SysUser{})
+	return ctx, db.AutoMigrate(&sysModel.Vo1Person{})
 }
 
 func (i *initUser) TableCreated(ctx context.Context) bool {
@@ -34,11 +34,11 @@ func (i *initUser) TableCreated(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	return db.Migrator().HasTable(&sysModel.SysUser{})
+	return db.Migrator().HasTable(&sysModel.Vo1Person{})
 }
 
 func (i initUser) InitializerName() string {
-	return sysModel.SysUser{}.TableName()
+	return sysModel.Vo1Person{}.TableName()
 }
 
 func (i *initUser) InitializeData(ctx context.Context) (next context.Context, err error) {
@@ -49,7 +49,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 	password := utils.BcryptHash("q123456.")
 	adminPassword := utils.BcryptHash("q123456.")
 
-	entities := []sysModel.SysUser{
+	entities := []sysModel.Vo1Person{
 		{
 			GS_BASE_USER: global.GS_BASE_USER{
 				UUID:           uuid.NewV4(),
@@ -94,10 +94,10 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 		},
 	}
 	if err = db.Create(&entities).Error; err != nil {
-		return ctx, errors.Wrap(err, sysModel.SysUser{}.TableName()+"表数据初始化失败!")
+		return ctx, errors.Wrap(err, sysModel.Vo1Person{}.TableName()+"表数据初始化失败!")
 	}
 	next = context.WithValue(ctx, i.InitializerName(), entities)
-	authorityEntities, ok := ctx.Value(initAuthority{}.InitializerName()).([]sysModel.SysAuthority)
+	authorityEntities, ok := ctx.Value(initAuthority{}.InitializerName()).([]sysModel.Vo1Role)
 	if !ok {
 		return next, errors.Wrap(system.ErrMissingDependentContext, "创建 [用户-权限] 关联失败, 未找到权限表初始化数据")
 	}
@@ -115,7 +115,7 @@ func (i *initUser) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	var record sysModel.SysUser
+	var record sysModel.Vo1Person
 	if errors.Is(db.Where("username = ?", "a303176530").
 		Preload("Authorities").First(&record).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
 		return false

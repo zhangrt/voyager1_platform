@@ -37,7 +37,7 @@ func (b *UserApi) Login(c *gin.Context) {
 		return
 	}
 	// if store.Verify(l.CaptchaId, l.Captcha, true) {
-	u := &system.SysUser{
+	u := &system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
 			Account:  l.Account,
 			Password: l.Password,
@@ -55,15 +55,17 @@ func (b *UserApi) Login(c *gin.Context) {
 }
 
 // 登录以后签发jwt
-func (b *UserApi) tokenNext(c *gin.Context, user system.SysUser) {
+func (b *UserApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 	j := &auth.TOKEN{SigningKey: []byte(global.GS_CONFIG.JWT.SigningKey)} // 唯一签名
 	claims := j.CreateClaims(auth.BaseClaims{
-		UUID:        user.UUID,
-		ID:          user.ID,
-		Name:        user.Name,
-		Account:     user.Account,
-		AuthorityId: user.RoleId,
-		Authority:   user.Role,
+		UUID:           user.UUID,
+		ID:             user.ID,
+		Name:           user.Name,
+		Account:        user.Account,
+		RoleId:         user.RoleId,
+		Role:           user.Role,
+		DepartMentId:   user.DepartMentId,
+		DepartMentName: user.DepartMentName,
 	})
 	token, err := j.CreateToken(claims)
 	if err != nil {
@@ -128,14 +130,14 @@ func (b *UserApi) Register(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	var authorities []system.SysAuthority
+	var authorities []system.Vo1Role
 	for _, v := range r.AuthorityIds {
-		authorities = append(authorities, system.SysAuthority{
+		authorities = append(authorities, system.Vo1Role{
 			RoleId: v,
 		})
 	}
 
-	user := &system.SysUser{
+	user := &system.Vo1Person{
 		Roles: authorities,
 	}
 	user.Account = r.Account
@@ -146,9 +148,9 @@ func (b *UserApi) Register(c *gin.Context) {
 	userReturn, err := userService.Register(*user)
 	if err != nil {
 		global.GS_LOG.Error("注册失败!", zap.Error(err))
-		response.FailWithDetailed(systemRes.SysUserResponse{User: userReturn}, "注册失败", c)
+		response.FailWithDetailed(systemRes.Vo1UserResponse{Person: userReturn}, "注册失败", c)
 	} else {
-		response.OkWithDetailed(systemRes.SysUserResponse{User: userReturn}, "注册成功", c)
+		response.OkWithDetailed(systemRes.Vo1UserResponse{Person: userReturn}, "注册成功", c)
 	}
 }
 
@@ -166,7 +168,7 @@ func (b *UserApi) ChangePassword(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	u := &system.SysUser{}
+	u := &system.Vo1Person{}
 	u.Account = user.Account
 	u.Password = user.Password
 	if _, err := userService.ChangePassword(u, user.NewPassword); err != nil {
@@ -228,7 +230,7 @@ func (b *UserApi) SetUserAuthority(c *gin.Context) {
 	} else {
 		claims := auth.GetUserInfo(c)
 		j := &auth.TOKEN{SigningKey: []byte(global.GS_CONFIG.JWT.SigningKey)} // 唯一签名
-		claims.AuthorityId = sua.AuthorityId
+		claims.RoleId = sua.AuthorityId
 		if token, err := j.CreateToken(*claims); err != nil {
 			global.GS_LOG.Error("修改失败!", zap.Error(err))
 			response.FailWithMessage(err.Error(), c)
@@ -312,7 +314,7 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 		}
 	}
 
-	if err := userService.SetUserInfo(system.SysUser{
+	if err := userService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
 			ID:        user.ID,
 			Name:      user.Name,
@@ -341,7 +343,7 @@ func (b *UserApi) SetSelfInfo(c *gin.Context) {
 	var user systemReq.ChangeUserInfo
 	_ = c.ShouldBindJSON(&user)
 	user.ID = auth.GetUserID(c)
-	if err := userService.SetUserInfo(system.SysUser{
+	if err := userService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
 			ID:        user.ID,
 			Name:      user.Name,
@@ -383,7 +385,7 @@ func (b *UserApi) GetUserInfo(c *gin.Context) {
 // @Success 200 {object} response.Response{msg=string} "重置用户密码"
 // @Router /user/resetPassword [post]
 func (b *UserApi) ResetPassword(c *gin.Context) {
-	var user system.SysUser
+	var user system.Vo1Person
 	_ = c.ShouldBindJSON(&user)
 	if err := userService.ResetPassword(user.ID); err != nil {
 		global.GS_LOG.Error("重置失败!", zap.Error(err))

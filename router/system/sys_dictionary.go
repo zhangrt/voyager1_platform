@@ -8,17 +8,17 @@ import (
 
 type DictionaryRouter struct{}
 
-func (s *DictionaryRouter) InitSysDictionaryRouter(Router *gin.RouterGroup) {
-	sysDictionaryRouter := Router.Group("sysDictionary")
-	sysDictionaryRouterWithoutRecord := Router.Group("sysDictionary")
-	sysDictionaryApi := v1.ApiGroupApp.SystemApiGroup.DictionaryApi
+func (s *DictionaryRouter) InitVo1DictionaryRouter(Router *gin.RouterGroup) {
+	Vo1DictionaryRouter := Router.Group("dictionary")
+	Vo1DictionaryRouterWithoutRecord := Router.Group("dictionary")
+	Vo1DictionaryApi := v1.ApiGroupApp.SystemApiGroup.DictionaryApi
 	{
-		sysDictionaryRouter.POST("createSysDictionary", sysDictionaryApi.CreateSysDictionary)   // 新建SysDictionary
-		sysDictionaryRouter.DELETE("deleteSysDictionary", sysDictionaryApi.DeleteSysDictionary) // 删除SysDictionary
-		sysDictionaryRouter.PUT("updateSysDictionary", sysDictionaryApi.UpdateSysDictionary)    // 更新SysDictionary
+		Vo1DictionaryRouter.POST("createDictionary", Vo1DictionaryApi.CreateVo1Dictionary)   // 新建Vo1Dictionary
+		Vo1DictionaryRouter.DELETE("deleteDictionary", Vo1DictionaryApi.DeleteVo1Dictionary) // 删除Vo1Dictionary
+		Vo1DictionaryRouter.PUT("updateDictionary", Vo1DictionaryApi.UpdateVo1Dictionary)    // 更新Vo1Dictionary
 	}
 	{
-		sysDictionaryRouterWithoutRecord.GET("findSysDictionary", sysDictionaryApi.FindSysDictionary)       // 根据ID获取SysDictionary
-		sysDictionaryRouterWithoutRecord.GET("getSysDictionaryList", sysDictionaryApi.GetSysDictionaryList) // 获取SysDictionary列表
+		Vo1DictionaryRouterWithoutRecord.GET("findDictionary", Vo1DictionaryApi.FindVo1Dictionary)       // 根据ID获取Vo1Dictionary
+		Vo1DictionaryRouterWithoutRecord.GET("getDictionaryList", Vo1DictionaryApi.GetVo1DictionaryList) // 获取Vo1Dictionary列表
 	}
 }

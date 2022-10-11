@@ -81,7 +81,7 @@ service-mesh:
 # system configuration
 system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
-  host: '192.168.19.111'
+  host: '192.168.19.110'
   port: 7777
   db-type: 'cockroach'
   use-cache: true       # 使用缓存组件
@@ -150,7 +150,7 @@ cockroach:
   path: '192.168.244.142'
   port: '26257'
   config: 'TimeZone=Asia/Shanghai'
-  db-name: 'test'
+  db-name: 'test2'
   username: 'root'
   password: '123123'
   max-idle-conns: 10

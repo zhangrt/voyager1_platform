@@ -22,7 +22,7 @@ func (baseMenuService *BaseMenuService) DeleteBaseMenu(id int) (err error) {
 	if err != nil {
 		var menu system.SysBaseMenu
 		db := global.GS_DB.Preload("SysAuthoritys").Where("id = ?", id).First(&menu).Delete(&menu)
-		err = global.GS_DB.Delete(&system.SysBaseMenuParameter{}, "sys_base_menu_id = ?", id).Error
+		err = global.GS_DB.Delete(&system.SysBaseMenuParameter{}, "vo1_menu_id = ?", id).Error
 		if err != nil {
 			global.GS_LOG.Error(err.Error())
 		}
@@ -69,7 +69,7 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.SysBaseMenu) 
 				return errors.New("存在相同name修改失败")
 			}
 		}
-		txErr := tx.Unscoped().Delete(&system.SysBaseMenuParameter{}, "sys_base_menu_id = ?", menu.ID).Error
+		txErr := tx.Unscoped().Delete(&system.SysBaseMenuParameter{}, "vo1_menu_id = ?", menu.ID).Error
 		if txErr != nil {
 			global.GS_LOG.Debug(txErr.Error())
 			return txErr

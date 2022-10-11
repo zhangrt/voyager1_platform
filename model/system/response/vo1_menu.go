@@ -3,7 +3,7 @@ package response
 import "github.com/zhangrt/voyager1_platform/model/system"
 
 type SysMenusResponse struct {
-	Menus []system.SysMenu `json:"menus"`
+	Menus []system.Vo1Menu `json:"menus"`
 }
 
 type SysBaseMenusResponse struct {

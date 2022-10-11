@@ -493,6 +493,8 @@ github.com/yusufpapurcu/wmi v1.2.2/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQ
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 github.com/zhangrt/voyager1_core v0.1.8-dev h1:3ThlaD+magD0fdI9FVsB/c31xVEe8bV2loPoKsF89IU=
 github.com/zhangrt/voyager1_core v0.1.8-dev/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
+github.com/zhangrt/voyager1_core v0.1.8-dev.0.20221011021544-d11eebfa7723 h1:b2Y/NnWIMEdxKJ/JGw8rAf71D8iPngMMPgMVe+44L3k=
+github.com/zhangrt/voyager1_core v0.1.8-dev.0.20221011021544-d11eebfa7723/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
