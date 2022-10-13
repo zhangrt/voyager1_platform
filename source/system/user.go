@@ -119,10 +119,10 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 	if !ok {
 		return next, errors.Wrap(system.ErrMissingDependentContext, "创建 [用户-权限] 关联失败, 未找到权限表初始化数据")
 	}
-	if err = db.Model(&entities[0]).Association("Authorities").Replace(authorityEntities); err != nil {
+	if err = db.Model(&entities[0]).Association("Roles").Replace(authorityEntities); err != nil {
 		return next, err
 	}
-	if err = db.Model(&entities[1]).Association("Authorities").Replace(authorityEntities[:1]); err != nil {
+	if err = db.Model(&entities[1]).Association("Roles").Replace(authorityEntities[:1]); err != nil {
 		return next, err
 	}
 	return next, err
@@ -135,7 +135,7 @@ func (i *initUser) DataInserted(ctx context.Context) bool {
 	}
 	var record sysModel.Vo1Person
 	if errors.Is(db.Where("account = ?", "admin").
-		Preload("Authorities").First(&record).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
+		Preload("Roles").First(&record).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
 		return false
 	}
 	return len(record.Roles) > 0 && record.Roles[0].ID == "888"

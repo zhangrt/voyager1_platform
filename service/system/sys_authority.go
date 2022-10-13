@@ -28,7 +28,7 @@ var AuthorityServiceApp = new(AuthorityService)
 
 func (authorityService *AuthorityService) CreateAuthority(auth system.Vo1Role) (authority system.Vo1Role, err error) {
 	var authorityBox system.Vo1Role
-	if !errors.Is(global.GS_DB.Where("authority_id = ?", auth.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GS_DB.Where("id = ?", auth.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
 		return auth, ErrRoleExistence
 	}
 	err = global.GS_DB.Create(&auth).Error
@@ -43,7 +43,7 @@ func (authorityService *AuthorityService) CreateAuthority(auth system.Vo1Role) (
 
 func (authorityService *AuthorityService) CopyAuthority(copyInfo response.Vo1RoleCopyResponse) (authority system.Vo1Role, err error) {
 	var authorityBox system.Vo1Role
-	if !errors.Is(global.GS_DB.Where("authority_id = ?", copyInfo.Role.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GS_DB.Where("id = ?", copyInfo.Role.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
 		return authority, ErrRoleExistence
 	}
 	copyInfo.Role.Children = []system.Vo1Role{}
@@ -79,7 +79,7 @@ func (authorityService *AuthorityService) CopyAuthority(copyInfo response.Vo1Rol
 //@return: authority system.Vo1Role, err error
 
 func (authorityService *AuthorityService) UpdateAuthority(auth system.Vo1Role) (authority system.Vo1Role, err error) {
-	err = global.GS_DB.Where("authority_id = ?", auth.ID).First(&system.Vo1Role{}).Updates(&auth).Error
+	err = global.GS_DB.Where("id = ?", auth.ID).First(&system.Vo1Role{}).Updates(&auth).Error
 	return auth, err
 }
 
@@ -96,13 +96,13 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.Vo1Role) 
 	if len(auth.Persons) != 0 {
 		return errors.New("此角色有用户正在使用禁止删除")
 	}
-	if !errors.Is(global.GS_DB.Where("authority_id = ?", auth.ID).First(&system.Vo1Person{}).Error, gorm.ErrRecordNotFound) {
+	if !errors.Is(global.GS_DB.Where("id = ?", auth.ID).First(&system.Vo1Person{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("此角色有用户正在使用禁止删除")
 	}
 	if !errors.Is(global.GS_DB.Where("parent_id = ?", auth.ID).First(&system.Vo1Role{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("此角色存在子角色不允许删除")
 	}
-	db := global.GS_DB.Preload("Vo1Menus").Where("role_id = ?", auth.ID).First(auth)
+	db := global.GS_DB.Preload("Vo1Menus").Where("id = ?", auth.ID).First(auth)
 	err = db.Unscoped().Delete(auth).Error
 	if err != nil {
 		return
@@ -119,7 +119,7 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.Vo1Role) 
 			return
 		}
 	}
-	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "vo1_role_id = ?", auth.ID).Error
+	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "role_id = ?", auth.ID).Error
 	if err != nil {
 		global.GS_LOG.Error(err.Error())
 	}
@@ -157,7 +157,7 @@ func (authorityService *AuthorityService) GetAuthorityInfoList(info request.Page
 //@return: sa system.Vo1Role, err error
 
 func (authorityService *AuthorityService) GetAuthorityInfo(auth system.Vo1Role) (sa system.Vo1Role, err error) {
-	err = global.GS_DB.Preload("DataAuthorityId").Where("authority_id = ?", auth.ID).First(&sa).Error
+	err = global.GS_DB.Preload("DataAuthorityId").Where("id = ?", auth.ID).First(&sa).Error
 	return sa, err
 }
 
@@ -169,7 +169,7 @@ func (authorityService *AuthorityService) GetAuthorityInfo(auth system.Vo1Role) 
 
 func (authorityService *AuthorityService) SetDataAuthority(auth system.Vo1Role) error {
 	var s system.Vo1Role
-	global.GS_DB.Preload("DataAuthorityId").First(&s, "authority_id = ?", auth.ID)
+	global.GS_DB.Preload("DataAuthorityId").First(&s, "id = ?", auth.ID)
 	err := global.GS_DB.Model(&s).Association("DataAuthorityId").Replace(&auth.DataRoleId)
 	return err
 }
@@ -182,7 +182,7 @@ func (authorityService *AuthorityService) SetDataAuthority(auth system.Vo1Role) 
 
 func (authorityService *AuthorityService) SetMenuAuthority(auth *system.Vo1Role) error {
 	var s system.Vo1Role
-	global.GS_DB.Preload("Vo1Menus").First(&s, "authority_id = ?", auth.ID)
+	global.GS_DB.Preload("Vo1Menus").First(&s, "id = ?", auth.ID)
 	err := global.GS_DB.Model(&s).Association("Vo1Menus").Replace(&auth.Vo1Menu)
 	return err
 }

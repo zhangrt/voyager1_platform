@@ -10,7 +10,7 @@ type Vo1Role struct {
 	Description string      `json:"description"`
 	DataRoleId  []*Vo1Role  `json:"dataRoleId,omitempty" gorm:"many2many:sys_data_role_id;"`
 	Children    []Vo1Role   `json:"children,omitempty" gorm:"-"`
-	Vo1Menu     []Vo1Menu   `json:"menus,omitempty" gorm:"many2many:vo1_role_mtm_menus;"`
+	Vo1Menu     []Vo1Menu   `json:"menus,omitempty" gorm:"many2many:vo1_role_mtm_menu;"`
 	Persons     []Vo1Person `json:"-" gorm:"many2many:vo1_person_mtm_role;"`
 }
 

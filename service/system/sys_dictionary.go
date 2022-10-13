@@ -19,8 +19,8 @@ import (
 type DictionaryService struct{}
 
 func (dictionaryService *DictionaryService) CreateVo1Dictionary(Vo1Dictionary system.Vo1Dictionary) (err error) {
-	if (!errors.Is(global.GS_DB.First(&system.Vo1Dictionary{}, "type = ?", Vo1Dictionary.Type).Error, gorm.ErrRecordNotFound)) {
-		return errors.New("存在相同的type，不允许创建")
+	if (!errors.Is(global.GS_DB.First(&system.Vo1Dictionary{}, "id = ?", Vo1Dictionary.ID).Error, gorm.ErrRecordNotFound)) {
+		return errors.New("存在相同的ID(key)，不允许创建")
 	}
 	err = global.GS_DB.Create(&Vo1Dictionary).Error
 	return err
@@ -60,15 +60,15 @@ func (dictionaryService *DictionaryService) DeleteVo1Dictionary(Vo1Dictionary sy
 func (dictionaryService *DictionaryService) UpdateVo1Dictionary(Vo1Dictionary *system.Vo1Dictionary) (err error) {
 	var dict system.Vo1Dictionary
 	Vo1DictionaryMap := map[string]interface{}{
-		"Name":        Vo1Dictionary.Name,
-		"Type":        Vo1Dictionary.Type,
-		"Status":      Vo1Dictionary.Status,
+		"NameCN":      Vo1Dictionary.NameCN,
+		"NameEN":      Vo1Dictionary.NameEN,
+		"Key":         Vo1Dictionary.ID,
 		"Description": Vo1Dictionary.Description,
 	}
 	db := global.GS_DB.Where("id = ?", Vo1Dictionary.ID).First(&dict)
-	if dict.Type != Vo1Dictionary.Type {
-		if !errors.Is(global.GS_DB.First(&system.Vo1Dictionary{}, "type = ?", Vo1Dictionary.Type).Error, gorm.ErrRecordNotFound) {
-			return errors.New("存在相同的type，不允许创建")
+	if dict.ID != Vo1Dictionary.ID {
+		if !errors.Is(global.GS_DB.First(&system.Vo1Dictionary{}, "id = ?", Vo1Dictionary.ID).Error, gorm.ErrRecordNotFound) {
+			return errors.New("存在相同的ID(Key)，不允许创建")
 		}
 	}
 	err = db.Updates(Vo1DictionaryMap).Error
@@ -81,8 +81,8 @@ func (dictionaryService *DictionaryService) UpdateVo1Dictionary(Vo1Dictionary *s
 //@param: Type string, Id uint
 //@return: err error, Vo1Dictionary model.Vo1Dictionary
 
-func (dictionaryService *DictionaryService) GetVo1Dictionary(Type string, Id string) (Vo1Dictionary system.Vo1Dictionary, err error) {
-	err = global.GS_DB.Where("type = ? OR id = ? and status = ?", Type, Id, true).Preload("Vo1DictionaryDetails", "status = ?", true).First(&Vo1Dictionary).Error
+func (dictionaryService *DictionaryService) GetVo1Dictionary(NameEN string, Id string) (Vo1Dictionary system.Vo1Dictionary, err error) {
+	err = global.GS_DB.Where("id = ? OR NameEN = ?", Id, NameEN).First(&Vo1Dictionary).Error
 	return
 }
 
@@ -100,14 +100,14 @@ func (dictionaryService *DictionaryService) GetVo1DictionaryInfoList(info reques
 	db := global.GS_DB.Model(&system.Vo1Dictionary{})
 	var Vo1Dictionarys []system.Vo1Dictionary
 	// 如果有条件搜索 下方会自动创建搜索语句
-	if info.Name != "" {
-		db = db.Where("name LIKE ?", "%"+info.Name+"%")
+	if info.NameCN != "" {
+		db = db.Where("name LIKE ?", "%"+info.NameCN+"%")
 	}
-	if info.Type != "" {
-		db = db.Where("type LIKE ?", "%"+info.Type+"%")
+	if info.ID != "" {
+		db = db.Where("type LIKE ?", "%"+info.ID+"%")
 	}
-	if info.Status != nil {
-		db = db.Where("status = ?", info.Status)
+	if info.NameEN != "" {
+		db = db.Where("status LIKE ?", "%"+info.NameEN+"%")
 	}
 	if info.Description != "" {
 		db = db.Where("description LIKE ?", "%"+info.Description+"%")

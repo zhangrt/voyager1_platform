@@ -47,7 +47,7 @@ func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo
 
 	var user system.Vo1Person
 	// 这里需要保证不同用户之间account、phone、email都不相同，也不能存在A.account=B.phone的情况
-	err = global.GS_DB.Where("account = ?", u.Account).Or("phone = ?", u.Phone).Or("email = ?", u.Email).Preload("Roles").Preload("Role").First(&user).Error
+	err = global.GS_DB.Where("account = ? or phone = ? or email = ?", u.Account, u.Phone, u.Email).Preload("Roles").Preload("Role").First(&user).Error
 	if err == nil {
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
 			return nil, errors.New("密码错误")
@@ -133,7 +133,7 @@ func (userService *UserService) GetUserInfoList(info request.PageInfo) (list int
 
 func (userService *UserService) SetUserAuthorities(id uint, authorityIds []string) (err error) {
 	return global.GS_DB.Transaction(func(tx *gorm.DB) error {
-		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
+		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "person_id = ?", id).Error
 		if TxErr != nil {
 			return TxErr
 		}
@@ -147,7 +147,7 @@ func (userService *UserService) SetUserAuthorities(id uint, authorityIds []strin
 		if TxErr != nil {
 			return TxErr
 		}
-		TxErr = tx.Where("vo1_user_id = ?", id).First(&system.Vo1Person{}).Update("vo1_role_id", authorityIds[0]).Error
+		TxErr = tx.Where("vo1_user_id = ?", id).First(&system.Vo1Person{}).Update("role_id", authorityIds[0]).Error
 		if TxErr != nil {
 			return TxErr
 		}
@@ -168,7 +168,7 @@ func (userService *UserService) DeleteUser(id int) (err error) {
 	if err != nil {
 		return err
 	}
-	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
+	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "person_id = ?", id).Error
 	return err
 }
 

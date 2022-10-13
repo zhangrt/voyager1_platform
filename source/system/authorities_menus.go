@@ -28,7 +28,7 @@ func (i *initMenuAuthority) TableCreated(ctx context.Context) bool {
 }
 
 func (i initMenuAuthority) InitializerName() string {
-	return "sys_authority_menus"
+	return "vo1_role_mtm_menu"
 }
 
 func (i *initMenuAuthority) InitializeData(ctx context.Context) (next context.Context, err error) {
@@ -46,25 +46,25 @@ func (i *initMenuAuthority) InitializeData(ctx context.Context) (next context.Co
 	}
 	next = ctx
 	// 888
-	if err = db.Model(&authorities[0]).Association("SysBaseMenus").Replace(menus[:20]); err != nil {
+	if err = db.Model(&authorities[0]).Association("Vo1Menu").Replace(menus[:20]); err != nil {
 		return next, err
 	}
-	if err = db.Model(&authorities[0]).Association("SysBaseMenus").Append(menus[21:]); err != nil {
+	if err = db.Model(&authorities[0]).Association("Vo1Menu").Append(menus[21:]); err != nil {
 		return next, err
 	}
 
 	// 8881
 	menu8881 := menus[:2]
 	menu8881 = append(menu8881, menus[7])
-	if err = db.Model(&authorities[1]).Association("SysBaseMenus").Replace(menu8881); err != nil {
+	if err = db.Model(&authorities[1]).Association("Vo1Menu").Replace(menu8881); err != nil {
 		return next, err
 	}
 
 	// // 9528
-	// if err = db.Model(&authorities[2]).Association("SysBaseMenus").Replace(menus[:12]); err != nil {
+	// if err = db.Model(&authorities[2]).Association("Vo1Menu").Replace(menus[:12]); err != nil {
 	// 	return next, err
 	// }
-	// if err = db.Model(&authorities[2]).Association("SysBaseMenus").Append(menus[13:17]); err != nil {
+	// if err = db.Model(&authorities[2]).Association("Vo1Menu").Append(menus[13:17]); err != nil {
 	// 	return next, err
 	// }
 	return next, nil
@@ -77,7 +77,7 @@ func (i *initMenuAuthority) DataInserted(ctx context.Context) bool {
 	}
 	var count int64
 	if err := db.Model(&sysModel.Vo1Role{}).
-		Where("authority_id = ?", "9528").Preload("SysBaseMenus").Count(&count); err != nil {
+		Where("id = ?", "888").Preload("Vo1Menu").Count(&count); err != nil {
 		return count == 16
 	}
 	return false

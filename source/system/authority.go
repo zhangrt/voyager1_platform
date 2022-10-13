@@ -82,7 +82,7 @@ func (i *initAuthority) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	if errors.Is(db.Where("authority_id = ?", "8881").
+	if errors.Is(db.Where("id = ?", "888").
 		First(&sysModel.Vo1Role{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
 		return false
 	}

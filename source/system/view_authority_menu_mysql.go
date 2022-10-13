@@ -63,14 +63,14 @@ func (v *initMenuViewMysql) MigrateTable(ctx context.Context) (context.Context, 
 		   @menus.menu_level        AS menu_level,
 		   @menus.default_menu      AS default_menu,
 		   @menus.close_tab      	AS close_tab,
-		   @authorities_menus.vo1_menu_id      AS menu_id,
-		   @authorities_menus.sys_authority_authority_id AS authority_id
-	from (@authorities_menus
-			 join @menus on ((@authorities_menus.vo1_menu_id = @menus.id)));
+		   @role_menus.id      AS menu_id,
+		   @role_menus.role_id AS role_id
+	from (@role_menus
+			 join @menus on ((@role_menus.menu_id = @menus.id)));
 	`
 	sql = strings.ReplaceAll(sql, "@table_name", sysModel.Vo1Menu{}.TableName())
 	sql = strings.ReplaceAll(sql, "@menus", sysModel.Vo1Menu{}.TableName())
-	sql = strings.ReplaceAll(sql, "@authorities_menus", joinTableName)
+	sql = strings.ReplaceAll(sql, "@role_menus", joinTableName)
 	if err := db.Exec(sql).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.Vo1Menu{}.TableName()+"视图创建失败!")
 	}

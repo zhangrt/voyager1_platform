@@ -241,7 +241,7 @@ func (i *initCasbin) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	if errors.Is(db.Where(adapter.CasbinRule{Ptype: "p", V0: "9528", V1: global.GS_CONFIG.System.Application + "GET", V2: "/user/getUserInfo"}).
+	if errors.Is(db.Where(adapter.CasbinRule{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/base/login", V2: "POST"}).
 		First(&adapter.CasbinRule{}).Error, gorm.ErrRecordNotFound) { // 判断是否存在数据
 		return false
 	}

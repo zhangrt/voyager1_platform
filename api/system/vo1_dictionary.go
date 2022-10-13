@@ -81,7 +81,7 @@ func (s *DictionaryApi) UpdateVo1Dictionary(c *gin.Context) {
 func (s *DictionaryApi) FindVo1Dictionary(c *gin.Context) {
 	var dictionary system.Vo1Dictionary
 	_ = c.ShouldBindQuery(&dictionary)
-	if Vo1Dictionary, err := dictionaryService.GetVo1Dictionary(dictionary.Type, dictionary.ID); err != nil {
+	if Vo1Dictionary, err := dictionaryService.GetVo1Dictionary(dictionary.ID, dictionary.NameEN); err != nil {
 		global.GS_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
