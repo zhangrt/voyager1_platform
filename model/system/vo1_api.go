@@ -3,7 +3,7 @@ package system
 import "github.com/zhangrt/voyager1_core/global"
 
 type Vo1Api struct {
-	global.GS_BASE_MODEL
+	global.GS_BASE_MODEL_ID_STRING
 	Name        string
 	Url         string
 	Action      string

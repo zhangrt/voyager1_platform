@@ -3,7 +3,7 @@ package system
 import "github.com/zhangrt/voyager1_core/global"
 
 type Vo1Department struct {
-	global.GS_BASE_MODEL
+	global.GS_BASE_MODEL_ID_STRING
 	Name             string
 	OrganId          string
 	ParentId         string `json:"parentId" gorm:"comment:父部门ID"` // 父级部门ID

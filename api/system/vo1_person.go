@@ -39,7 +39,9 @@ func (b *UserApi) Login(c *gin.Context) {
 	// if store.Verify(l.CaptchaId, l.Captcha, true) {
 	u := &system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
-			Account:  l.Account,
+			Account:  l.Identification,
+			Phone:    l.Identification,
+			Email:    l.Identification,
 			Password: l.Password,
 		},
 	}
@@ -62,8 +64,8 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 		ID:             user.ID,
 		Name:           user.Name,
 		Account:        user.Account,
-		RoleId:         user.RoleId,
-		Role:           user.Role,
+		RoleIds:        user.RoleIds,
+		Roles:          user.Roles,
 		DepartMentId:   user.DepartMentId,
 		DepartMentName: user.DepartMentName,
 	})
@@ -131,9 +133,11 @@ func (b *UserApi) Register(c *gin.Context) {
 		return
 	}
 	var authorities []system.Vo1Role
-	for _, v := range r.AuthorityIds {
+	for _, v := range r.RoleIds {
 		authorities = append(authorities, system.Vo1Role{
-			RoleId: v,
+			GS_BASE_MODEL_ID_STRING: core.GS_BASE_MODEL_ID_STRING{
+				ID: v,
+			},
 		})
 	}
 
@@ -143,8 +147,8 @@ func (b *UserApi) Register(c *gin.Context) {
 	user.Account = r.Account
 	user.Name = r.Name
 	user.Password = r.Password
-	user.HeaderImg = r.HeaderImg
-	user.RoleId = r.AuthorityId
+	user.Avatar = r.Avatar
+	user.RoleIds = r.RoleIds
 	userReturn, err := userService.Register(*user)
 	if err != nil {
 		global.GS_LOG.Error("注册失败!", zap.Error(err))
@@ -208,42 +212,6 @@ func (b *UserApi) GetUserList(c *gin.Context) {
 }
 
 // @Tags SysUser
-// @Summary 更改用户权限
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body systemReq.SetUserAuth true "用户UUID, 角色ID"
-// @Success 200 {object} response.Response{msg=string} "设置用户权限"
-// @Router /user/setUserAuthority [post]
-func (b *UserApi) SetUserAuthority(c *gin.Context) {
-	var sua systemReq.SetUserAuth
-	_ = c.ShouldBindJSON(&sua)
-	if UserVerifyErr := utils.Verify(sua, utils.SetUserAuthorityVerify); UserVerifyErr != nil {
-		response.FailWithMessage(UserVerifyErr.Error(), c)
-		return
-	}
-	userID := auth.GetUserID(c)
-	uuid := auth.GetUserUUID(c)
-	if err := userService.SetUserAuthority(userID, uuid, sua.AuthorityId); err != nil {
-		global.GS_LOG.Error("修改失败!", zap.Error(err))
-		response.FailWithMessage(err.Error(), c)
-	} else {
-		claims := auth.GetUserInfo(c)
-		j := &auth.TOKEN{SigningKey: []byte(global.GS_CONFIG.JWT.SigningKey)} // 唯一签名
-		claims.RoleId = sua.AuthorityId
-		if token, err := j.CreateToken(*claims); err != nil {
-			global.GS_LOG.Error("修改失败!", zap.Error(err))
-			response.FailWithMessage(err.Error(), c)
-		} else {
-			c.Header("new-token", token)
-			c.Header("new-expires-at", strconv.FormatInt(claims.ExpiresAt, 10))
-			response.OkWithMessage("修改成功", c)
-		}
-
-	}
-}
-
-// @Tags SysUser
 // @Summary 设置用户权限
 // @Security ApiKeyAuth
 // @accept application/json
@@ -254,10 +222,26 @@ func (b *UserApi) SetUserAuthority(c *gin.Context) {
 func (b *UserApi) SetUserAuthorities(c *gin.Context) {
 	var sua systemReq.SetUserAuthorities
 	_ = c.ShouldBindJSON(&sua)
-	if err := userService.SetUserAuthorities(sua.ID, sua.AuthorityIds); err != nil {
+	if UserVerifyErr := utils.Verify(sua, utils.SetUserAuthorityVerify); UserVerifyErr != nil {
+		response.FailWithMessage(UserVerifyErr.Error(), c)
+		return
+	}
+	if err := userService.SetUserAuthorities(sua.ID, sua.RoleIds); err != nil {
 		global.GS_LOG.Error("修改失败!", zap.Error(err))
 		response.FailWithMessage("修改失败", c)
 	} else {
+		claims := auth.GetUserInfo(c)
+		j := &auth.TOKEN{SigningKey: []byte(global.GS_CONFIG.JWT.SigningKey)} // 唯一签名
+		claims.RoleIds = sua.RoleIds
+		if token, err := j.CreateToken(*claims); err != nil {
+			global.GS_LOG.Error("修改失败!", zap.Error(err))
+			response.FailWithMessage(err.Error(), c)
+		} else {
+			c.Header("new-token", token)
+			c.Header("new-expires-at", strconv.FormatInt(claims.ExpiresAt, 10))
+			response.OkWithMessage("修改成功", c)
+		}
+
 		response.OkWithMessage("修改成功", c)
 	}
 }
@@ -316,12 +300,12 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 
 	if err := userService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
-			ID:        user.ID,
-			Name:      user.Name,
-			HeaderImg: user.HeaderImg,
-			Phone:     user.Phone,
-			Email:     user.Email,
-			SideMode:  user.SideMode,
+			ID:       user.ID,
+			Name:     user.Name,
+			Avatar:   user.Avatar,
+			Phone:    user.Phone,
+			Email:    user.Email,
+			SideMode: user.SideMode,
 		},
 	}); err != nil {
 		global.GS_LOG.Error("设置失败!", zap.Error(err))
@@ -345,12 +329,12 @@ func (b *UserApi) SetSelfInfo(c *gin.Context) {
 	user.ID = auth.GetUserID(c)
 	if err := userService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
-			ID:        user.ID,
-			Name:      user.Name,
-			HeaderImg: user.HeaderImg,
-			Phone:     user.Phone,
-			Email:     user.Email,
-			SideMode:  user.SideMode,
+			ID:       user.ID,
+			Name:     user.Name,
+			Avatar:   user.Avatar,
+			Phone:    user.Phone,
+			Email:    user.Email,
+			SideMode: user.SideMode,
 		},
 	}); err != nil {
 		global.GS_LOG.Error("设置失败!", zap.Error(err))

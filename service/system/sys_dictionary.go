@@ -81,7 +81,7 @@ func (dictionaryService *DictionaryService) UpdateVo1Dictionary(Vo1Dictionary *s
 //@param: Type string, Id uint
 //@return: err error, Vo1Dictionary model.Vo1Dictionary
 
-func (dictionaryService *DictionaryService) GetVo1Dictionary(Type string, Id uint) (Vo1Dictionary system.Vo1Dictionary, err error) {
+func (dictionaryService *DictionaryService) GetVo1Dictionary(Type string, Id string) (Vo1Dictionary system.Vo1Dictionary, err error) {
 	err = global.GS_DB.Where("type = ? OR id = ? and status = ?", Type, Id, true).Preload("Vo1DictionaryDetails", "status = ?", true).First(&Vo1Dictionary).Error
 	return
 }

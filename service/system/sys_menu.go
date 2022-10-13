@@ -21,10 +21,10 @@ type MenuService struct{}
 
 var MenuServiceApp = new(MenuService)
 
-func (menuService *MenuService) getMenuTreeMap(authorityId string) (treeMap map[string][]system.Vo1Menu, err error) {
+func (menuService *MenuService) getMenuTreeMap(authorityIds []string) (treeMap map[string][]system.Vo1Menu, err error) {
 	var allMenus []system.Vo1Menu
 	treeMap = make(map[string][]system.Vo1Menu)
-	err = global.GS_DB.Where("authority_id = ?", authorityId).Order("sort").Preload("Parameters").Find(&allMenus).Error
+	err = global.GS_DB.Where("authority_id in ?", authorityIds).Order("sort").Preload("Parameters").Find(&allMenus).Error
 	if err != nil {
 		return
 	}
@@ -40,8 +40,8 @@ func (menuService *MenuService) getMenuTreeMap(authorityId string) (treeMap map[
 //@param: authorityId string
 //@return: menus []system.Vo1Menu, err error
 
-func (menuService *MenuService) GetMenuTree(authorityId string) (menus []system.Vo1Menu, err error) {
-	menuTree, err := menuService.getMenuTreeMap(authorityId)
+func (menuService *MenuService) GetMenuTree(authorityIds []string) (menus []system.Vo1Menu, err error) {
+	menuTree, err := menuService.getMenuTreeMap(authorityIds)
 	menus = menuTree["0"]
 	for i := 0; i < len(menus); i++ {
 		err = menuService.getChildrenList(&menus[i], menuTree)
@@ -142,7 +142,7 @@ func (menuService *MenuService) GetBaseMenuTree() (menus []system.SysBaseMenu, e
 
 func (menuService *MenuService) AddMenuAuthority(menus []system.SysBaseMenu, authorityId string) (err error) {
 	var auth system.Vo1Role
-	auth.RoleId = authorityId
+	auth.ID = authorityId
 	auth.SysBaseMenus = menus
 	err = AuthorityServiceApp.SetMenuAuthority(&auth)
 	return err

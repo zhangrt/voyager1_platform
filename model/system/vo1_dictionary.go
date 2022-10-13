@@ -7,7 +7,7 @@ import (
 
 // 如果含有time.Time 请自行import time包
 type Vo1Dictionary struct {
-	global.GS_BASE_MODEL
+	global.GS_BASE_MODEL_ID_STRING
 	Name        string `json:"name" form:"name" gorm:"column:name;comment:字典名（中）"` // 字典名（中）
 	ParentId    string
 	SerialNo    string

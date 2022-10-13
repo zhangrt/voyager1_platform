@@ -3,6 +3,7 @@ package system
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/zhangrt/voyager1_platform/global"
 	"github.com/zhangrt/voyager1_platform/model/common/request"
@@ -45,22 +46,22 @@ func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo
 	}
 
 	var user system.Vo1Person
-	err = global.GS_DB.Where("account = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
-	if err != nil {
-		err = global.GS_DB.Where("phone = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
-		if err != nil {
-			err = global.GS_DB.Where("email = ?", u.Account).Preload("Authorities").Preload("Authority").First(&user).Error
-		}
-	}
+	err = global.GS_DB.Where("account = ?", u.Account).Or("phone = ?", u.Phone).Or("email = ?", u.Email).Preload("Roles").Preload("Role").First(&user).Error
 	if err == nil {
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
 			return nil, errors.New("密码错误")
 		}
-		var am system.Vo1Menu
-		ferr := global.GS_DB.First(&am, "name = ? AND role_id = ?", user.Role.DefaultRouter, user.RoleId).Error
-		if errors.Is(ferr, gorm.ErrRecordNotFound) {
-			user.Role.DefaultRouter = "404"
-		}
+		// var am system.Vo1Menu
+		// ferr := global.GS_DB.First(&am, "name = ? AND role_id = ?", user.Role.DefaultRouter, user.RoleId).Error
+		// if errors.Is(ferr, gorm.ErrRecordNotFound) {
+		// 	user.Role.DefaultRouter = "404"
+		// }
+
+		// 登录成功这里查询相关信息
+
+		// 设置登录时间
+		global.GS_DB.Model(&user).Update("last_login_time", time.Now())
+
 	}
 
 	return &user, err
@@ -107,21 +108,6 @@ func (userService *UserService) GetUserInfoList(info request.PageInfo) (list int
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: SetUserAuthority
-//@description: 设置一个用户的权限
-//@param: uuid uuid.UUID, authorityId string
-//@return: err error
-
-func (userService *UserService) SetUserAuthority(id uint, uuid uuid.UUID, authorityId string) (err error) {
-	assignErr := global.GS_DB.Where("sys_user_id = ? AND sys_authority_authority_id = ?", id, authorityId).First(&system.Vo1PersonRole{}).Error
-	if errors.Is(assignErr, gorm.ErrRecordNotFound) {
-		return errors.New("该用户无此角色")
-	}
-	err = global.GS_DB.Where("uuid = ?", uuid).First(&system.Vo1Person{}).Update("authority_id", authorityId).Error
-	return err
-}
-
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetUserAuthorities
 //@description: 设置一个用户的权限
 //@param: id uint, authorityIds []string
@@ -129,7 +115,7 @@ func (userService *UserService) SetUserAuthority(id uint, uuid uuid.UUID, author
 
 func (userService *UserService) SetUserAuthorities(id uint, authorityIds []string) (err error) {
 	return global.GS_DB.Transaction(func(tx *gorm.DB) error {
-		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "sys_user_id = ?", id).Error
+		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
 		if TxErr != nil {
 			return TxErr
 		}
@@ -143,7 +129,7 @@ func (userService *UserService) SetUserAuthorities(id uint, authorityIds []strin
 		if TxErr != nil {
 			return TxErr
 		}
-		TxErr = tx.Where("id = ?", id).First(&system.Vo1Person{}).Update("authority_id", authorityIds[0]).Error
+		TxErr = tx.Where("vo1_user_id = ?", id).First(&system.Vo1Person{}).Update("vo1_role_id", authorityIds[0]).Error
 		if TxErr != nil {
 			return TxErr
 		}
@@ -190,11 +176,7 @@ func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.Vo1Pers
 	if err != nil {
 		return reqUser, err
 	}
-	var am system.Vo1Menu
-	ferr := global.GS_DB.First(&am, "name = ? AND authority_id = ?", reqUser.Role.DefaultRouter, reqUser.RoleId).Error
-	if errors.Is(ferr, gorm.ErrRecordNotFound) {
-		reqUser.Role.DefaultRouter = "404"
-	}
+
 	return reqUser, err
 }
 

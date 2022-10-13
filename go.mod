@@ -21,7 +21,7 @@ require (
 	github.com/spf13/viper v1.13.0
 	github.com/swaggo/gin-swagger v1.3.2
 	github.com/swaggo/swag v1.8.2
-	github.com/zhangrt/voyager1_core v0.1.8-dev.0.20221011021544-d11eebfa7723
+	github.com/zhangrt/voyager1_core v0.1.8-dev.0.20221013032254-ce42bffb46c2
 	go.uber.org/zap v1.23.0
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa
 	golang.org/x/sync v0.0.0-20220907140024-f12130a52804

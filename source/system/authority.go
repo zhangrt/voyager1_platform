@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 
+	"github.com/zhangrt/voyager1_core/global"
 	sysModel "github.com/zhangrt/voyager1_platform/model/system"
 	"github.com/zhangrt/voyager1_platform/service/system"
 
@@ -45,9 +46,9 @@ func (i *initAuthority) InitializeData(ctx context.Context) (context.Context, er
 		return ctx, system.ErrMissingDBContext
 	}
 	entities := []sysModel.Vo1Role{
-		{RoleId: "888", RoleName: "普通用户", ParentId: "0", DefaultRouter: "dashboard"},
-		{RoleId: "9528", RoleName: "测试角色", ParentId: "0", DefaultRouter: "dashboard"},
-		{RoleId: "8881", RoleName: "普通用户子角色", ParentId: "888", DefaultRouter: "dashboard"},
+		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "888"}, Name: "普通用户"},
+		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "9528"}, Name: "测试角色"},
+		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "8881"}, Name: "普通用户子角色"},
 	}
 
 	if err := db.Create(&entities).Error; err != nil {
