@@ -22,7 +22,7 @@ type AuthorityMenuApi struct{}
 // @Security ApiKeyAuth
 // @Produce  application/json
 // @Param data body request.Empty true "空"
-// @Success 200 {object} response.Response{data=systemRes.SysMenusResponse,msg=string} "获取用户动态路由,返回包括系统菜单详情列表"
+// @Success 200 {object} response.Response{data=systemRes.Vo1MenusResponse,msg=string} "获取用户动态路由,返回包括系统菜单详情列表"
 // @Router /menu/getMenu [post]
 func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
 	if menus, err := menuService.GetMenuTree(auth.GetUserAuthorityId(c)); err != nil {
