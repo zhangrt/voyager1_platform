@@ -41,7 +41,7 @@ func (authorityService *AuthorityService) CreateAuthority(auth system.Vo1Role) (
 //@param: copyInfo response.SysAuthorityCopyResponse
 //@return: authority system.Vo1Role, err error
 
-func (authorityService *AuthorityService) CopyAuthority(copyInfo response.SysAuthorityCopyResponse) (authority system.Vo1Role, err error) {
+func (authorityService *AuthorityService) CopyAuthority(copyInfo response.Vo1RoleCopyResponse) (authority system.Vo1Role, err error) {
 	var authorityBox system.Vo1Role
 	if !errors.Is(global.GS_DB.Where("authority_id = ?", copyInfo.Role.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
 		return authority, ErrRoleExistence

@@ -120,11 +120,11 @@ func (b *UserApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 用户注册账号
 // @Produce  application/json
 // @Param data body systemReq.Register true "用户名, 昵称, 密码, 角色ID"
-// @Success 200 {object} response.Response{data=systemRes.SysUserResponse,msg=string} "用户注册账号,返回包括用户信息"
+// @Success 200 {object} response.Response{data=systemRes.Vo1PersonResponse,msg=string} "用户注册账号,返回包括用户信息"
 // @Router /user/admin_register [post]
 func (b *UserApi) Register(c *gin.Context) {
 	var r systemReq.Register
@@ -153,13 +153,13 @@ func (b *UserApi) Register(c *gin.Context) {
 	userReturn, err := userService.Register(*user)
 	if err != nil {
 		global.GS_LOG.Error("注册失败!", zap.Error(err))
-		response.FailWithDetailed(systemRes.Vo1UserResponse{Person: userReturn}, "注册失败", c)
+		response.FailWithDetailed(systemRes.Vo1PersonResponse{Person: userReturn}, "注册失败", c)
 	} else {
-		response.OkWithDetailed(systemRes.Vo1UserResponse{Person: userReturn}, "注册成功", c)
+		response.OkWithDetailed(systemRes.Vo1PersonResponse{Person: userReturn}, "注册成功", c)
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 用户修改密码
 // @Security ApiKeyAuth
 // @Produce  application/json
@@ -184,7 +184,7 @@ func (b *UserApi) ChangePassword(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 分页获取用户列表
 // @Security ApiKeyAuth
 // @accept application/json
@@ -212,7 +212,7 @@ func (b *UserApi) GetUserList(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 设置用户权限
 // @Security ApiKeyAuth
 // @accept application/json
@@ -247,7 +247,7 @@ func (b *UserApi) SetUserAuthorities(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 删除用户
 // @Security ApiKeyAuth
 // @accept application/json
@@ -275,12 +275,12 @@ func (b *UserApi) DeleteUser(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 设置用户信息
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body system.SysUser true "ID, 用户名, 昵称, 头像链接"
+// @Param data body system.Vo1Person true "ID, 用户名, 昵称, 头像链接"
 // @Success 200 {object} response.Response{data=map[string]interface{},msg=string} "设置用户信息"
 // @Router /user/setUserInfo [put]
 func (b *UserApi) SetUserInfo(c *gin.Context) {
@@ -316,12 +316,12 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 设置用户信息
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body system.SysUser true "ID, 用户名, 昵称, 头像链接"
+// @Param data body system.Vo1Person true "ID, 用户名, 昵称, 头像链接"
 // @Success 200 {object} response.Response{data=map[string]interface{},msg=string} "设置用户信息"
 // @Router /user/SetSelfInfo [put]
 func (b *UserApi) SetSelfInfo(c *gin.Context) {
@@ -345,7 +345,7 @@ func (b *UserApi) SetSelfInfo(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 获取用户信息
 // @Security ApiKeyAuth
 // @accept application/json
@@ -362,11 +362,11 @@ func (b *UserApi) GetUserInfo(c *gin.Context) {
 	}
 }
 
-// @Tags SysUser
+// @Tags Vo1Person
 // @Summary 重置用户密码
 // @Security ApiKeyAuth
 // @Produce  application/json
-// @Param data body system.SysUser true "ID"
+// @Param data body system.Vo1Person true "ID"
 // @Success 200 {object} response.Response{msg=string} "重置用户密码"
 // @Router /user/resetPassword [post]
 func (b *UserApi) ResetPassword(c *gin.Context) {

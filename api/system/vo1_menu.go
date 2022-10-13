@@ -41,7 +41,7 @@ func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Produce  application/json
 // @Param data body request.Empty true "空"
-// @Success 200 {object} response.Response{data=systemRes.SysBaseMenusResponse,msg=string} "获取用户动态路由,返回包括系统菜单列表"
+// @Success 200 {object} response.Response{data=systemRes.Vo1MenusResponse,msg=string} "获取用户动态路由,返回包括系统菜单列表"
 // @Router /menu/getBaseMenuTree [post]
 func (a *AuthorityMenuApi) GetBaseMenuTree(c *gin.Context) {
 	if menus, err := menuService.GetBaseMenuTree(); err != nil {
@@ -103,7 +103,7 @@ func (a *AuthorityMenuApi) GetMenuAuthority(c *gin.Context) {
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body system.SysBaseMenu true "路由path, 父菜单ID, 路由name, 对应前端文件路径, 排序标记"
+// @Param data body system.Vo1Menu true "路由path, 父菜单ID, 路由name, 对应前端文件路径, 排序标记"
 // @Success 200 {object} response.Response{msg=string} "新增菜单"
 // @Router /menu/addBaseMenu [post]
 func (a *AuthorityMenuApi) AddBaseMenu(c *gin.Context) {
@@ -150,7 +150,7 @@ func (a *AuthorityMenuApi) DeleteBaseMenu(c *gin.Context) {
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body system.SysBaseMenu true "路由path, 父菜单ID, 路由name, 对应前端文件路径, 排序标记"
+// @Param data body system.Vo1Menu true "路由path, 父菜单ID, 路由name, 对应前端文件路径, 排序标记"
 // @Success 200 {object} response.Response{msg=string} "更新菜单"
 // @Router /menu/updateBaseMenu [post]
 func (a *AuthorityMenuApi) UpdateBaseMenu(c *gin.Context) {
@@ -175,7 +175,7 @@ func (a *AuthorityMenuApi) UpdateBaseMenu(c *gin.Context) {
 // @accept application/json
 // @Produce application/json
 // @Param data body request.GetById true "菜单id"
-// @Success 200 {object} response.Response{data=systemRes.SysBaseMenuResponse,msg=string} "根据id获取菜单,返回包括系统菜单列表"
+// @Success 200 {object} response.Response{data=systemRes.Vo1MenuResponse,msg=string} "根据id获取菜单,返回包括系统菜单列表"
 // @Router /menu/getBaseMenuById [post]
 func (a *AuthorityMenuApi) GetBaseMenuById(c *gin.Context) {
 	var idInfo request.GetById

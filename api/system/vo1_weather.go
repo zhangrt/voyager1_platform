@@ -15,7 +15,7 @@ type WeatherApi struct{}
 // @Summary 天气信息
 // @Produce  application/json
 // @Param cityCode query string true "城市编码cityCode 101010100 "
-// @Success 200 {object} response.Response{data=systemRes.SysWeatherInfo,msg=string} "通过城市编码获取天气信息"
+// @Success 200 {object} response.Response{data=systemRes.Vo1WeatherInfo,msg=string} "通过城市编码获取天气信息"
 // @Router /weather/getInfo [get]
 func (w *WeatherApi) GetWeatherInfo(c *gin.Context) {
 
@@ -23,7 +23,7 @@ func (w *WeatherApi) GetWeatherInfo(c *gin.Context) {
 
 	if get_back, err := weatherService.GetWeatherInfo(cityCode); err != nil {
 		global.GS_LOG.Error("get failed", zap.Error(err))
-		response.OkWithDetailed(systemRes.SysWeatherInfo{
+		response.OkWithDetailed(systemRes.Vo1WeatherInfo{
 			Code:        "101010100",
 			Temperature: "33.5",
 			Location:    "北京",

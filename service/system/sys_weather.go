@@ -48,7 +48,7 @@ Request Trace Info:
   RequestAttempt: 1
   RemoteAddr    : 3.221.81.55:443
 */
-func (weatherService *WeatherService) GetWeatherInfo(cityCode string) (sysWeatherInfo response.SysWeatherInfo, err error) {
+func (weatherService *WeatherService) GetWeatherInfo(cityCode string) (sysWeatherInfo response.Vo1WeatherInfo, err error) {
 	sxUrl := "http://www.weather.com.cn/data/sk/" + cityCode + ".html"
 	cityInfoUrl := "http://www.weather.com.cn/data/cityinfo/" + cityCode + ".html"
 
@@ -108,7 +108,7 @@ func (weatherService *WeatherService) GetWeatherInfo(cityCode string) (sysWeathe
 	// global.GS_LOG.Info("status", zap.String(sxUrl, sxResp.Status()))
 	// global.GS_LOG.Info("status", zap.String(cityInfoUrl, cityResp.Status()))
 
-	sysWeatherInfo = response.SysWeatherInfo{
+	sysWeatherInfo = response.Vo1WeatherInfo{
 		Code:        cityCode,
 		Temperature: sxMap["weatherinfo"]["temp"],
 		Location:    sxMap["weatherinfo"]["city"],

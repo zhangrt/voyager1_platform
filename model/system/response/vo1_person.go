@@ -4,7 +4,7 @@ import (
 	"github.com/zhangrt/voyager1_platform/model/system"
 )
 
-type Vo1UserResponse struct {
+type Vo1PersonResponse struct {
 	Person system.Vo1Person `json:"person"`
 }
 

@@ -1,6 +1,6 @@
 package response
 
-type SysWeatherInfo struct {
+type Vo1WeatherInfo struct {
 	Code        string `json:"code"`
 	Temperature string `json:"temperature"`
 	Location    string `json:"location"`
