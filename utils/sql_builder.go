@@ -30,38 +30,42 @@ var (
 )
 
 // SQL 代理
-var SQLAdapter *SQLBuilder
+var SQLAdapterObj *SQLBuilder
 
 // 初始化方法
 func init() {
-	SQLAdapter = &SQLBuilder{
+	SQLAdapterObj = &SQLBuilder{
 		dbs:   make(map[string]*gorm.DB),
 		hasDB: false,
 		sqls:  make(map[string]string),
 	}
 }
 
+func New() *SQLBuilder {
+	return &SQLBuilder{}
+}
+
 // adapter
 func (builder *SQLBuilder) Adapter(k string, v *gorm.DB) *SQLBuilder {
 	builder.lock.Lock()
+	defer builder.lock.Unlock()
 	builder.dbs[k] = v
 	builder.hasDB = true
-	defer builder.lock.Unlock()
 	return builder
 }
 
 func (builder *SQLBuilder) OriginSql(k string, sql string) *SQLBuilder {
 	builder.sqlLock.Lock()
-	builder.sqls[k] = sql
 	defer builder.sqlLock.Unlock()
+	builder.sqls[k] = sql
 	return builder
 }
 
 // k key唯一key, n name属性名称, c command命令, v value 值
 func (builder *SQLBuilder) And(k string, n string, c string, v interface{}) *SQLBuilder {
 	builder.sqlLock.Lock()
-	builder.sqls[k] = And(builder.dbs[k], builder.sqls[k], n, c, v)
 	defer builder.sqlLock.Unlock()
+	builder.sqls[k] = And(builder.dbs[k], builder.sqls[k], n, c, v)
 	return builder
 }
 
@@ -93,21 +97,22 @@ func And(db *gorm.DB, sql string, n string, c string, v interface{}) string {
 
 func (builder *SQLBuilder) Model(k string, v interface{}) *SQLBuilder {
 	builder.lock.Lock()
-	builder.dbs[k] = builder.dbs[k].Model(v)
 	defer builder.lock.Unlock()
+	builder.dbs[k] = builder.dbs[k].Model(v)
 	return builder
 }
 
 // param, commad, value
 func (builder *SQLBuilder) Where(k string, p string, c string, v interface{}) *SQLBuilder {
 	builder.lock.Lock()
+	defer builder.lock.Unlock()
 	var db = builder.dbs[k]
 	if !Pre(db, v) {
 		return builder
 	}
 
 	builder.dbs[k] = Where(db, p, c, v)
-	defer builder.lock.Unlock()
+
 	return builder
 }
 
@@ -187,15 +192,15 @@ func Order(db *gorm.DB, r string) *gorm.DB {
 
 func (builder *SQLBuilder) Order(k string, r string) *SQLBuilder {
 	builder.lock.Lock()
-	builder.dbs[k] = Order(builder.dbs[k], r)
 	defer builder.lock.Unlock()
+	builder.dbs[k] = Order(builder.dbs[k], r)
 	return builder
 }
 
 func (builder *SQLBuilder) Page(k string, page int, pageSize int) *SQLBuilder {
 	builder.lock.Lock()
-	builder.dbs[k] = Page(builder.dbs[k], page, pageSize)
 	defer builder.lock.Unlock()
+	builder.dbs[k] = Page(builder.dbs[k], page, pageSize)
 	return builder
 }
 

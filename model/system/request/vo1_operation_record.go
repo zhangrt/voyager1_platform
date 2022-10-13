@@ -5,7 +5,7 @@ import (
 	"github.com/zhangrt/voyager1_platform/model/system"
 )
 
-type SysOperationRecordSearch struct {
-	system.SysOperationRecord
+type Vo1OperationRecordSearch struct {
+	system.Vo1OperationRecord
 	request.PageInfo
 }

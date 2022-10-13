@@ -46,6 +46,7 @@ func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo
 	}
 
 	var user system.Vo1Person
+	// 这里需要保证不同用户之间account、phone、email都不相同，也不能存在A.account=B.phone的情况
 	err = global.GS_DB.Where("account = ?", u.Account).Or("phone = ?", u.Phone).Or("email = ?", u.Email).Preload("Roles").Preload("Role").First(&user).Error
 	if err == nil {
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
@@ -57,7 +58,24 @@ func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo
 		// 	user.Role.DefaultRouter = "404"
 		// }
 
-		// 登录成功这里查询相关信息
+		// 登录成功这里查询该用户跟组织机构相关的角色信息
+		var roles []system.Vo1Role
+		if u.OrganizationId == "" {
+			// select * from role where id in (select role_id where person_id = ?)
+			global.GS_DB.Where("id in ?", global.GS_DB.Table("vo1_person_mtm_role").Select("role_id").Where("person_id = ?", u.ID)).Find(&roles)
+		} else {
+			// select * from role where organ_id = ?
+			global.GS_DB.Where("organ_id = ?", u.OrganizationId).Find(&roles)
+		}
+
+		u.Roles = roles
+
+		var ids []string
+		for _, r := range roles {
+			ids = append(ids, r.ID)
+		}
+
+		u.RoleIds = ids
 
 		// 设置登录时间
 		global.GS_DB.Model(&user).Update("last_login_time", time.Now())

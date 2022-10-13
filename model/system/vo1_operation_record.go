@@ -8,7 +8,7 @@ import (
 )
 
 // 如果含有time.Time 请自行import time包
-type SysOperationRecord struct {
+type Vo1OperationRecord struct {
 	global.GS_BASE_MODEL
 	Ip           string        `json:"ip" form:"ip" gorm:"column:ip;comment:请求ip"`                                   // 请求ip
 	Method       string        `json:"method" form:"method" gorm:"column:method;comment:请求方法"`                       // 请求方法
@@ -23,6 +23,6 @@ type SysOperationRecord struct {
 	User         Vo1Person     `json:"user"`
 }
 
-func (SysOperationRecord) TableName() string {
+func (Vo1OperationRecord) TableName() string {
 	return "vo1_operation_record"
 }

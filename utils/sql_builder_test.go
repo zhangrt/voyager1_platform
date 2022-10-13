@@ -37,7 +37,7 @@ func TestSQLBuilder(t *testing.T) {
 
 	dbtest = CraeteDB()
 	t.Log(dbtest)
-	db := SQLAdapter.Adapter("test", dbtest).
+	db := SQLAdapterObj.Adapter("test", dbtest).
 		Model("test", &demo.Facility{}).
 		Where("test", "id", "=", nil).
 		Where("test", "name", "-like", "_1 or ^3=3%").

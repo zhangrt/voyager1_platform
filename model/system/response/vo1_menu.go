@@ -2,14 +2,10 @@ package response
 
 import "github.com/zhangrt/voyager1_platform/model/system"
 
-type SysMenusResponse struct {
+type Vo1MenusResponse struct {
 	Menus []system.Vo1Menu `json:"menus"`
 }
 
-type SysBaseMenusResponse struct {
-	Menus []system.SysBaseMenu `json:"menus"`
-}
-
-type SysBaseMenuResponse struct {
-	Menu system.SysBaseMenu `json:"menu"`
+type Vo1MenuResponse struct {
+	Menu system.Vo1Menu `json:"menu"`
 }

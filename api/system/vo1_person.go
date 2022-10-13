@@ -39,10 +39,11 @@ func (b *UserApi) Login(c *gin.Context) {
 	// if store.Verify(l.CaptchaId, l.Captcha, true) {
 	u := &system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
-			Account:  l.Identification,
-			Phone:    l.Identification,
-			Email:    l.Identification,
-			Password: l.Password,
+			Account:        l.Identification,
+			Phone:          l.Identification,
+			Email:          l.Identification,
+			Password:       l.Password,
+			OrganizationId: l.OrganizationId,
 		},
 	}
 	if user, err := userService.Login(u); err != nil {

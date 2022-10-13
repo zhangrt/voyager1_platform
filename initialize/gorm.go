@@ -2,9 +2,7 @@ package initialize
 
 import (
 	"github.com/zhangrt/voyager1_platform/global"
-	DemoModels "github.com/zhangrt/voyager1_platform/model/demo"
 	SystemModels "github.com/zhangrt/voyager1_platform/model/system"
-	TestModels "github.com/zhangrt/voyager1_platform/model/test"
 
 	auth "github.com/zhangrt/voyager1_core/auth/luna"
 
@@ -40,23 +38,27 @@ func AutoMigrate() {
 	// 实体
 	var models = []interface{}{
 
-		&TestModels.Test{},
+		// &TestModels.Test{},
 
-		&DemoModels.Facility{},
+		// &DemoModels.Facility{},
+
 		&SystemModels.Vo1Api{},
 		&SystemModels.Vo1Department{},
 		&SystemModels.Vo1Dictionary{},
-		&SystemModels.Vo1Person{},
-		&SystemModels.Vo1PersonRole{},
-		&SystemModels.Vo1Role{},
-		&SystemModels.SysBaseMenu{},
-		&SystemModels.SysBaseMenuParameter{},
 		&SystemModels.Vo1Menu{},
-		&SystemModels.SysOperationRecord{},
-		&SystemModels.SysOrganization{},
+
+		&SystemModels.Vo1PersonDepartment{},
+		&SystemModels.Vo1PersonRole{},
+		&SystemModels.Vo1RoleMenu{},
+		&SystemModels.Vo1PersonSystem{},
+
+		&SystemModels.Vo1OperationRecord{},
+		&SystemModels.Vo1Organization{},
+		&SystemModels.Vo1Person{},
+		&SystemModels.Vo1Role{},
+		&SystemModels.Vo1System{},
 
 		&auth.JwtBlacklist{},
-
 		gormadapter.CasbinRule{},
 	}
 	// db.AutoMigrate(models...)

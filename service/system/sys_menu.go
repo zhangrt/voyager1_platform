@@ -56,7 +56,7 @@ func (menuService *MenuService) GetMenuTree(authorityIds []string) (menus []syst
 //@return: err error
 
 func (menuService *MenuService) getChildrenList(menu *system.Vo1Menu, treeMap map[string][]system.Vo1Menu) (err error) {
-	menu.Children = treeMap[menu.MenuId]
+	menu.Children = treeMap[menu.ID]
 	for i := 0; i < len(menu.Children); i++ {
 		err = menuService.getChildrenList(&menu.Children[i], treeMap)
 	}
@@ -69,7 +69,7 @@ func (menuService *MenuService) getChildrenList(menu *system.Vo1Menu, treeMap ma
 //@return: list interface{}, total int64,err error
 
 func (menuService *MenuService) GetInfoList() (list interface{}, total int64, err error) {
-	var menuList []system.SysBaseMenu
+	var menuList []system.Vo1Menu
 	treeMap, err := menuService.getBaseMenuTreeMap()
 	menuList = treeMap["0"]
 	for i := 0; i < len(menuList); i++ {
@@ -81,11 +81,11 @@ func (menuService *MenuService) GetInfoList() (list interface{}, total int64, er
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: getBaseChildrenList
 //@description: 获取菜单的子菜单
-//@param: menu *model.SysBaseMenu, treeMap map[string][]model.SysBaseMenu
+//@param: menu *model.Vo1Menu, treeMap map[string][]model.Vo1Menu
 //@return: err error
 
-func (menuService *MenuService) getBaseChildrenList(menu *system.SysBaseMenu, treeMap map[string][]system.SysBaseMenu) (err error) {
-	menu.Children = treeMap[strconv.Itoa(int(menu.MenuId))]
+func (menuService *MenuService) getBaseChildrenList(menu *system.Vo1Menu, treeMap map[string][]system.Vo1Menu) (err error) {
+	menu.Children = treeMap[strconv.Itoa(int(menu.SerialNo))]
 	for i := 0; i < len(menu.Children); i++ {
 		err = menuService.getBaseChildrenList(&menu.Children[i], treeMap)
 	}
@@ -95,11 +95,11 @@ func (menuService *MenuService) getBaseChildrenList(menu *system.SysBaseMenu, tr
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: AddBaseMenu
 //@description: 添加基础路由
-//@param: menu model.SysBaseMenu
+//@param: menu model.Vo1Menu
 //@return: error
 
-func (menuService *MenuService) AddBaseMenu(menu system.SysBaseMenu) error {
-	if !errors.Is(global.GS_DB.Where("name = ?", menu.Name).First(&system.SysBaseMenu{}).Error, gorm.ErrRecordNotFound) {
+func (menuService *MenuService) AddBaseMenu(menu system.Vo1Menu) error {
+	if !errors.Is(global.GS_DB.Where("name = ?", menu.Name).First(&system.Vo1Menu{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("存在重复name，请修改name")
 	}
 	return global.GS_DB.Create(&menu).Error
@@ -108,11 +108,11 @@ func (menuService *MenuService) AddBaseMenu(menu system.SysBaseMenu) error {
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: getBaseMenuTreeMap
 //@description: 获取路由总树map
-//@return: treeMap map[string][]system.SysBaseMenu, err error
+//@return: treeMap map[string][]system.Vo1Menu, err error
 
-func (menuService *MenuService) getBaseMenuTreeMap() (treeMap map[string][]system.SysBaseMenu, err error) {
-	var allMenus []system.SysBaseMenu
-	treeMap = make(map[string][]system.SysBaseMenu)
+func (menuService *MenuService) getBaseMenuTreeMap() (treeMap map[string][]system.Vo1Menu, err error) {
+	var allMenus []system.Vo1Menu
+	treeMap = make(map[string][]system.Vo1Menu)
 	err = global.GS_DB.Order("sort").Preload("MenuBtn").Preload("Parameters").Find(&allMenus).Error
 	for _, v := range allMenus {
 		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)
@@ -123,9 +123,9 @@ func (menuService *MenuService) getBaseMenuTreeMap() (treeMap map[string][]syste
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetBaseMenuTree
 //@description: 获取基础路由树
-//@return: menus []system.SysBaseMenu, err error
+//@return: menus []system.Vo1Menu, err error
 
-func (menuService *MenuService) GetBaseMenuTree() (menus []system.SysBaseMenu, err error) {
+func (menuService *MenuService) GetBaseMenuTree() (menus []system.Vo1Menu, err error) {
 	treeMap, err := menuService.getBaseMenuTreeMap()
 	menus = treeMap["0"]
 	for i := 0; i < len(menus); i++ {
@@ -137,13 +137,13 @@ func (menuService *MenuService) GetBaseMenuTree() (menus []system.SysBaseMenu, e
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: AddMenuAuthority
 //@description: 为角色增加menu树
-//@param: menus []model.SysBaseMenu, authorityId string
+//@param: menus []model.Vo1Menu, authorityId string
 //@return: err error
 
-func (menuService *MenuService) AddMenuAuthority(menus []system.SysBaseMenu, authorityId string) (err error) {
+func (menuService *MenuService) AddMenuAuthority(menus []system.Vo1Menu, authorityId string) (err error) {
 	var auth system.Vo1Role
 	auth.ID = authorityId
-	auth.SysBaseMenus = menus
+	auth.Vo1Menu = menus
 	err = AuthorityServiceApp.SetMenuAuthority(&auth)
 	return err
 }

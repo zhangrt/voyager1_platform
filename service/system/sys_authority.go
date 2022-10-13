@@ -51,13 +51,13 @@ func (authorityService *AuthorityService) CopyAuthority(copyInfo response.SysAut
 	if err != nil {
 		return
 	}
-	var baseMenu []system.SysBaseMenu
+	var baseMenu []system.Vo1Menu
 	for _, v := range menus {
-		intNum, _ := strconv.Atoi(v.MenuId)
-		v.SysBaseMenu.ID = uint(intNum)
-		baseMenu = append(baseMenu, v.SysBaseMenu)
+		intNum, _ := strconv.Atoi(v.ID)
+		v.ID = string(intNum)
+		baseMenu = append(baseMenu, v)
 	}
-	copyInfo.Role.SysBaseMenus = baseMenu
+	copyInfo.Role.Vo1Menu = baseMenu
 	err = global.GS_DB.Create(&copyInfo.Role).Error
 	if err != nil {
 		return
@@ -102,17 +102,17 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.Vo1Role) 
 	if !errors.Is(global.GS_DB.Where("parent_id = ?", auth.ID).First(&system.Vo1Role{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("此角色存在子角色不允许删除")
 	}
-	db := global.GS_DB.Preload("SysBaseMenus").Where("role_id = ?", auth.ID).First(auth)
+	db := global.GS_DB.Preload("Vo1Menus").Where("role_id = ?", auth.ID).First(auth)
 	err = db.Unscoped().Delete(auth).Error
 	if err != nil {
 		return
 	}
-	if len(auth.SysBaseMenus) > 0 {
-		err = global.GS_DB.Model(auth).Association("SysBaseMenus").Delete(auth.SysBaseMenus)
+	if len(auth.Vo1Menu) > 0 {
+		err = global.GS_DB.Model(auth).Association("Vo1Menus").Delete(auth.Vo1Menu)
 		if err != nil {
 			return
 		}
-		// err = db.Association("SysBaseMenus").Delete(&auth)
+		// err = db.Association("Vo1Menus").Delete(&auth)
 	} else {
 		err = db.Error
 		if err != nil {
@@ -182,8 +182,8 @@ func (authorityService *AuthorityService) SetDataAuthority(auth system.Vo1Role) 
 
 func (authorityService *AuthorityService) SetMenuAuthority(auth *system.Vo1Role) error {
 	var s system.Vo1Role
-	global.GS_DB.Preload("SysBaseMenus").First(&s, "authority_id = ?", auth.ID)
-	err := global.GS_DB.Model(&s).Association("SysBaseMenus").Replace(&auth.SysBaseMenus)
+	global.GS_DB.Preload("Vo1Menus").First(&s, "authority_id = ?", auth.ID)
+	err := global.GS_DB.Model(&s).Association("Vo1Menus").Replace(&auth.Vo1Menu)
 	return err
 }
 

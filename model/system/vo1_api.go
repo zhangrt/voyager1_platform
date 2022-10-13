@@ -12,3 +12,7 @@ type Vo1Api struct {
 	SerialId    string
 	Description string
 }
+
+func (Vo1Api) TableName() string {
+	return "vo1_api"
+}

@@ -37,7 +37,7 @@ func OperationRecord() gin.HandlerFunc {
 		var userId int
 		body = ReadAll(c, body)
 		userId = GetUserId(c, userId)
-		record := system.SysOperationRecord{
+		record := system.Vo1OperationRecord{
 			Ip:     c.ClientIP(),
 			Method: c.Request.Method,
 			Path:   c.Request.URL.Path,
@@ -90,7 +90,7 @@ func OperationRecord() gin.HandlerFunc {
 			}
 		}
 
-		if err := operationRecordService.CreateSysOperationRecord(record); err != nil {
+		if err := operationRecordService.CreateVo1OperationRecord(record); err != nil {
 			global.GS_LOG.Error("create operation record error:", zap.Error(err))
 		}
 	}

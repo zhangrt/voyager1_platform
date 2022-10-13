@@ -1,8 +1,11 @@
 package system
 
+import "github.com/zhangrt/voyager1_core/global"
+
 type Vo1PersonDepartment struct {
-	PersonId     uint   `gorm:"column:vo1_person_id"`
-	DepartmentId string `gorm:"column:vo1_department_id"`
+	global.GS_BASE_MODEL_ID_STRING
+	PersonId     uint   `gorm:"column:person_id"`
+	DepartmentId string `gorm:"column:department_id"`
 }
 
 func (s *Vo1PersonDepartment) TableName() string {

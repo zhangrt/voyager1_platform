@@ -32,7 +32,7 @@ func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
 		if menus == nil {
 			menus = []system.Vo1Menu{}
 		}
-		response.OkWithDetailed(systemRes.SysMenusResponse{Menus: menus}, "获取成功", c)
+		response.OkWithDetailed(systemRes.Vo1MenusResponse{Menus: menus}, "获取成功", c)
 	}
 }
 
@@ -48,7 +48,7 @@ func (a *AuthorityMenuApi) GetBaseMenuTree(c *gin.Context) {
 		global.GS_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
-		response.OkWithDetailed(systemRes.SysBaseMenusResponse{Menus: menus}, "获取成功", c)
+		response.OkWithDetailed(systemRes.Vo1MenusResponse{Menus: menus}, "获取成功", c)
 	}
 }
 
@@ -92,7 +92,7 @@ func (a *AuthorityMenuApi) GetMenuAuthority(c *gin.Context) {
 	}
 	if menus, err := menuService.GetMenuAuthority(&param); err != nil {
 		global.GS_LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithDetailed(systemRes.SysMenusResponse{Menus: menus}, "获取失败", c)
+		response.FailWithDetailed(systemRes.Vo1MenusResponse{Menus: menus}, "获取失败", c)
 	} else {
 		response.OkWithDetailed(gin.H{"menus": menus}, "获取成功", c)
 	}
@@ -107,13 +107,9 @@ func (a *AuthorityMenuApi) GetMenuAuthority(c *gin.Context) {
 // @Success 200 {object} response.Response{msg=string} "新增菜单"
 // @Router /menu/addBaseMenu [post]
 func (a *AuthorityMenuApi) AddBaseMenu(c *gin.Context) {
-	var menu system.SysBaseMenu
+	var menu system.Vo1Menu
 	_ = c.ShouldBindJSON(&menu)
 	if err := utils.Verify(menu, utils.MenuVerify); err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	if err := utils.Verify(menu.Meta, utils.MenuMetaVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -158,16 +154,13 @@ func (a *AuthorityMenuApi) DeleteBaseMenu(c *gin.Context) {
 // @Success 200 {object} response.Response{msg=string} "更新菜单"
 // @Router /menu/updateBaseMenu [post]
 func (a *AuthorityMenuApi) UpdateBaseMenu(c *gin.Context) {
-	var menu system.SysBaseMenu
+	var menu system.Vo1Menu
 	_ = c.ShouldBindJSON(&menu)
 	if err := utils.Verify(menu, utils.MenuVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := utils.Verify(menu.Meta, utils.MenuMetaVerify); err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
+
 	if err := baseMenuService.UpdateBaseMenu(menu); err != nil {
 		global.GS_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
@@ -195,7 +188,7 @@ func (a *AuthorityMenuApi) GetBaseMenuById(c *gin.Context) {
 		global.GS_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
-		response.OkWithDetailed(systemRes.SysBaseMenuResponse{Menu: menu}, "获取成功", c)
+		response.OkWithDetailed(systemRes.Vo1MenuResponse{Menu: menu}, "获取成功", c)
 	}
 }
 

@@ -68,7 +68,7 @@ func (a *initMenuViewPg) MigrateTable(ctx context.Context) (context.Context, err
 		   @authorities_menus.vo1_role_role_id as authority_id
 	from (@authorities_menus join @menus on ((@authorities_menus.vo1_menu_id = @menus.id)));`
 	sql = strings.ReplaceAll(sql, "@table_name", sysModel.Vo1Menu{}.TableName())
-	sql = strings.ReplaceAll(sql, "@menus", sysModel.SysBaseMenu{}.TableName())
+	sql = strings.ReplaceAll(sql, "@menus", sysModel.Vo1Menu{}.TableName())
 	sql = strings.ReplaceAll(sql, "@authorities_menus", joinTableName)
 	if err := db.Exec(sql).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.Vo1Menu{}.TableName()+"视图创建失败!")

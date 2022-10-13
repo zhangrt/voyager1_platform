@@ -8,7 +8,7 @@ import (
 
 type DictionaryRouter struct{}
 
-func (s *DictionaryRouter) InitVo1DictionaryRouter(Router *gin.RouterGroup) {
+func (s *DictionaryRouter) InitDictionaryRouter(Router *gin.RouterGroup) {
 	Vo1DictionaryRouter := Router.Group("dictionary")
 	Vo1DictionaryRouterWithoutRecord := Router.Group("dictionary")
 	Vo1DictionaryApi := v1.ApiGroupApp.SystemApiGroup.DictionaryApi
