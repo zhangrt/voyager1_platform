@@ -24,7 +24,7 @@ var MenuServiceApp = new(MenuService)
 func (menuService *MenuService) getMenuTreeMap(authorityIds []string) (treeMap map[string][]system.Vo1Menu, err error) {
 	var allMenus []system.Vo1Menu
 	treeMap = make(map[string][]system.Vo1Menu)
-	err = global.GS_DB.Where("role_id in ?", authorityIds).Order("sort").Preload("Parameters").Find(&allMenus).Error
+	err = global.GS_DB.Where("role_id in ?", authorityIds).Order("serial_no").Find(&allMenus).Error
 	if err != nil {
 		return
 	}
@@ -155,7 +155,7 @@ func (menuService *MenuService) AddMenuAuthority(menus []system.Vo1Menu, authori
 //@return: menus []system.Vo1Menu, err error
 
 func (menuService *MenuService) GetMenuAuthority(info *request.GetAuthorityId) (menus []system.Vo1Menu, err error) {
-	err = global.GS_DB.Where("role_id = ? ", info.AuthorityId).Order("sort").Find(&menus).Error
+	err = global.GS_DB.Where("role_id = ? ", info.AuthorityId).Order("serial_no").Find(&menus).Error
 	// sql := "SELECT authority_menu.keep_alive,authority_menu.default_menu,authority_menu.created_at,authority_menu.updated_at,authority_menu.deleted_at,authority_menu.menu_level,authority_menu.parent_id,authority_menu.path,authority_menu.`name`,authority_menu.hidden,authority_menu.component,authority_menu.title,authority_menu.icon,authority_menu.sort,authority_menu.menu_id,authority_menu.role_id FROM authority_menu WHERE authority_menu.role_id = ? ORDER BY authority_menu.sort ASC"
 	// err = global.GS_DB.Raw(sql, authorityId).Scan(&menus).Error
 	return menus, err

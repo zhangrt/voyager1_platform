@@ -119,7 +119,7 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.Vo1Role) 
 			return
 		}
 	}
-	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "role_id = ?", auth.ID).Error
+	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "vo1_role_id = ?", auth.ID).Error
 	if err != nil {
 		global.GS_LOG.Error(err.Error())
 	}

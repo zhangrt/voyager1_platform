@@ -47,7 +47,7 @@ func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo
 
 	var user system.Vo1Person
 	// 这里需要保证不同用户之间account、phone、email都不相同，也不能存在A.account=B.phone的情况
-	err = global.GS_DB.Where("account = ? or phone = ? or email = ?", u.Account, u.Phone, u.Email).Preload("Roles").Preload("Role").First(&user).Error
+	err = global.GS_DB.Where("account = ? or phone = ? or email = ?", u.Account, u.Phone, u.Email).First(&user).Error
 	if err == nil {
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
 			return nil, errors.New("密码错误")
@@ -62,20 +62,20 @@ func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo
 		var roles []system.Vo1Role
 		if u.OrganizationId == "" {
 			// select * from role where id in (select role_id where person_id = ?)
-			global.GS_DB.Where("id in ?", global.GS_DB.Table("vo1_person_mtm_role").Select("role_id").Where("person_id = ?", u.ID)).Find(&roles)
+			global.GS_DB.Where("id in (?)", global.GS_DB.Table("vo1_person_mtm_role").Select("vo1_role_id").Where("vo1_person_id = ?", user.ID)).Find(&roles)
 		} else {
 			// select * from role where organ_id = ?
 			global.GS_DB.Where("organ_id = ?", u.OrganizationId).Find(&roles)
 		}
 
-		u.Roles = roles
+		user.Roles = roles
 
 		var ids []string
 		for _, r := range roles {
 			ids = append(ids, r.ID)
 		}
 
-		u.RoleIds = ids
+		user.RoleIds = ids
 
 		// 设置登录时间
 		global.GS_DB.Model(&user).Update("last_login_time", time.Now())
@@ -133,7 +133,7 @@ func (userService *UserService) GetUserInfoList(info request.PageInfo) (list int
 
 func (userService *UserService) SetUserAuthorities(id uint, authorityIds []string) (err error) {
 	return global.GS_DB.Transaction(func(tx *gorm.DB) error {
-		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "person_id = ?", id).Error
+		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
 		if TxErr != nil {
 			return TxErr
 		}
@@ -168,7 +168,7 @@ func (userService *UserService) DeleteUser(id int) (err error) {
 	if err != nil {
 		return err
 	}
-	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "person_id = ?", id).Error
+	err = global.GS_DB.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
 	return err
 }
 
