@@ -25,7 +25,7 @@ func init() {
 }
 
 func (i initMenuViewPg) InitializerName() string {
-	return fmt.Sprintf("postgresql 视图<%s>", sysModel.SysMenu{}.TableName())
+	return fmt.Sprintf("postgresql 视图<%s>", sysModel.Vo1Menu{}.TableName())
 }
 
 func (i *initMenuViewPg) InitializeData(ctx context.Context) (context.Context, error) {
@@ -44,7 +44,7 @@ func (a *initMenuViewPg) MigrateTable(ctx context.Context) (context.Context, err
 	if s, ok := ctx.Value("dbtype").(string); !ok || s != "pgsql" {
 		return ctx, nil // ignore
 	}
-	joinTableName := db.Model(&sysModel.SysAuthority{}).Association("SysBaseMenus").Relationship.JoinTable.Name
+	joinTableName := db.Model(&sysModel.Vo1Role{}).Association("SysBaseMenus").Relationship.JoinTable.Name
 
 	sql := `
 	CREATE OR REPLACE VIEW @table_name as
@@ -64,14 +64,14 @@ func (a *initMenuViewPg) MigrateTable(ctx context.Context) (context.Context, err
 		   @menus.menu_level               as menu_level,
 		   @menus.default_menu             as default_menu,
 		   @menus.close_tab                as close_tab,
-		   @authorities_menus.sys_base_menu_id      as menu_id,
-		   @authorities_menus.sys_authority_authority_id as authority_id
-	from (@authorities_menus join @menus on ((@authorities_menus.sys_base_menu_id = @menus.id)));`
-	sql = strings.ReplaceAll(sql, "@table_name", sysModel.SysMenu{}.TableName())
-	sql = strings.ReplaceAll(sql, "@menus", sysModel.SysBaseMenu{}.TableName())
-	sql = strings.ReplaceAll(sql, "@authorities_menus", joinTableName)
+		   @role_menus.menu_id      as menu_id,
+		   @role_menus.role_id as role_id
+	from (@role_menus join @menus on ((@role_menus.menu_id = @menus.id)));`
+	sql = strings.ReplaceAll(sql, "@table_name", sysModel.Vo1Menu{}.TableName())
+	sql = strings.ReplaceAll(sql, "@menus", sysModel.Vo1Menu{}.TableName())
+	sql = strings.ReplaceAll(sql, "@role_menus", joinTableName)
 	if err := db.Exec(sql).Error; err != nil {
-		return ctx, errors.Wrap(err, sysModel.SysMenu{}.TableName()+"视图创建失败!")
+		return ctx, errors.Wrap(err, sysModel.Vo1Menu{}.TableName()+"视图创建失败!")
 	}
 	return ctx, nil
 }
@@ -81,9 +81,9 @@ func (a *initMenuViewPg) TableCreated(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	err1 := db.Find(&[]sysModel.SysMenu{}).Error
+	err1 := db.Find(&[]sysModel.Vo1Menu{}).Error
 	err2 := errors.New(fmt.Sprintf("Error 1146: Table '%v.%v' doesn't exist",
-		global.GS_CONFIG.Pgsql.Dbname, sysModel.SysMenu{}.TableName()))
+		global.GS_CONFIG.Pgsql.Dbname, sysModel.Vo1Menu{}.TableName()))
 	if errors.As(err1, &err2) {
 		return false
 	}

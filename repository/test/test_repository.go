@@ -8,35 +8,36 @@ import (
 	"github.com/zhangrt/voyager1_platform/model/test"
 	"github.com/zhangrt/voyager1_platform/model/test/request"
 
-	"github.com/zhangrt/voyager1_core/cache"
+	redis "github.com/zhangrt/voyager1_core/cache"
 )
 
-type TestRepository struct{}
+type TestRepository struct {
+	cache redis.Cacher
+}
 
-func (tTestRepository *TestRepository) TestGet(ctx context.Context, id string) (data string, err error) {
-	get_back, err := cache.GetResult(id)
+func (t *TestRepository) TestGet(ctx context.Context, id string) (data string, err error) {
+	get_back := t.cache.Get(id)
 	return get_back, err
 }
 
-func (tTestRepository *TestRepository) TestUpdate(ctx context.Context, testName string, ids ...string) {
+func (t *TestRepository) TestUpdate(ctx context.Context, testName string, ids ...string) {
 	originSql := "update test set testName=? where user_id in (?) "
 	global.GS_DB.Exec(originSql, testName, ids)
-	return
 }
 
-func (tTestRepository *TestRepository) TestSelect(ctx context.Context, id string) (testName string, err error) {
+func (t *TestRepository) TestSelect(ctx context.Context, id string) (testName string, err error) {
 	originSql := "select testName from test where id = ? "
 	rows, err := global.GS_DB.Raw(originSql, id).Rows()
-	defer rows.Close()
-	if rows != nil {
+	if err != nil && rows != nil {
 		for rows.Next() {
 			rows.Scan(&testName)
 		}
 	}
+	defer rows.Close()
 	return testName, err
 }
 
-func (tTestRepository *TestRepository) GetTestInfoList(info request.TestSearch) (list []test.Test, total int64, err error) {
+func (t *TestRepository) GetTestInfoList(info request.TestSearch) (list []test.Test, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db

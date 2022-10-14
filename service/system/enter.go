@@ -9,7 +9,5 @@ type ServiceGroup struct {
 	DictionaryService
 	SystemConfigService
 	OperationRecordService
-	DictionaryDetailService
-	AuthorityBtnService
 	WeatherService
 }

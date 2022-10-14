@@ -11,111 +11,111 @@ import (
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSysDictionary
+//@function: DeleteVo1Dictionary
 //@description: 创建字典数据
-//@param: sysDictionary model.SysDictionary
+//@param: Vo1Dictionary model.Vo1Dictionary
 //@return: err error
 
 type DictionaryService struct{}
 
-func (dictionaryService *DictionaryService) CreateSysDictionary(sysDictionary system.SysDictionary) (err error) {
-	if (!errors.Is(global.GS_DB.First(&system.SysDictionary{}, "type = ?", sysDictionary.Type).Error, gorm.ErrRecordNotFound)) {
-		return errors.New("存在相同的type，不允许创建")
+func (dictionaryService *DictionaryService) CreateVo1Dictionary(Vo1Dictionary system.Vo1Dictionary) (err error) {
+	if (!errors.Is(global.GS_DB.First(&system.Vo1Dictionary{}, "id = ?", Vo1Dictionary.ID).Error, gorm.ErrRecordNotFound)) {
+		return errors.New("存在相同的ID(key)，不允许创建")
 	}
-	err = global.GS_DB.Create(&sysDictionary).Error
+	err = global.GS_DB.Create(&Vo1Dictionary).Error
 	return err
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSysDictionary
+//@function: DeleteVo1Dictionary
 //@description: 删除字典数据
-//@param: sysDictionary model.SysDictionary
+//@param: Vo1Dictionary model.Vo1Dictionary
 //@return: err error
 
-func (dictionaryService *DictionaryService) DeleteSysDictionary(sysDictionary system.SysDictionary) (err error) {
-	err = global.GS_DB.Where("id = ?", sysDictionary.ID).Preload("SysDictionaryDetails").First(&sysDictionary).Error
+func (dictionaryService *DictionaryService) DeleteVo1Dictionary(Vo1Dictionary system.Vo1Dictionary) (err error) {
+	err = global.GS_DB.Where("id = ?", Vo1Dictionary.ID).Preload("Vo1DictionaryDetails").First(&Vo1Dictionary).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return errors.New("请不要搞事")
 	}
 	if err != nil {
 		return err
 	}
-	err = global.GS_DB.Delete(&sysDictionary).Error
+	err = global.GS_DB.Delete(&Vo1Dictionary).Error
 	if err != nil {
 		return err
 	}
 
-	if sysDictionary.SysDictionaryDetails != nil {
-		return global.GS_DB.Where("sys_dictionary_id=?", sysDictionary.ID).Delete(sysDictionary.SysDictionaryDetails).Error
+	if Vo1Dictionary.Dictionarys != nil {
+		return global.GS_DB.Where("parent_id=?", Vo1Dictionary.ID).Delete(Vo1Dictionary.Dictionarys).Error
 	}
 	return
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: UpdateSysDictionary
+//@function: UpdateVo1Dictionary
 //@description: 更新字典数据
-//@param: sysDictionary *model.SysDictionary
+//@param: Vo1Dictionary *model.Vo1Dictionary
 //@return: err error
 
-func (dictionaryService *DictionaryService) UpdateSysDictionary(sysDictionary *system.SysDictionary) (err error) {
-	var dict system.SysDictionary
-	sysDictionaryMap := map[string]interface{}{
-		"Name":   sysDictionary.Name,
-		"Type":   sysDictionary.Type,
-		"Status": sysDictionary.Status,
-		"Desc":   sysDictionary.Desc,
+func (dictionaryService *DictionaryService) UpdateVo1Dictionary(Vo1Dictionary *system.Vo1Dictionary) (err error) {
+	var dict system.Vo1Dictionary
+	Vo1DictionaryMap := map[string]interface{}{
+		"NameCN":      Vo1Dictionary.NameCN,
+		"NameEN":      Vo1Dictionary.NameEN,
+		"Key":         Vo1Dictionary.ID,
+		"Description": Vo1Dictionary.Description,
 	}
-	db := global.GS_DB.Where("id = ?", sysDictionary.ID).First(&dict)
-	if dict.Type != sysDictionary.Type {
-		if !errors.Is(global.GS_DB.First(&system.SysDictionary{}, "type = ?", sysDictionary.Type).Error, gorm.ErrRecordNotFound) {
-			return errors.New("存在相同的type，不允许创建")
+	db := global.GS_DB.Where("id = ?", Vo1Dictionary.ID).First(&dict)
+	if dict.ID != Vo1Dictionary.ID {
+		if !errors.Is(global.GS_DB.First(&system.Vo1Dictionary{}, "id = ?", Vo1Dictionary.ID).Error, gorm.ErrRecordNotFound) {
+			return errors.New("存在相同的ID(Key)，不允许创建")
 		}
 	}
-	err = db.Updates(sysDictionaryMap).Error
+	err = db.Updates(Vo1DictionaryMap).Error
 	return err
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetSysDictionary
+//@function: GetVo1Dictionary
 //@description: 根据id或者type获取字典单条数据
 //@param: Type string, Id uint
-//@return: err error, sysDictionary model.SysDictionary
+//@return: err error, Vo1Dictionary model.Vo1Dictionary
 
-func (dictionaryService *DictionaryService) GetSysDictionary(Type string, Id uint) (sysDictionary system.SysDictionary, err error) {
-	err = global.GS_DB.Where("type = ? OR id = ? and status = ?", Type, Id, true).Preload("SysDictionaryDetails", "status = ?", true).First(&sysDictionary).Error
+func (dictionaryService *DictionaryService) GetVo1Dictionary(NameEN string, Id string) (Vo1Dictionary system.Vo1Dictionary, err error) {
+	err = global.GS_DB.Where("id = ? OR NameEN = ?", Id, NameEN).First(&Vo1Dictionary).Error
 	return
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@author: [SliverHorn](https://github.com/SliverHorn)
-//@function: GetSysDictionaryInfoList
+//@function: GetVo1DictionaryInfoList
 //@description: 分页获取字典列表
-//@param: info request.SysDictionarySearch
+//@param: info request.Vo1DictionarySearch
 //@return: err error, list interface{}, total int64
 
-func (dictionaryService *DictionaryService) GetSysDictionaryInfoList(info request.SysDictionarySearch) (list interface{}, total int64, err error) {
+func (dictionaryService *DictionaryService) GetVo1DictionaryInfoList(info request.Vo1DictionarySearch) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GS_DB.Model(&system.SysDictionary{})
-	var sysDictionarys []system.SysDictionary
+	db := global.GS_DB.Model(&system.Vo1Dictionary{})
+	var Vo1Dictionarys []system.Vo1Dictionary
 	// 如果有条件搜索 下方会自动创建搜索语句
-	if info.Name != "" {
-		db = db.Where("name LIKE ?", "%"+info.Name+"%")
+	if info.NameCN != "" {
+		db = db.Where("name LIKE ?", "%"+info.NameCN+"%")
 	}
-	if info.Type != "" {
-		db = db.Where("type LIKE ?", "%"+info.Type+"%")
+	if info.ID != "" {
+		db = db.Where("type LIKE ?", "%"+info.ID+"%")
 	}
-	if info.Status != nil {
-		db = db.Where("status = ?", info.Status)
+	if info.NameEN != "" {
+		db = db.Where("status LIKE ?", "%"+info.NameEN+"%")
 	}
-	if info.Desc != "" {
-		db = db.Where("desc LIKE ?", "%"+info.Desc+"%")
+	if info.Description != "" {
+		db = db.Where("description LIKE ?", "%"+info.Description+"%")
 	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return
 	}
-	err = db.Limit(limit).Offset(offset).Find(&sysDictionarys).Error
-	return sysDictionarys, total, err
+	err = db.Limit(limit).Offset(offset).Find(&Vo1Dictionarys).Error
+	return Vo1Dictionarys, total, err
 }

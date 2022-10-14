@@ -81,7 +81,7 @@ service-mesh:
 # system configuration
 system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
-  host: '192.168.19.111'
+  host: '192.168.19.110'
   port: 7777
   db-type: 'cockroach'
   use-cache: true       # 使用缓存组件
@@ -90,7 +90,7 @@ system:
   cache-type: 'redis'   # 缓存组件类型
   oss-type: 'minio'
   root-path: ""
-  use-multipoint: true
+  use-multipoint: true # 多点登录
   # test develop release & develop skip authenticate & test skip all auth
   mode: "release"
   time-zone: "Asia/Shanghai"
@@ -99,6 +99,16 @@ system:
   #  IP限制一个小时
   iplimit-time: 3600
 
+grpc:
+  server:
+    network: "tcp"
+    host: "127.0.0.1"
+    port: 2567
+  client:
+    host: "127.0.0.1"
+    port: 2567
+
+# 此处配置已迁移至./conf/zinx.json
 zinx:
  # 服务器应用名称
   name: 'luna'
@@ -140,13 +150,13 @@ cockroach:
   path: '192.168.244.142'
   port: '26257'
   config: 'TimeZone=Asia/Shanghai'
-  db-name: 'test'
+  db-name: 'test2'
   username: 'root'
   password: '123123'
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: "true"
-  log-zap: false
+  log-zap: true
 
 mysql:
   path: ''

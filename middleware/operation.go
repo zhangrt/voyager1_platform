@@ -37,13 +37,13 @@ func OperationRecord() gin.HandlerFunc {
 		var userId int
 		body = ReadAll(c, body)
 		userId = GetUserId(c, userId)
-		record := system.SysOperationRecord{
-			Ip:     c.ClientIP(),
-			Method: c.Request.Method,
-			Path:   c.Request.URL.Path,
-			Agent:  c.Request.UserAgent(),
-			Body:   string(body),
-			UserID: userId,
+		record := system.Vo1OperationRecord{
+			Ip:       c.ClientIP(),
+			Method:   c.Request.Method,
+			Path:     c.Request.URL.Path,
+			Agent:    c.Request.UserAgent(),
+			Body:     string(body),
+			PersonId: userId,
 		}
 
 		// 上传文件时候 中间件日志进行裁断操作
@@ -90,7 +90,7 @@ func OperationRecord() gin.HandlerFunc {
 			}
 		}
 
-		if err := operationRecordService.CreateSysOperationRecord(record); err != nil {
+		if err := operationRecordService.CreateVo1OperationRecord(record); err != nil {
 			global.GS_LOG.Error("create operation record error:", zap.Error(err))
 		}
 	}
@@ -136,7 +136,7 @@ func GetUserId(c *gin.Context, userId int) int {
 	if claims.ID != 0 {
 		userId = int(claims.ID)
 	} else {
-		id, err := strconv.Atoi(c.Request.Header.Get("x-user-id"))
+		id, err := strconv.Atoi(c.Request.Header.Get(global.GS_CONFIG.AUTHKey.UserId))
 		if err != nil {
 			userId = 0
 		} else {

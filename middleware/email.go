@@ -24,8 +24,8 @@ func ErrorToEmail() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var username string
 		claims, _ := auth.GetClaims(c)
-		if claims.Username != "" {
-			username = claims.Username
+		if claims.Account != "" {
+			username = claims.Account
 		} else {
 			id, _ := strconv.Atoi(c.Request.Header.Get("x-user-id"))
 			user, err := userService.FindUserById(id)
@@ -39,7 +39,7 @@ func ErrorToEmail() gin.HandlerFunc {
 		body, _ := ioutil.ReadAll(c.Request.Body)
 		// 再重新写回请求体body中，ioutil.ReadAll会清空c.Request.Body中的数据
 		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
-		record := system.SysOperationRecord{
+		record := system.Vo1OperationRecord{
 			Ip:     c.ClientIP(),
 			Method: c.Request.Method,
 			Path:   c.Request.URL.Path,

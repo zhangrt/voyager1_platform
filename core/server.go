@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	core "github.com/zhangrt/voyager1_core"
+	grpc "github.com/zhangrt/voyager1_core/auth/grpc"
+	"github.com/zhangrt/voyager1_core/auth/grpc/service"
+	config "github.com/zhangrt/voyager1_core/config"
 	"github.com/zhangrt/voyager1_platform/global"
 	initialize "github.com/zhangrt/voyager1_platform/initialize"
-
-	"github.com/gin-gonic/gin"
-	gallery "github.com/zhangrt/voyager1_core"
-	auth "github.com/zhangrt/voyager1_core/auth/luna"
-	config "github.com/zhangrt/voyager1_core/config"
 
 	"go.uber.org/zap"
 )
@@ -45,13 +45,13 @@ func RunServer() {
 	}
 
 	// 基础组件对象初始化
-	gallery.NewInit().
+	core.New().
 		Viper(global.GS_VP).
 		Zap(global.GS_LOG).
-		DB(global.GS_DB).
+		// DB(global.GS_DB). // core组件去除了数据库相关代码
 		SetRedisMod(global.GS_CONFIG.Redis.ClusterMod).
 		RedisStandalone(global.GS_REDIS_STANDALONE).
-		BlackCache(global.BlackCache).
+		// BlackCache(global.BlackCache).
 		Config(config.Server{
 			System:  config.System(global.GS_CONFIG.System),
 			JWT:     global.GS_CONFIG.JWT,
@@ -59,9 +59,13 @@ func RunServer() {
 			AUTHKey: global.GS_CONFIG.AUTHKey,
 		}).
 		ConfigMinio(global.GS_CONFIG.Minio).
-		ConfigZinx(global.GS_CONFIG.Zinx)
+		ConfigZinx(global.GS_CONFIG.Zinx).
+		ConfigGrpc(global.GS_CONFIG.Grpc)
 
-	auth.LoadAll()
+	// 启动 Luan Server(Grpc/Tcp)
+	go grpc.NewServer().
+		RegisterAuthServiceServer(new(service.AuthService)).
+		LunchGrpcServer()
 
 	// 时区
 	time.LoadLocation(global.GS_CONFIG.System.TimeZone)
@@ -69,7 +73,7 @@ func RunServer() {
 	// 路由
 	Router := initialize.Routers()
 
-	Addr := global.GS_CONFIG.System.Host + ":" + global.GS_CONFIG.System.Port
+	Addr := fmt.Sprintf("%s:%s", global.GS_CONFIG.System.Host, global.GS_CONFIG.System.Port)
 	// init
 	s := func(address string, router *gin.Engine) server {
 		return &http.Server{
@@ -90,9 +94,9 @@ func RunServer() {
                          | w----|\\
                         /\\     |/
 
-	welcome to gin-github.com/zhangrt/voyager1_platform
+	welcome to Platform
 	version:v0.1
-	email:zhoujiajun@github.com/zhangrt/voyager1_platform.com
+	email:zhoujiajun@gsafety.com
 	default docs:http://%s/swagger/index.html
 
 `, Addr)

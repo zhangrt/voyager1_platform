@@ -2,6 +2,7 @@ package utils
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"gorm.io/gorm"
@@ -9,53 +10,109 @@ import (
 
 // 自定义SQL
 type SQLBuilder struct {
-	hasDB bool
+	lock    sync.RWMutex
+	sqlLock sync.RWMutex
+	dbs     map[string]*gorm.DB // db
+	hasDB   bool
+	sqls    map[string]string // original sql
 }
 
 type DBAdapter SQLBuilder
 
 // 占位符防止sql注入
 var (
-	DB    *gorm.DB
-	DBS   map[string]*gorm.DB
 	SPACE = " "
-	LIKE  = " like ?"
+	LIKE  = " LIKE ?"
 	EQ    = " = ?"
-	IN    = " in (?)"
+	IN    = " IN (?)"
 	PLACE = " ? "
+	AND   = " AND "
 )
 
-// adapter
-func (builder *SQLBuilder) Adapter(tx *gorm.DB) *SQLBuilder {
-	DB = tx
-	return builder
+// SQL 代理
+var SQLAdapterObj *SQLBuilder
+
+// 初始化方法
+func init() {
+	SQLAdapterObj = &SQLBuilder{
+		dbs:   make(map[string]*gorm.DB),
+		hasDB: false,
+		sqls:  make(map[string]string),
+	}
 }
 
-func (builder *SQLBuilder) AdapterSafety(k string, v *gorm.DB) *SQLBuilder {
-	DBS = make(map[string]*gorm.DB)
-	DBS[k] = v
+func New() *SQLBuilder {
+	return &SQLBuilder{}
+}
+
+// adapter
+func (builder *SQLBuilder) Adapter(k string, v *gorm.DB) *SQLBuilder {
+	builder.lock.Lock()
+	defer builder.lock.Unlock()
+	builder.dbs[k] = v
 	builder.hasDB = true
 	return builder
 }
 
-func (builder *SQLBuilder) Model(v interface{}) *SQLBuilder {
-	DB = DB.Model(v)
+func (builder *SQLBuilder) OriginSql(k string, sql string) *SQLBuilder {
+	builder.sqlLock.Lock()
+	defer builder.sqlLock.Unlock()
+	builder.sqls[k] = sql
 	return builder
 }
 
-func (builder *SQLBuilder) ModelSafety(k string, v interface{}) *SQLBuilder {
-	DBS[k] = DBS[k].Model(v)
+// k key唯一key, n name属性名称, c command命令, v value 值
+func (builder *SQLBuilder) And(k string, n string, c string, v interface{}) *SQLBuilder {
+	builder.sqlLock.Lock()
+	defer builder.sqlLock.Unlock()
+	builder.sqls[k] = And(builder.dbs[k], builder.sqls[k], n, c, v)
+	return builder
+}
+
+func And(db *gorm.DB, sql string, n string, c string, v interface{}) string {
+	switch c {
+	case "like", "-like-", "-like", "like-":
+		sql = sql + AND + n + LIKE + PLACE
+		db.Row()
+	case "=":
+
+	case "in":
+		if str, ok := v.(string); ok {
+			arr := strings.Split(str, ",")
+			if len(arr) == 1 {
+			} else {
+			}
+		}
+		// [""]
+		if val, ok := v.([]string); ok {
+			if len(val) == 1 && val[0] != "" {
+			} else if len(val) > 1 {
+			}
+		}
+	default:
+	}
+
+	return sql
+}
+
+func (builder *SQLBuilder) Model(k string, v interface{}) *SQLBuilder {
+	builder.lock.Lock()
+	defer builder.lock.Unlock()
+	builder.dbs[k] = builder.dbs[k].Model(v)
 	return builder
 }
 
 // param, commad, value
-func (builder *SQLBuilder) WhereSafety(k string, p string, c string, v interface{}) *SQLBuilder {
-	var db = DBS[k]
+func (builder *SQLBuilder) Where(k string, p string, c string, v interface{}) *SQLBuilder {
+	builder.lock.Lock()
+	defer builder.lock.Unlock()
+	var db = builder.dbs[k]
 	if !Pre(db, v) {
 		return builder
 	}
 
-	db = Where(db, p, c, v)
+	builder.dbs[k] = Where(db, p, c, v)
+
 	return builder
 }
 
@@ -76,17 +133,6 @@ func Pre(db *gorm.DB, v interface{}) bool {
 		return false
 	}
 	return true
-}
-
-// param, commad, value
-func (builder *SQLBuilder) Where(p string, c string, v interface{}) *SQLBuilder {
-	if !Pre(DB, v) {
-		return builder
-	}
-
-	DB = Where(DB, p, c, v)
-
-	return builder
 }
 
 // 条件查询
@@ -123,11 +169,6 @@ func Where(db *gorm.DB, p string, c string, v interface{}) *gorm.DB {
 	return db
 }
 
-func (builder *SQLBuilder) Order(r string) *SQLBuilder {
-	DB = Order(DB, r)
-	return builder
-}
-
 func Order(db *gorm.DB, r string) *gorm.DB {
 	if db.Statement != nil {
 		var orders map[string]string
@@ -139,29 +180,27 @@ func Order(db *gorm.DB, r string) *gorm.DB {
 				orders[p[0]] = p[1]
 			}
 		}
-		if orders != nil {
-			for k, v := range orders {
-				order := k + " " + v
-				db = db.Order(order)
-			}
+		for k, v := range orders {
+			order := k + " " + v
+			db = db.Order(order)
 		}
+
 	}
 
 	return db
 }
 
-func (builder *SQLBuilder) OrderSafety(k string, r string) *SQLBuilder {
-	DBS[k] = Order(DBS[k], r)
+func (builder *SQLBuilder) Order(k string, r string) *SQLBuilder {
+	builder.lock.Lock()
+	defer builder.lock.Unlock()
+	builder.dbs[k] = Order(builder.dbs[k], r)
 	return builder
 }
 
-func (builder *SQLBuilder) Page(page int, pageSize int) *SQLBuilder {
-	DB = Page(DB, page, pageSize)
-	return builder
-}
-
-func (builder *SQLBuilder) PageSafety(k string, page int, pageSize int) *SQLBuilder {
-	DBS[k] = Page(DBS[k], page, pageSize)
+func (builder *SQLBuilder) Page(k string, page int, pageSize int) *SQLBuilder {
+	builder.lock.Lock()
+	defer builder.lock.Unlock()
+	builder.dbs[k] = Page(builder.dbs[k], page, pageSize)
 	return builder
 }
 
@@ -174,25 +213,16 @@ func Page(db *gorm.DB, page int, pageSize int) *gorm.DB {
 	return db
 }
 
-func (builder *SQLBuilder) Go() (tx *gorm.DB) {
-	defer Close()
-	return DB
+func (builder *SQLBuilder) Go(k string) (tx *gorm.DB) {
+	builder.lock.RLock()
+	defer builder.lock.RUnlock()
+	defer Close(k, builder)
+	return builder.dbs[k]
 }
 
-func (builder *SQLBuilder) GoSafety(k string) (tx *gorm.DB) {
-	defer CloseSafety(k)
-	return DBS[k]
-}
-
-func Close() {
-	if DB != nil {
-		DB = nil
-	}
-}
-
-func CloseSafety(k string) {
-	if DBS[k] != nil {
-		DBS[k] = nil
+func Close(k string, builder *SQLBuilder) {
+	if builder.dbs[k] != nil {
+		builder.dbs[k] = nil
 	}
 }
 
@@ -217,6 +247,8 @@ func Like(v string, t int) string {
 	}
 }
 
-func (builder *SQLBuilder) Get() (tx *gorm.DB) {
-	return DB
+func (builder *SQLBuilder) Get(key string) (tx *gorm.DB) {
+	builder.lock.RLock()
+	defer builder.lock.RUnlock()
+	return builder.dbs[key]
 }

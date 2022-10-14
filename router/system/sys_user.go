@@ -16,7 +16,6 @@ func (s *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 		userRouter.POST("login", userApi.Login)
 		userRouter.POST("admin_register", userApi.Register)               // 管理员注册账号
 		userRouter.POST("changePassword", userApi.ChangePassword)         // 用户修改密码
-		userRouter.POST("setUserAuthority", userApi.SetUserAuthority)     // 设置用户权限
 		userRouter.DELETE("deleteUser", userApi.DeleteUser)               // 删除用户
 		userRouter.PUT("setUserInfo", userApi.SetUserInfo)                // 设置用户信息
 		userRouter.PUT("setSelfInfo", userApi.SetSelfInfo)                // 设置自身信息

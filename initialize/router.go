@@ -4,10 +4,12 @@ import (
 	"net/http"
 	"time"
 
+	auth "github.com/zhangrt/voyager1_core/auth/luna"
 	_ "github.com/zhangrt/voyager1_platform/docs"
 	"github.com/zhangrt/voyager1_platform/global"
 	middleware "github.com/zhangrt/voyager1_platform/middleware"
 	"github.com/zhangrt/voyager1_platform/router"
+	service "github.com/zhangrt/voyager1_platform/service/auth"
 
 	handler "github.com/zhangrt/voyager1_core/auth/luna/handler"
 
@@ -41,6 +43,7 @@ func Routers() *gin.Engine {
 	// 跨域，如需跨域可以打开下面的注释
 	Router.Use(middleware.Cors())        // 直接放行全部跨域请求
 	Router.Use(middleware.CorsByRules()) // 按照配置的规则放行跨域请求
+	Router.Use(middleware.GinRecovery(true))
 	global.GS_LOG.Info("Cors init")
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	global.GS_LOG.Info("register swagger handler")
@@ -62,32 +65,33 @@ func Routers() *gin.Engine {
 	{
 		testRouter.InitTestRouter(PublicGroup)     // 测试路由
 		demoRouter.InitFacilityRouter(PublicGroup) // 演示demo测试路由
-		// login
-		systemRouter.InitBaseRouter(PublicGroup) // 注册登录基础路由 不做鉴权
-		systemRouter.InitInitRouter(PublicGroup) // 初始化相关路由
+		systemRouter.InitBaseRouter(PublicGroup)   // 注册登录基础路由 不做鉴权
+		systemRouter.InitInitRouter(PublicGroup)   // 初始化相关路由
 
 	}
 
 	PrivateGroup := Router.Group(global.GS_CONFIG.System.Application)
 	// 权限管理 test模式下跳过
 	if global.GS_CONFIG.System.Mode != "test" {
-		PrivateGroup.Use(handler.JWTAuth()).Use(handler.CasbinHandler())
+		// 注册权限管理模块，注入实现类
+		auth.RegisterCasbin(&service.CasbinService{})                    // 注入Casbin实现类
+		auth.RegisterJwt(&service.JwtService{})                          // 注入Jwt实现类
+		auth.NewJWT().LoadAll()                                          // 加载黑名单
+		PrivateGroup.Use(handler.JWTAuth()).Use(handler.CasbinHandler()) // 注入拦截器
 	}
 
 	{
-		fileRouter.InitFileRouter(PrivateGroup)                  // 文件上传下载相关路由
-		systemRouter.InitSystemRouter(PrivateGroup)              // system相关路由
-		systemRouter.InitUserRouter(PrivateGroup)                // 用户相关路由
-		systemRouter.InitMenuRouter(PrivateGroup)                // 菜单相关路由
-		systemRouter.InitJwtRouter(PrivateGroup)                 // jwt相关路由
-		systemRouter.InitSysOperationRecordRouter(PrivateGroup)  // 操作记录
-		systemRouter.InitSysDictionaryRouter(PrivateGroup)       // 字典管理相关路由
-		systemRouter.InitSysDictionaryDetailRouter(PrivateGroup) // 字典详情相关路由
-		systemRouter.InitCasbinRouter(PrivateGroup)              // 权限相关路由
-		systemRouter.InitAuthorityRouter(PrivateGroup)           // 注册角色相关路由
-		systemRouter.InitAuthorityBtnRouterRouter(PrivateGroup)  // 注册角色按钮相关路由
-		systemRouter.InitWeatherrRouter(PrivateGroup)            // 天气信息相关路由
-		statisticsRouter.InitStatisticesRouter(PrivateGroup)     // 统计数据相关路由
+		fileRouter.InitFileRouter(PrivateGroup)              // 文件上传下载相关路由
+		systemRouter.InitSystemRouter(PrivateGroup)          // system相关路由
+		systemRouter.InitUserRouter(PrivateGroup)            // 用户相关路由
+		systemRouter.InitMenuRouter(PrivateGroup)            // 菜单相关路由
+		systemRouter.InitJwtRouter(PrivateGroup)             // jwt相关路由
+		systemRouter.InitOperationRecordRouter(PrivateGroup) // 操作记录
+		systemRouter.InitDictionaryRouter(PrivateGroup)      // 字典管理相关路由
+		systemRouter.InitCasbinRouter(PrivateGroup)          // 权限相关路由
+		systemRouter.InitAuthorityRouter(PrivateGroup)       // 注册角色相关路由
+		systemRouter.InitWeatherrRouter(PrivateGroup)        // 天气信息相关路由
+		statisticsRouter.InitStatisticesRouter(PrivateGroup) // 统计数据相关路由
 	}
 
 	InstallPlugin(PublicGroup, PrivateGroup) // 安装插件

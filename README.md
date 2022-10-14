@@ -65,6 +65,8 @@
 
 * `swag init`
 
+* `swag init --parseDependency --parseInternal 项目引入了基础组件需要识别外部依赖`
+
 * `import _ "go_code/docs" => router.go`
 
 * 通过 Addr/swagger/doc.json 地址可直接手动导入Apifox
@@ -169,13 +171,29 @@ pip install pre-commit，需要安装python环境
 
 ### 单元测试覆盖率
 
-* go test ./... -coverprofile=sonar/cov.out
+* go test ./... -coverprofile="sonar/cov.out"
 
 * sonar-scanner.bat -D"sonar.projectKey=test" -D"sonar.sources=." -D"sonar.host.url=<http://192.168.244.142:9100>" -D"sonar.login=ba6f1edcbf7aa20bf01c02306413f2947bc180ee"
 
 ## Websocket
 
 <https://github.com/gorilla/websocket>
+
+## 基础组件Core
+
+### 初始化配置
+
+Core.New().Config().Config.....
+
+### import相关组件 如Auth Cache 等
+
+* platform服务导入luna相关包 import "github.com/zhangrt/voyager1_core/auth/luna"
+
+* 业务服务导入star相关包 import "github.com/zhangrt/voyager1_core/auth/star"
+
+* 导入Cache相关包 import "github.com/zhangrt/voyager1_core/cache"
+
+* 以上诸如此类
 
 ## 学习扩展
 

@@ -14,12 +14,12 @@ func Test_GetWeatherInfo(t *testing.T) {
 
 	tests := [2]struct {
 		code    string
-		want    response.SysWeatherInfo
+		want    response.Vo1WeatherInfo
 		wantErr bool
 	}{
 		{
 			code: "101010100",
-			want: response.SysWeatherInfo{
+			want: response.Vo1WeatherInfo{
 				Code:        "101010100",
 				Temperature: "27.9",
 				Location:    "北京",
@@ -31,7 +31,7 @@ func Test_GetWeatherInfo(t *testing.T) {
 		},
 		{
 			code: "101220101",
-			want: response.SysWeatherInfo{
+			want: response.Vo1WeatherInfo{
 				Code:        "101220101",
 				Temperature: "20.5",
 				Location:    "合肥",

@@ -8,65 +8,65 @@ import (
 )
 
 //@author: [granty1](https://github.com/granty1)
-//@function: CreateSysOperationRecord
+//@function: CreateVo1OperationRecord
 //@description: 创建记录
-//@param: sysOperationRecord model.SysOperationRecord
+//@param: Vo1OperationRecord model.Vo1OperationRecord
 //@return: err error
 
 type OperationRecordService struct{}
 
-func (operationRecordService *OperationRecordService) CreateSysOperationRecord(sysOperationRecord system.SysOperationRecord) (err error) {
-	err = global.GS_DB.Create(&sysOperationRecord).Error
+func (operationRecordService *OperationRecordService) CreateVo1OperationRecord(Vo1OperationRecord system.Vo1OperationRecord) (err error) {
+	err = global.GS_DB.Create(&Vo1OperationRecord).Error
 	return err
 }
 
 //@author: [granty1](https://github.com/granty1)
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: DeleteSysOperationRecordByIds
+//@function: DeleteVo1OperationRecordByIds
 //@description: 批量删除记录
 //@param: ids request.IdsReq
 //@return: err error
 
-func (operationRecordService *OperationRecordService) DeleteSysOperationRecordByIds(ids request.IdsReq) (err error) {
-	err = global.GS_DB.Delete(&[]system.SysOperationRecord{}, "id in (?)", ids.Ids).Error
+func (operationRecordService *OperationRecordService) DeleteVo1OperationRecordByIds(ids request.IdsReq) (err error) {
+	err = global.GS_DB.Delete(&[]system.Vo1OperationRecord{}, "id in (?)", ids.Ids).Error
 	return err
 }
 
 //@author: [granty1](https://github.com/granty1)
-//@function: DeleteSysOperationRecord
+//@function: DeleteVo1OperationRecord
 //@description: 删除操作记录
-//@param: sysOperationRecord model.SysOperationRecord
+//@param: Vo1OperationRecord model.Vo1OperationRecord
 //@return: err error
 
-func (operationRecordService *OperationRecordService) DeleteSysOperationRecord(sysOperationRecord system.SysOperationRecord) (err error) {
-	err = global.GS_DB.Delete(&sysOperationRecord).Error
+func (operationRecordService *OperationRecordService) DeleteVo1OperationRecord(Vo1OperationRecord system.Vo1OperationRecord) (err error) {
+	err = global.GS_DB.Delete(&Vo1OperationRecord).Error
 	return err
 }
 
 //@author: [granty1](https://github.com/granty1)
-//@function: DeleteSysOperationRecord
+//@function: DeleteVo1OperationRecord
 //@description: 根据id获取单条操作记录
 //@param: id uint
-//@return: sysOperationRecord system.SysOperationRecord, err error
+//@return: Vo1OperationRecord system.Vo1OperationRecord, err error
 
-func (operationRecordService *OperationRecordService) GetSysOperationRecord(id uint) (sysOperationRecord system.SysOperationRecord, err error) {
-	err = global.GS_DB.Where("id = ?", id).First(&sysOperationRecord).Error
+func (operationRecordService *OperationRecordService) GetVo1OperationRecord(id uint) (Vo1OperationRecord system.Vo1OperationRecord, err error) {
+	err = global.GS_DB.Where("id = ?", id).First(&Vo1OperationRecord).Error
 	return
 }
 
 //@author: [granty1](https://github.com/granty1)
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetSysOperationRecordInfoList
+//@function: GetVo1OperationRecordInfoList
 //@description: 分页获取操作记录列表
-//@param: info systemReq.SysOperationRecordSearch
+//@param: info systemReq.Vo1OperationRecordSearch
 //@return: list interface{}, total int64, err error
 
-func (operationRecordService *OperationRecordService) GetSysOperationRecordInfoList(info systemReq.SysOperationRecordSearch) (list interface{}, total int64, err error) {
+func (operationRecordService *OperationRecordService) GetVo1OperationRecordInfoList(info systemReq.Vo1OperationRecordSearch) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GS_DB.Model(&system.SysOperationRecord{})
-	var sysOperationRecords []system.SysOperationRecord
+	db := global.GS_DB.Model(&system.Vo1OperationRecord{})
+	var Vo1OperationRecords []system.Vo1OperationRecord
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.Method != "" {
 		db = db.Where("method = ?", info.Method)
@@ -81,6 +81,6 @@ func (operationRecordService *OperationRecordService) GetSysOperationRecordInfoL
 	if err != nil {
 		return
 	}
-	err = db.Order("id desc").Limit(limit).Offset(offset).Preload("User").Find(&sysOperationRecords).Error
-	return sysOperationRecords, total, err
+	err = db.Order("id desc").Limit(limit).Offset(offset).Preload("User").Find(&Vo1OperationRecords).Error
+	return Vo1OperationRecords, total, err
 }
