@@ -19,8 +19,8 @@ type Vo1OperationRecord struct {
 	ErrorMessage string        `json:"error_message" form:"error_message" gorm:"column:error_message;comment:错误信息"`  // 错误信息
 	Body         string        `json:"body" form:"body" gorm:"type:text;column:body;comment:请求Body"`                 // 请求Body
 	Resp         string        `json:"resp" form:"resp" gorm:"type:text;column:resp;comment:响应Body"`                 // 响应Body
-	UserID       int           `json:"user_id" form:"user_id" gorm:"column:user_id;comment:用户id"`                    // 用户id
-	User         Vo1Person     `json:"user"`
+	PersonId     int           `json:"person_id" form:"user_id" gorm:"column:user_id;comment:用户id"`                  // 用户id
+	Person       Vo1Person     `json:"person"`
 }
 
 func (Vo1OperationRecord) TableName() string {

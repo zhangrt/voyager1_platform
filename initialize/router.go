@@ -43,6 +43,7 @@ func Routers() *gin.Engine {
 	// 跨域，如需跨域可以打开下面的注释
 	Router.Use(middleware.Cors())        // 直接放行全部跨域请求
 	Router.Use(middleware.CorsByRules()) // 按照配置的规则放行跨域请求
+	Router.Use(middleware.GinRecovery(true))
 	global.GS_LOG.Info("Cors init")
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	global.GS_LOG.Info("register swagger handler")
