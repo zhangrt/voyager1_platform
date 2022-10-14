@@ -49,7 +49,7 @@ func (operationRecordService *OperationRecordService) DeleteVo1OperationRecord(V
 //@param: id uint
 //@return: Vo1OperationRecord system.Vo1OperationRecord, err error
 
-func (operationRecordService *OperationRecordService) GetVo1OperationRecord(id uint) (Vo1OperationRecord system.Vo1OperationRecord, err error) {
+func (operationRecordService *OperationRecordService) GetVo1OperationRecord(id string) (Vo1OperationRecord system.Vo1OperationRecord, err error) {
 	err = global.GS_DB.Where("id = ?", id).First(&Vo1OperationRecord).Error
 	return
 }

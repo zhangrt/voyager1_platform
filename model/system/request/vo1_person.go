@@ -1,6 +1,9 @@
 package request
 
-import model "github.com/zhangrt/voyager1_platform/model/system"
+import (
+	uuid "github.com/satori/go.uuid"
+	model "github.com/zhangrt/voyager1_platform/model/system"
+)
 
 // User register structure
 type Register struct {
@@ -37,12 +40,12 @@ type SetUserAuth struct {
 
 // Modify  user's auth structure
 type SetUserAuthorities struct {
-	ID      uint
+	ID      string
 	RoleIds []string `json:"roleIds"` // 角色ID
 }
 
 type ChangeUserInfo struct {
-	ID           uint            `gorm:"primarykey"`                                                                                                                  // 主键ID
+	ID           uuid.UUID       `gorm:"primarykey"`                                                                                                                  // 主键ID
 	Name         string          `json:"name" gorm:"default:系统用户;comment:用户昵称"`                                                                                       // 用户昵称
 	Phone        string          `json:"phone"  gorm:"comment:用户手机号"`                                                                                                 // 用户角色ID
 	AuthorityIds []string        `json:"authorityIds" gorm:"-"`                                                                                                       // 角色ID

@@ -39,12 +39,12 @@ func (b *UserApi) Login(c *gin.Context) {
 	// if store.Verify(l.CaptchaId, l.Captcha, true) {
 	u := &system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
-			Account:        l.Identification,
-			Phone:          l.Identification,
-			Email:          l.Identification,
-			Password:       l.Password,
-			OrganizationId: l.OrganizationId,
+			Account:  l.Identification,
+			Phone:    l.Identification,
+			Email:    l.Identification,
+			Password: l.Password,
 		},
+		OrganizationId: l.OrganizationId,
 	}
 	if user, err := userService.Login(u); err != nil {
 		global.GS_LOG.Error("登陆失败! 用户名不存在或者密码错误!", zap.Error(err))
@@ -61,14 +61,18 @@ func (b *UserApi) Login(c *gin.Context) {
 func (b *UserApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 	j := &auth.TOKEN{SigningKey: []byte(global.GS_CONFIG.JWT.SigningKey)} // 唯一签名
 	claims := j.CreateClaims(auth.BaseClaims{
-		UUID:           user.UUID,
-		ID:             user.ID,
-		Name:           user.Name,
-		Account:        user.Account,
-		RoleIds:        user.RoleIds,
-		Roles:          user.Roles,
-		DepartMentId:   user.DepartMentId,
-		DepartMentName: user.DepartMentName,
+		ID:              user.ID,
+		Name:            user.Name,
+		Account:         user.Account,
+		Phone:           user.Phone,
+		Email:           user.Email,
+		RoleIds:         user.RoleIds,
+		Roles:           user.Roles,
+		DepartMentIds:   user.DepartmentIds,
+		DepartMents:     user.Departments,
+		OrganizationId:  user.OrganizationId,
+		OrganizationIds: user.OrganizationIds,
+		Organizations:   user.Organizations,
 	})
 	token, err := j.CreateToken(claims)
 	if err != nil {
@@ -263,7 +267,7 @@ func (b *UserApi) DeleteUser(c *gin.Context) {
 		return
 	}
 	jwtId := auth.GetUserID(c)
-	if jwtId == uint(reqId.ID) {
+	if jwtId == reqId.ID {
 		response.FailWithMessage("删除失败, 自杀失败", c)
 		return
 	}
@@ -292,7 +296,7 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 	}
 
 	if len(user.AuthorityIds) != 0 {
-		err := userService.SetUserAuthorities(user.ID, user.AuthorityIds)
+		err := userService.SetUserAuthorities(user.ID.String(), user.AuthorityIds)
 		if err != nil {
 			global.GS_LOG.Error("设置失败!", zap.Error(err))
 			response.FailWithMessage("设置失败", c)
@@ -301,12 +305,11 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 
 	if err := userService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
-			ID:       user.ID,
-			Name:     user.Name,
-			Avatar:   user.Avatar,
-			Phone:    user.Phone,
-			Email:    user.Email,
-			SideMode: user.SideMode,
+			ID:     user.ID,
+			Name:   user.Name,
+			Avatar: user.Avatar,
+			Phone:  user.Phone,
+			Email:  user.Email,
 		},
 	}); err != nil {
 		global.GS_LOG.Error("设置失败!", zap.Error(err))
@@ -327,15 +330,14 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 func (b *UserApi) SetSelfInfo(c *gin.Context) {
 	var user systemReq.ChangeUserInfo
 	_ = c.ShouldBindJSON(&user)
-	user.ID = auth.GetUserID(c)
+	user.ID = auth.GetUserUUID(c)
 	if err := userService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
-			ID:       user.ID,
-			Name:     user.Name,
-			Avatar:   user.Avatar,
-			Phone:    user.Phone,
-			Email:    user.Email,
-			SideMode: user.SideMode,
+			ID:     user.ID,
+			Name:   user.Name,
+			Avatar: user.Avatar,
+			Phone:  user.Phone,
+			Email:  user.Email,
 		},
 	}); err != nil {
 		global.GS_LOG.Error("设置失败!", zap.Error(err))
@@ -372,7 +374,7 @@ func (b *UserApi) GetUserInfo(c *gin.Context) {
 func (b *UserApi) ResetPassword(c *gin.Context) {
 	var user system.Vo1Person
 	_ = c.ShouldBindJSON(&user)
-	if err := userService.ResetPassword(user.ID); err != nil {
+	if err := userService.ResetPassword(user.ID.String()); err != nil {
 		global.GS_LOG.Error("重置失败!", zap.Error(err))
 		response.FailWithMessage("重置失败"+err.Error(), c)
 	} else {

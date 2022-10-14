@@ -29,7 +29,7 @@ func (userService *UserService) Register(u system.Vo1Person) (userInter system.V
 	}
 	// 否则 附加uuid 密码hash加密 注册
 	u.Password = utils.BcryptHash(u.Password)
-	u.UUID = uuid.NewV4()
+	u.ID = uuid.NewV4()
 	err = global.GS_DB.Create(&u).Error
 	return u, err
 }
@@ -131,7 +131,7 @@ func (userService *UserService) GetUserInfoList(info request.PageInfo) (list int
 //@param: id uint, authorityIds []string
 //@return: err error
 
-func (userService *UserService) SetUserAuthorities(id uint, authorityIds []string) (err error) {
+func (userService *UserService) SetUserAuthorities(id string, authorityIds []string) (err error) {
 	return global.GS_DB.Transaction(func(tx *gorm.DB) error {
 		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
 		if TxErr != nil {
@@ -162,7 +162,7 @@ func (userService *UserService) SetUserAuthorities(id uint, authorityIds []strin
 //@param: id float64
 //@return: err error
 
-func (userService *UserService) DeleteUser(id int) (err error) {
+func (userService *UserService) DeleteUser(id string) (err error) {
 	var user system.Vo1Person
 	err = global.GS_DB.Where("id = ?", id).Delete(&user).Error
 	if err != nil {
@@ -230,7 +230,7 @@ func (userService *UserService) FindUserByUuid(uuid string) (user *system.Vo1Per
 //@param: ID uint
 //@return: err error
 
-func (userService *UserService) ResetPassword(ID uint) (err error) {
+func (userService *UserService) ResetPassword(ID string) (err error) {
 	err = global.GS_DB.Model(&system.Vo1Person{}).Where("id = ?", ID).Update("password", utils.BcryptHash("123456")).Error
 	return err
 }
