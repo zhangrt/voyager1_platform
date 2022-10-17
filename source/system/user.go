@@ -65,7 +65,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 				Name:     "超级管理员",
 				Avatar:   "https://img1.baidu.com/it/u=2838100141,2488760005&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=9f7622bd7a5ab6abda1ec1de3e8797af",
 				Phone:    "17611111111",
-				Email:    "333333333@qq.com",
+				Email:    "2333333333@qq.com",
 			},
 		},
 		{
@@ -83,7 +83,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 				Name:     "ZHOUJIAJUN",
 				Avatar:   "https://img1.baidu.com/it/u=2838100141,2488760005&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=9f7622bd7a5ab6abda1ec1de3e8797af",
 				Phone:    "18966668888",
-				Email:    "zhoujiajun@github.com/zhangrt/voyager1_platform.com",
+				Email:    "zhoujiajun@gsafety.com",
 			},
 		},
 		{
@@ -101,7 +101,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 				Name:     "BIG Monster",
 				Avatar:   "https://img0.baidu.com/it/u=4060770951,4069855872&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1662483600&t=92a8aac26b4757fe849a8a10aaf31d87",
 				Phone:    "17611111111",
-				Email:    "333333333@qq.com",
+				Email:    "1333333333@qq.com",
 			},
 		},
 	}

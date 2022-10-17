@@ -848,10 +848,6 @@ definitions:
     type: object
   system.Vo1Menu:
     properties:
-      authoritys:
-        items:
-          $ref: '#/definitions/system.Vo1Role'
-        type: array
       children:
         items:
           $ref: '#/definitions/system.Vo1Menu'
@@ -891,6 +887,10 @@ definitions:
       parentId:
         description: 父菜单ID
         type: string
+      roles:
+        items:
+          $ref: '#/definitions/system.Vo1Role'
+        type: array
       serialNo:
         description: 排序标记 0、1、2、3、4、5 ...
         type: integer
@@ -1603,32 +1603,6 @@ paths:
       summary: 更新角色信息
       tags:
       - Authority
-  /base/login:
-    post:
-      parameters:
-      - description: 用户名, 密码, 验证码
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.Login'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 返回包括用户信息,token,过期时间
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.LoginResponse'
-                msg:
-                  type: string
-              type: object
-      summary: 用户登录
-      tags:
-      - Base
   /casbin/UpdateCasbin:
     post:
       consumes:
@@ -3136,6 +3110,219 @@ paths:
       summary: 设置用户信息
       tags:
       - Vo1Person
+  /v1/voyager/auth/updateCasbin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 权限id, 权限模型列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/luna.CasbinInReceive'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新角色api权限
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 更新角色api权限
+      tags:
+      - Casbin
+  /v1/voyager1/auth/getPolicyPathByAuthorityId:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 权限id, 权限模型列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/luna.CasbinInReceive'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取权限列表,返回包括casbin详情列表
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PolicyPathResponse'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取权限列表
+      tags:
+      - Casbin
+  /v1/voyager1/auth/jsonInBlacklist:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: jwt加入黑名单
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: jwt加入黑名单
+      tags:
+      - Jwt
+  /v1/voyager1/changePassword:
+    post:
+      parameters:
+      - description: 用户名, 原密码, 新密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ChangePasswordStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户修改密码
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 用户修改密码
+      tags:
+      - Vo1Person
+  /v1/voyager1/login:
+    post:
+      parameters:
+      - description: 用户名, 密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回包括用户信息,token,过期时间
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LoginResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 用户登录
+      tags:
+      - Base
+  /v1/voyager1/register:
+    post:
+      parameters:
+      - description: 用户名, 昵称, 密码, 角色ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户注册账号,返回包括用户信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Vo1PersonResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 用户注册账号
+      tags:
+      - Vo1Person
+  /v1/voyager1/resetPassword:
+    post:
+      parameters:
+      - description: ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.Vo1Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 重置用户密码
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 重置用户密码
+      tags:
+      - Vo1Person
+  /v1/voyager1/role/getMenusByRoleIds:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 权限ids
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetAuthorityId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建角色,返回包括系统角色详情
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Vo1MenusResponse'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 通过用户角色信息获取菜单列表
+      tags:
+      - Authority
   /weather/getInfo:
     get:
       parameters:

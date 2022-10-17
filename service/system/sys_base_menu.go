@@ -25,8 +25,8 @@ func (baseMenuService *BaseMenuService) DeleteBaseMenu(id string) (err error) {
 		if err != nil {
 			global.GS_LOG.Error(err.Error())
 		}
-		if len(menu.SysAuthoritys) > 0 {
-			err = global.GS_DB.Model(&menu).Association("SysAuthoritys").Delete(&menu.SysAuthoritys)
+		if len(menu.Roles) > 0 {
+			err = global.GS_DB.Model(&menu).Association("SysAuthoritys").Delete(&menu.Roles)
 		} else {
 			err = db.Error
 			if err != nil {

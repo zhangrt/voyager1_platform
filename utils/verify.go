@@ -10,6 +10,7 @@ var (
 	PageInfoVerify         = Rules{"Page": {NotEmpty()}, "PageSize": {NotEmpty()}}
 	CustomerVerify         = Rules{"CustomerName": {NotEmpty()}, "CustomerPhoneData": {NotEmpty()}}
 	AuthorityVerify        = Rules{"AuthorityId": {NotEmpty()}, "AuthorityName": {NotEmpty()}, "ParentId": {NotEmpty()}}
+	GetAuthorityIdVerify   = Rules{"RoleIds": {NotEmpty()}}
 	AuthorityIdVerify      = Rules{"AuthorityId": {NotEmpty()}}
 	OldAuthorityVerify     = Rules{"OldAuthorityId": {NotEmpty()}}
 	ChangePasswordVerify   = Rules{"Identification": {NotEmpty()}, "Password": {NotEmpty()}, "NewPassword": {NotEmpty()}}
