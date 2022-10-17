@@ -295,8 +295,8 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 		return
 	}
 
-	if len(user.AuthorityIds) != 0 {
-		err := userService.SetUserAuthorities(user.ID.String(), user.AuthorityIds)
+	if len(user.RoleIds) != 0 {
+		err := userService.SetUserAuthorities(user.ID.String(), user.RoleIds)
 		if err != nil {
 			global.GS_LOG.Error("设置失败!", zap.Error(err))
 			response.FailWithMessage("设置失败", c)

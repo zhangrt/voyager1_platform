@@ -46,7 +46,7 @@ func (authorityService *AuthorityService) CopyAuthority(copyInfo response.Vo1Rol
 	if !errors.Is(global.GS_DB.Where("id = ?", copyInfo.Role.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
 		return authority, ErrRoleExistence
 	}
-	copyInfo.Role.Children = []system.Vo1Role{}
+	// copyInfo.Role.Children = []system.Vo1Role{}
 	menus, err := MenuServiceApp.GetMenuAuthority(&request.GetAuthorityId{AuthorityId: copyInfo.OldRoleId})
 	if err != nil {
 		return
@@ -142,11 +142,11 @@ func (authorityService *AuthorityService) GetAuthorityInfoList(info request.Page
 	err = db.Where("parent_id = ?", "0").Count(&total).Error
 	var authority []system.Vo1Role
 	err = db.Limit(limit).Offset(offset).Preload("DataAuthorityId").Where("parent_id = ?", "0").Find(&authority).Error
-	if len(authority) > 0 {
-		for k := range authority {
-			err = authorityService.findChildrenAuthority(&authority[k])
-		}
-	}
+	// if len(authority) > 0 {
+	// 	for k := range authority {
+	// 		err = authorityService.findChildrenAuthority(&authority[k])
+	// 	}
+	// }
 	return authority, total, err
 }
 
@@ -169,8 +169,7 @@ func (authorityService *AuthorityService) GetAuthorityInfo(auth system.Vo1Role) 
 
 func (authorityService *AuthorityService) SetDataAuthority(auth system.Vo1Role) error {
 	var s system.Vo1Role
-	global.GS_DB.Preload("DataAuthorityId").First(&s, "id = ?", auth.ID)
-	err := global.GS_DB.Model(&s).Association("DataAuthorityId").Replace(&auth.DataRoleId)
+	err := global.GS_DB.Model(&s).First(&system.Vo1Role{}).Updates(auth).Error
 	return err
 }
 
@@ -187,18 +186,18 @@ func (authorityService *AuthorityService) SetMenuAuthority(auth *system.Vo1Role)
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: findChildrenAuthority
-//@description: 查询子角色
-//@param: authority *model.Vo1Role
-//@return: err error
+// //@author: [piexlmax](https://github.com/piexlmax)
+// //@function: findChildrenAuthority
+// //@description: 查询子角色
+// //@param: authority *model.Vo1Role
+// //@return: err error
 
-func (authorityService *AuthorityService) findChildrenAuthority(authority *system.Vo1Role) (err error) {
-	err = global.GS_DB.Preload("DataAuthorityId").Where("parent_id = ?", authority.ID).Find(&authority.Children).Error
-	if len(authority.Children) > 0 {
-		for k := range authority.Children {
-			err = authorityService.findChildrenAuthority(&authority.Children[k])
-		}
-	}
-	return err
-}
+// func (authorityService *AuthorityService) findChildrenAuthority(authority *system.Vo1Role) (err error) {
+// 	err = global.GS_DB.Preload("DataAuthorityId").Where("parent_id = ?", authority.ID).Find(&authority.Children).Error
+// 	if len(authority.Children) > 0 {
+// 		for k := range authority.Children {
+// 			err = authorityService.findChildrenAuthority(&authority.Children[k])
+// 		}
+// 	}
+// 	return err
+// }

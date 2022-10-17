@@ -15,7 +15,7 @@ import (
 type Vo1Menu struct {
 	global.GS_BASE_MODEL_ID_STRING
 	// MenuId        uint                   `gorm:"column:menu_id" json:"menu_id,string" form:"menu_id"` //菜单ID
-	OrganId       string    `json:"organId" gorm:"comment:角色ID"`
+	// OrganId       string    `json:"organId" gorm:"comment:组织机构ID"`
 	RoleId        string    `json:"-" gorm:"comment:角色ID"`
 	MenuLevel     uint      `json:"-"`
 	ParentId      string    `json:"parentId" gorm:"comment:父菜单ID"`     // 父菜单ID

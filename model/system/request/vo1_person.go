@@ -20,7 +20,7 @@ type Register struct {
 type Login struct {
 	Identification string `json:"identification"` // 身份：用户名|手机号|邮箱
 	Password       string `json:"password"`       // 密码
-	OrganizationId string `json:OrganizationId`
+	OrganizationId string `json:"OrganizationId"`
 	// Captcha   string `json:"captcha"`   // 验证码
 	// CaptchaId string `json:"captchaId"` // 验证码ID
 }
@@ -34,7 +34,7 @@ type ChangePasswordStruct struct {
 
 // Modify  user's auth structure
 type SetUserAuth struct {
-	RoleId  string   `json:roleId`
+	RoleId  string   `json:"roleId"`
 	RoleIds []string `json:"roleIds"` // 角色ID
 }
 
@@ -45,12 +45,11 @@ type SetUserAuthorities struct {
 }
 
 type ChangeUserInfo struct {
-	ID           uuid.UUID       `gorm:"primarykey"`                                                                                                                  // 主键ID
-	Name         string          `json:"name" gorm:"default:系统用户;comment:用户昵称"`                                                                                       // 用户昵称
-	Phone        string          `json:"phone"  gorm:"comment:用户手机号"`                                                                                                 // 用户角色ID
-	AuthorityIds []string        `json:"authorityIds" gorm:"-"`                                                                                                       // 角色ID
-	Email        string          `json:"email"  gorm:"comment:用户邮箱"`                                                                                                  // 用户邮箱
-	Avatar       string          `json:"avatar" gorm:"default:https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg;comment:用户头像"` // 用户头像
-	SideMode     string          `json:"sideMode"  gorm:"comment:用户侧边主题"`                                                                                             // 用户侧边主题
-	Authorities  []model.Vo1Role `json:"-" gorm:"many2many:sys_user_authority;"`
+	ID      uuid.UUID       `gorm:"primarykey"`                                                                                                                  // 主键ID
+	Name    string          `json:"name" gorm:"default:系统用户;comment:用户昵称"`                                                                                       // 用户昵称
+	Phone   string          `json:"phone"  gorm:"comment:用户手机号"`                                                                                                 // 用户角色ID
+	RoleIds []string        `json:"roleIds" gorm:"-"`                                                                                                            // 角色ID
+	Email   string          `json:"email"  gorm:"comment:用户邮箱"`                                                                                                  // 用户邮箱
+	Avatar  string          `json:"avatar" gorm:"default:https://c-ssl.dtstatic.com/uploads/item/201901/19/20190119105005_uJPTs.thumb.1000_0.jpeg;comment:用户头像"` // 用户头像
+	Roles   []model.Vo1Role `json:"-" gorm:"many2many:vo1_person_mtm_role;"`
 }

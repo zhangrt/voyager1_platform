@@ -7,8 +7,8 @@ import (
 
 // Add menu authority info structure
 type AddMenuAuthorityInfo struct {
-	Menus       []system.Vo1Menu `json:"menus"`
-	AuthorityId string           `json:"authorityId"` // 角色ID
+	Menus  []system.Vo1Menu `json:"menus"`
+	RoleId string           `json:"roleId"` // 角色ID
 }
 
 func DefaultMenu() []system.Vo1Menu {
