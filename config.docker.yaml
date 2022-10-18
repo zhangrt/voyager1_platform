@@ -18,8 +18,8 @@ casbin:
 # jwt configuration
 jwt:
   signing-key: 'gsafety'
-  expires-time: 604800
-  buffer-time: 86400
+  expires-time: 180
+  buffer-time: 120
   issuer: 'gsafety'
 
 # email configuration
@@ -45,6 +45,20 @@ redis:
   - '172.30.0.105:10306'
   username: ''
   password: ''
+
+cache:
+  addr: '192.168.244.142:6379'
+  addrs:
+  - '172.30.0.28:10301'
+  - '172.30.0.28:10302'
+  - '172.30.0.222:10303'
+  - '172.30.0.222:10304'
+  - '172.30.0.105:10305'
+  - '172.30.0.105:10306'
+  username: ''
+  password: ''
+  master-name: ''
+  options: '0' # 0单机 1集群
 
 # service-mesh 核心配置 host & port
 service-mesh:
@@ -90,7 +104,7 @@ system:
   cache-type: 'redis'   # 缓存组件类型
   oss-type: 'minio'
   root-path: ""
-  use-multipoint: true
+  use-multipoint: true # 多点登录
   # test develop release & develop skip authenticate & test skip all auth
   mode: "release"
   time-zone: "Asia/Shanghai"
@@ -99,6 +113,16 @@ system:
   #  IP限制一个小时
   iplimit-time: 3600
 
+grpc:
+  server:
+    network: "tcp"
+    host: "127.0.0.1"
+    port: 2567
+  client:
+    host: "127.0.0.1"
+    port: 2567
+
+# 此处配置已迁移至./conf/zinx.json
 zinx:
  # 服务器应用名称
   name: 'luna'
@@ -140,13 +164,13 @@ cockroach:
   path: '192.168.244.142'
   port: '26257'
   config: 'TimeZone=Asia/Shanghai'
-  db-name: 'test'
+  db-name: 'test2'
   username: 'root'
   password: '123123'
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: "true"
-  log-zap: false
+  log-zap: true
 
 mysql:
   path: ''

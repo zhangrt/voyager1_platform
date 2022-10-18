@@ -48,6 +48,13 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		return ctx, system.ErrMissingDBContext
 	}
 	entities := []adapter.CasbinRule{
+		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/v1/voyager1/login", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/v1/voyager1/logout", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/v1/voyager1/register", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/v1/voyager1/auth/getMenusByRoleIds", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/v1/voyager1/auth/updateCasbin", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/v1/voyager1/auth/jsonInBlacklist", V2: "POST"},
+
 		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/base/login", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: global.GS_CONFIG.System.Application + "/user/admin_register", V2: "POST"},
 

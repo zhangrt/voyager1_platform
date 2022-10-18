@@ -1,4 +1,4 @@
-package system
+package voyager1
 
 import (
 	systemRes "github.com/zhangrt/voyager1_platform/model/system/response"
@@ -21,7 +21,7 @@ type CasbinApi struct{}
 // @Produce application/json
 // @Param data body luna.CasbinInReceive true "权限id, 权限模型列表"
 // @Success 200 {object} response.Response{msg=string} "更新角色api权限"
-// @Router /casbin/UpdateCasbin [post]
+// @Router /v1/voyager/auth/updateCasbin [post]
 func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 	var req luna.CasbinInReceive
 	_ = c.ShouldBindJSON(&req)
@@ -45,7 +45,7 @@ func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 // @Produce application/json
 // @Param data body luna.CasbinInReceive true "权限id, 权限模型列表"
 // @Success 200 {object} response.Response{data=systemRes.PolicyPathResponse,msg=string} "获取权限列表,返回包括casbin详情列表"
-// @Router /casbin/getPolicyPathByAuthorityId [post]
+// @Router /v1/voyager1/auth/getPolicyPathByAuthorityId [post]
 func (cas *CasbinApi) GetPolicyPathByAuthorityId(c *gin.Context) {
 	var req luna.CasbinInReceive
 	_ = c.ShouldBindJSON(&req)

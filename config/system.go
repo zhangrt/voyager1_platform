@@ -9,8 +9,8 @@ type System struct {
 	DbType        string `mapstructure:"db-type" json:"db-type" yaml:"db-type"`                      // 数据库类型
 	OssType       string `mapstructure:"oss-type" json:"oss-type" yaml:"oss-type"`                   // Oss类型
 	Mode          string `mapstructure:"mode" json:"mode" yaml:"mode"`                               // 环境值
-	UseMultipoint bool   `mapstructure:"use-multipoint" json:"use-multipoint" yaml:"use-multipoint"` // 多点登录拦截
-	UseCache      bool   `mapstructure:"use-cache" json:"use-cache" yaml:"use-cache"`                // 使用redis
+	UseMultipoint bool   `mapstructure:"use-multipoint" json:"use-multipoint" yaml:"use-multipoint"` // 多点登录
+	UseCache      bool   `mapstructure:"use-cache" json:"use-cache" yaml:"use-cache"`                // 使用cache
 	UseDatabase   bool   `mapstructure:"use-database" json:"use-database" yaml:"use-database"`       // 使用数据库
 	AutoMigrate   bool   `mapstructure:"auto-migrate" json:"auto-migrate" yaml:"auto-migrate"`       // 自动建表
 	TimeZone      string `mapstructure:"time-zone" json:"time-zone" yaml:"time-zone"`                // 时区

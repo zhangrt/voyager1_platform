@@ -8,7 +8,7 @@ import (
 	_ "github.com/zhangrt/voyager1_platform/docs"
 	"github.com/zhangrt/voyager1_platform/global"
 	middleware "github.com/zhangrt/voyager1_platform/middleware"
-	"github.com/zhangrt/voyager1_platform/router"
+	routers "github.com/zhangrt/voyager1_platform/router"
 	service "github.com/zhangrt/voyager1_platform/service/auth"
 
 	handler "github.com/zhangrt/voyager1_core/auth/luna/handler"
@@ -34,11 +34,12 @@ func Routers() *gin.Engine {
 	}
 
 	Router := gin.Default()
-	testRouter := router.RouterGroupApp.Test
-	fileRouter := router.RouterGroupApp.File
-	systemRouter := router.RouterGroupApp.System
-	demoRouter := router.RouterGroupApp.Demo
-	statisticsRouter := router.RouterGroupApp.Statistics
+	testRouter := routers.RouterGroupApp.Test
+	fileRouter := routers.RouterGroupApp.File
+	systemRouter := routers.RouterGroupApp.System
+	demoRouter := routers.RouterGroupApp.Demo
+	statisticsRouter := routers.RouterGroupApp.Statistics
+	voyager1Router := routers.RouterGroupApp.Voyager1
 
 	// 跨域，如需跨域可以打开下面的注释
 	Router.Use(middleware.Cors())        // 直接放行全部跨域请求
@@ -63,10 +64,18 @@ func Routers() *gin.Engine {
 		})
 	}
 	{
-		testRouter.InitTestRouter(PublicGroup)     // 测试路由
-		demoRouter.InitFacilityRouter(PublicGroup) // 演示demo测试路由
-		systemRouter.InitBaseRouter(PublicGroup)   // 注册登录基础路由 不做鉴权
-		systemRouter.InitInitRouter(PublicGroup)   // 初始化相关路由
+		// voyager public 路由 无权限验证
+		voyager1Router.InitVo1BaseRouter(PublicGroup)
+
+		// ------------------ 历史路由------------------
+		// 该路由注册代码块后续可以去除
+		{
+			testRouter.InitTestRouter(PublicGroup)     // 测试路由
+			demoRouter.InitFacilityRouter(PublicGroup) // 演示demo测试路由
+			systemRouter.InitBaseRouter(PublicGroup)   // 注册登录基础路由 不做鉴权
+			systemRouter.InitInitRouter(PublicGroup)   // 初始化相关路由
+		}
+		// ----------------------------------------------------------------
 
 	}
 
@@ -81,17 +90,26 @@ func Routers() *gin.Engine {
 	}
 
 	{
-		fileRouter.InitFileRouter(PrivateGroup)              // 文件上传下载相关路由
-		systemRouter.InitSystemRouter(PrivateGroup)          // system相关路由
-		systemRouter.InitUserRouter(PrivateGroup)            // 用户相关路由
-		systemRouter.InitMenuRouter(PrivateGroup)            // 菜单相关路由
-		systemRouter.InitJwtRouter(PrivateGroup)             // jwt相关路由
-		systemRouter.InitOperationRecordRouter(PrivateGroup) // 操作记录
-		systemRouter.InitDictionaryRouter(PrivateGroup)      // 字典管理相关路由
-		systemRouter.InitCasbinRouter(PrivateGroup)          // 权限相关路由
-		systemRouter.InitAuthorityRouter(PrivateGroup)       // 注册角色相关路由
-		systemRouter.InitWeatherrRouter(PrivateGroup)        // 天气信息相关路由
-		statisticsRouter.InitStatisticesRouter(PrivateGroup) // 统计数据相关路由
+		// voyager private 路由 有权限验证
+		voyager1Router.InitVo1RoleRouter(PrivateGroup) // 角色路由
+		voyager1Router.InitVo1AuthRouter(PrivateGroup) // 权限相关路由
+
+		// ------------------ 历史路由------------------
+		// 该路由注册代码块后续可以去除
+		{
+			fileRouter.InitFileRouter(PrivateGroup)              // 文件上传下载相关路由
+			systemRouter.InitSystemRouter(PrivateGroup)          // system相关路由
+			systemRouter.InitUserRouter(PrivateGroup)            // 用户相关路由
+			systemRouter.InitMenuRouter(PrivateGroup)            // 菜单相关路由
+			systemRouter.InitJwtRouter(PrivateGroup)             // jwt相关路由
+			systemRouter.InitOperationRecordRouter(PrivateGroup) // 操作记录
+			systemRouter.InitDictionaryRouter(PrivateGroup)      // 字典管理相关路由
+			systemRouter.InitCasbinRouter(PrivateGroup)          // 权限相关路由
+			systemRouter.InitAuthorityRouter(PrivateGroup)       // 注册角色相关路由
+			systemRouter.InitWeatherrRouter(PrivateGroup)        // 天气信息相关路由
+			statisticsRouter.InitStatisticesRouter(PrivateGroup) // 统计数据相关路由
+		}
+		// ----------------------------------------------------------------
 	}
 
 	InstallPlugin(PublicGroup, PrivateGroup) // 安装插件

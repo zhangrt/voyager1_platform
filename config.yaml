@@ -18,6 +18,8 @@ casbin:
 # jwt configuration
 jwt:
   signing-key: 'gsafety'
+  # 测试new token 可以用较小的过期时间
+  # 单位 秒
   expires-time: 180
   buffer-time: 120
   issuer: 'gsafety'
@@ -45,6 +47,20 @@ redis:
   - '172.30.0.105:10306'
   username: ''
   password: ''
+
+cache:
+  addr: '192.168.244.142:6379'
+  addrs:
+  - '172.30.0.28:10301'
+  - '172.30.0.28:10302'
+  - '172.30.0.222:10303'
+  - '172.30.0.222:10304'
+  - '172.30.0.105:10305'
+  - '172.30.0.105:10306'
+  username: ''
+  password: ''
+  master-name: ''
+  options: '0' # 0单机 1集群
 
 # service-mesh 核心配置 host & port
 service-mesh:
@@ -90,7 +106,7 @@ system:
   cache-type: 'redis'   # 缓存组件类型
   oss-type: 'minio'
   root-path: ""
-  use-multipoint: true # 多点登录
+  use-multipoint: false # 多点登录
   # test develop release & develop skip authenticate & test skip all auth
   mode: "release"
   time-zone: "Asia/Shanghai"

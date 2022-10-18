@@ -204,13 +204,28 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "creator",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "creator_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "错误信息",
                         "name": "error_message",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "example": "0",
+                        "example": "",
                         "description": "主键ID",
                         "name": "id",
                         "in": "query"
@@ -219,6 +234,16 @@ const docTemplate = `{
                         "type": "string",
                         "description": "请求ip",
                         "name": "ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "last_update_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "last_updater",
                         "in": "query"
                     },
                     {
@@ -241,6 +266,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "用户id",
+                        "name": "person_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "响应Body",
                         "name": "resp",
                         "in": "query"
@@ -255,12 +286,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "用户id",
-                        "name": "user_id",
                         "in": "query"
                     }
                 ],
@@ -328,13 +353,28 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "creator",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "creator_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "错误信息",
                         "name": "error_message",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "example": "0",
+                        "example": "",
                         "description": "主键ID",
                         "name": "id",
                         "in": "query"
@@ -349,6 +389,16 @@ const docTemplate = `{
                         "type": "string",
                         "description": "关键字 不做特定约束 根据实际接口设计选用 可用来做查询过滤、排序等，做排序时需满足param1-desc,param2-asc,param3-asc这种格式",
                         "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "last_update_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "last_updater",
                         "in": "query"
                     },
                     {
@@ -383,6 +433,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "用户id",
+                        "name": "person_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "响应Body",
                         "name": "resp",
                         "in": "query"
@@ -397,12 +453,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "用户id",
-                        "name": "user_id",
                         "in": "query"
                     }
                 ],
@@ -743,51 +793,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/base/login": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Base"
-                ],
-                "summary": "用户登录",
-                "parameters": [
-                    {
-                        "description": "用户名, 密码, 验证码",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.Login"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "返回包括用户信息,token,过期时间",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.LoginResponse"
-                                        },
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/casbin/UpdateCasbin": {
             "post": {
                 "security": [
@@ -1011,6 +1016,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "name": "SerialNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "创建时间",
                         "name": "createdAt",
                         "in": "query"
@@ -1056,7 +1066,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "字典名（中）",
-                        "name": "name",
+                        "name": "nameCN",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字典名（英）",
+                        "name": "nameEN",
                         "in": "query"
                     },
                     {
@@ -1066,31 +1082,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "serialNo",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "状态",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "字典名（英）",
-                        "name": "type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "字典值",
-                        "name": "value",
                         "in": "query"
                     }
                 ],
@@ -1138,6 +1131,11 @@ const docTemplate = `{
                 ],
                 "summary": "分页获取Vo1Dictionary列表",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "name": "SerialNo",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "创建时间",
@@ -1191,7 +1189,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "字典名（中）",
-                        "name": "name",
+                        "name": "nameCN",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字典名（英）",
+                        "name": "nameEN",
                         "in": "query"
                     },
                     {
@@ -1213,31 +1217,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "serialNo",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "状态",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "字典名（英）",
-                        "name": "type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "更新时间",
                         "name": "updatedAt",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "字典值",
-                        "name": "value",
                         "in": "query"
                     }
                 ],
@@ -3432,6 +3413,385 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/voyager/auth/updateCasbin": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Casbin"
+                ],
+                "summary": "更新角色api权限",
+                "parameters": [
+                    {
+                        "description": "权限id, 权限模型列表",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/luna.CasbinInReceive"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新角色api权限",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/voyager1/auth/getMenusByRoleIds": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authority"
+                ],
+                "summary": "通过用户角色信息获取菜单列表",
+                "parameters": [
+                    {
+                        "description": "权限ids",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetMenusByRoleIds"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "创建角色,返回包括系统角色详情",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Vo1MenusResponse"
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/voyager1/auth/getPolicyPathByAuthorityId": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Casbin"
+                ],
+                "summary": "获取权限列表",
+                "parameters": [
+                    {
+                        "description": "权限id, 权限模型列表",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/luna.CasbinInReceive"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "获取权限列表,返回包括casbin详情列表",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PolicyPathResponse"
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/voyager1/auth/jsonInBlacklist": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Jwt"
+                ],
+                "summary": "jwt加入黑名单",
+                "responses": {
+                    "200": {
+                        "description": "jwt加入黑名单",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/voyager1/changePassword": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vo1Person"
+                ],
+                "summary": "用户修改密码",
+                "parameters": [
+                    {
+                        "description": "用户名, 原密码, 新密码",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ChangePasswordStruct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户修改密码",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/voyager1/login": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Base"
+                ],
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "用户名, 密码",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Login"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回包括用户信息,token,过期时间",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LoginResponse"
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/voyager1/register": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vo1Person"
+                ],
+                "summary": "用户注册账号",
+                "parameters": [
+                    {
+                        "description": "用户名, 昵称, 密码, 角色ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Register"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "用户注册账号,返回包括用户信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Vo1PersonResponse"
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/voyager1/resetPassword": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vo1Person"
+                ],
+                "summary": "重置用户密码",
+                "parameters": [
+                    {
+                        "description": "ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/system.Vo1Person"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "重置用户密码",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/weather/getInfo": {
             "get": {
                 "produces": [
@@ -3536,6 +3896,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "expose-headers": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.Cache": {
+            "type": "object",
+            "properties": {
+                "addr": {
+                    "description": "单机地址",
+                    "type": "string"
+                },
+                "addrs": {
+                    "description": "集群地址",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "master-name": {
+                    "description": "哨兵MasterName",
+                    "type": "string"
+                },
+                "options": {
+                    "description": "0(单机)1(集群)",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }
@@ -3850,6 +4242,10 @@ const docTemplate = `{
                 "auth-key": {
                     "$ref": "#/definitions/config.AUTHKey"
                 },
+                "cache": {
+                    "description": "cache",
+                    "$ref": "#/definitions/config.Cache"
+                },
                 "casbin": {
                     "$ref": "#/definitions/config.Casbin"
                 },
@@ -4040,7 +4436,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "use-cache": {
-                    "description": "使用redis",
+                    "description": "使用cache",
                     "type": "boolean"
                 },
                 "use-database": {
@@ -4048,7 +4444,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "use-multipoint": {
-                    "description": "多点登录拦截",
+                    "description": "多点登录",
                     "type": "boolean"
                 }
             }
@@ -4192,15 +4588,15 @@ const docTemplate = `{
         "request.AddMenuAuthorityInfo": {
             "type": "object",
             "properties": {
-                "authorityId": {
-                    "description": "角色ID",
-                    "type": "string"
-                },
                 "menus": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/system.Vo1Menu"
                     }
+                },
+                "roleId": {
+                    "description": "角色ID",
+                    "type": "string"
                 }
             }
         },
@@ -4289,7 +4685,18 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "description": "主键ID",
-                    "type": "integer"
+                    "type": "string"
+                }
+            }
+        },
+        "request.GetMenusByRoleIds": {
+            "type": "object",
+            "properties": {
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -4340,11 +4747,11 @@ const docTemplate = `{
         "request.Login": {
             "type": "object",
             "properties": {
-                "identification": {
-                    "description": "身份：用户名|手机号|邮箱",
+                "OrganizationId": {
                     "type": "string"
                 },
-                "organizationId": {
+                "identification": {
+                    "description": "身份：用户名|手机号|邮箱",
                     "type": "string"
                 },
                 "password": {
@@ -4405,7 +4812,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "roleIds": {
                     "description": "角色ID",
@@ -4579,9 +4986,67 @@ const docTemplate = `{
                 }
             }
         },
+        "system.Vo1Department": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.Vo1Department"
+                    }
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "creator_id": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "string",
+                    "example": ""
+                },
+                "last_update_id": {
+                    "type": "string"
+                },
+                "last_updater": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organId": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父级部门ID",
+                    "type": "string"
+                },
+                "serialNo": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
         "system.Vo1Dictionary": {
             "type": "object",
             "properties": {
+                "SerialNo": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "description": "创建时间",
                     "type": "string"
@@ -4616,30 +5081,19 @@ const docTemplate = `{
                 "last_updater": {
                     "type": "string"
                 },
-                "name": {
+                "nameCN": {
                     "description": "字典名（中）",
+                    "type": "string"
+                },
+                "nameEN": {
+                    "description": "字典名（英）",
                     "type": "string"
                 },
                 "parentId": {
                     "type": "string"
                 },
-                "serialNo": {
-                    "type": "string"
-                },
-                "status": {
-                    "description": "状态",
-                    "type": "boolean"
-                },
-                "type": {
-                    "description": "字典名（英）",
-                    "type": "string"
-                },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string"
-                },
-                "value": {
-                    "description": "字典值",
                     "type": "string"
                 }
             }
@@ -4647,12 +5101,6 @@ const docTemplate = `{
         "system.Vo1Menu": {
             "type": "object",
             "properties": {
-                "authoritys": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.Vo1Role"
-                    }
-                },
                 "children": {
                     "type": "array",
                     "items": {
@@ -4703,13 +5151,15 @@ const docTemplate = `{
                     "description": "路由name",
                     "type": "string"
                 },
-                "organId": {
-                    "description": "MenuId        uint                   ` + "`" + `gorm:\"column:menu_id\" json:\"menu_id,string\" form:\"menu_id\"` + "`" + ` //菜单ID",
-                    "type": "string"
-                },
                 "parentId": {
                     "description": "父菜单ID",
                     "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.Vo1Role"
+                    }
                 },
                 "serialNo": {
                     "description": "排序标记 0、1、2、3、4、5 ...",
@@ -4740,6 +5190,15 @@ const docTemplate = `{
                     "description": "创建时间",
                     "type": "string"
                 },
+                "creator": {
+                    "type": "string"
+                },
+                "creator_id": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
                 "error_message": {
                     "description": "错误信息",
                     "type": "string"
@@ -4747,10 +5206,16 @@ const docTemplate = `{
                 "id": {
                     "description": "主键ID",
                     "type": "string",
-                    "example": "0"
+                    "example": ""
                 },
                 "ip": {
                     "description": "请求ip",
+                    "type": "string"
+                },
+                "last_update_id": {
+                    "type": "string"
+                },
+                "last_updater": {
                     "type": "string"
                 },
                 "latency": {
@@ -4765,6 +5230,13 @@ const docTemplate = `{
                     "description": "请求路径",
                     "type": "string"
                 },
+                "person": {
+                    "$ref": "#/definitions/system.Vo1Person"
+                },
+                "person_id": {
+                    "description": "用户id",
+                    "type": "string"
+                },
                 "resp": {
                     "description": "响应Body",
                     "type": "string"
@@ -4776,25 +5248,80 @@ const docTemplate = `{
                 "updatedAt": {
                     "description": "更新时间",
                     "type": "string"
+                }
+            }
+        },
+        "system.Vo1Organization": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.Vo1Organization"
+                    }
                 },
-                "user": {
-                    "$ref": "#/definitions/system.Vo1Person"
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
                 },
-                "user_id": {
-                    "description": "用户id",
+                "creator": {
+                    "type": "string"
+                },
+                "creator_id": {
+                    "type": "string"
+                },
+                "deleted": {
                     "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "string",
+                    "example": ""
+                },
+                "last_update_id": {
+                    "type": "string"
+                },
+                "last_updater": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "组织机构名称",
+                    "type": "string"
+                },
+                "parentId": {
+                    "description": "父级组织机构ID",
+                    "type": "string"
+                },
+                "serialNo": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
                 }
             }
         },
         "system.Vo1Person": {
             "type": "object",
             "properties": {
+                "Organizations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.Vo1Organization"
+                    }
+                },
                 "account": {
-                    "description": "用户名",
+                    "description": "UUID 通用的标准用户id，数据库存储为字符串在某些方面会更通用更好用\nUUID uuid.UUID ` + "`" + `json:\"uuid\" gorm:\"comment:用户UUID\"` + "`" + `\n用户名",
+                    "type": "string"
+                },
+                "age": {
                     "type": "string"
                 },
                 "avatar": {
-                    "description": "用户头像",
+                    "description": "用户侧边主题\nSideMode string ` + "`" + `json:\"sideMode\" gorm:\"default:dark;comment:用户主题\"` + "`" + `\n用户头像",
                     "type": "string"
                 },
                 "createdAt": {
@@ -4812,13 +5339,17 @@ const docTemplate = `{
                 "deleted": {
                     "type": "integer"
                 },
-                "departmentId": {
-                    "description": "部门Id",
-                    "type": "string"
+                "departmentIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
-                "departmentName": {
-                    "description": "部门名称",
-                    "type": "string"
+                "departments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/system.Vo1Department"
+                    }
                 },
                 "description": {
                     "description": "描述",
@@ -4828,10 +5359,13 @@ const docTemplate = `{
                     "description": "用户邮箱",
                     "type": "string"
                 },
+                "gender": {
+                    "type": "string"
+                },
                 "id": {
-                    "description": "适用于一些数据库自增性主键，数据库存储一般为数值，某些数据库可能不支持，比如cockroachdb并不会自增，这中ID在Mysql数据库中有更好的应用",
+                    "description": "适用于一些数据库自增性主键，数据库存储一般为数值，某些数据库可能不支持，比如cockroachdb并不会自增，这中ID在Mysql数据库中有更好的应用\nID string ` + "`" + `gorm:\"primarykey\" json:\"id,string\" form:\"id\"` + "`" + ` // 主键ID",
                     "type": "string",
-                    "example": "0"
+                    "example": ""
                 },
                 "lastLoginTime": {
                     "description": "最后一次登录时间",
@@ -4850,19 +5384,20 @@ const docTemplate = `{
                 },
                 "locked": {
                     "description": "用户锁定",
-                    "type": "integer"
+                    "type": "boolean"
                 },
                 "name": {
                     "description": "昵称",
                     "type": "string"
                 },
                 "organizationId": {
-                    "description": "单位Id",
                     "type": "string"
                 },
-                "organizationName": {
-                    "description": "单位名称",
-                    "type": "string"
+                "organizationIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "phone": {
                     "description": "用户手机号",
@@ -4880,16 +5415,11 @@ const docTemplate = `{
                         "$ref": "#/definitions/system.Vo1Role"
                     }
                 },
-                "sideMode": {
-                    "description": "用户侧边主题",
+                "serialNo": {
                     "type": "string"
                 },
                 "updatedAt": {
                     "description": "更新时间",
-                    "type": "string"
-                },
-                "uuid": {
-                    "description": "UUID 通用的标准用户id，数据库存储为字符串在某些方面会更通用更好用",
                     "type": "string"
                 }
             }
@@ -4897,12 +5427,6 @@ const docTemplate = `{
         "system.Vo1Role": {
             "type": "object",
             "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.Vo1Role"
-                    }
-                },
                 "createdAt": {
                     "description": "创建时间",
                     "type": "string"
@@ -4912,12 +5436,6 @@ const docTemplate = `{
                 },
                 "creator_id": {
                     "type": "string"
-                },
-                "dataRoleId": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.Vo1Role"
-                    }
                 },
                 "deleted": {
                     "type": "integer"
@@ -4937,6 +5455,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "menus": {
+                    "description": "Children    []Vo1Role   ` + "`" + `json:\"children,omitempty\" gorm:\"many2many:Vo1RoleThread;foreignkey:ID;association_foreignkey:ParentID\"` + "`" + ` // 这里角色非树形结构",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/system.Vo1Menu"

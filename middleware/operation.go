@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -34,7 +33,7 @@ func init() {
 func OperationRecord() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body []byte
-		var userId int
+		var userId string
 		body = ReadAll(c, body)
 		userId = GetUserId(c, userId)
 		record := system.Vo1OperationRecord{
@@ -131,17 +130,12 @@ func ReadAll(c *gin.Context, body []byte) []byte {
 	return body
 }
 
-func GetUserId(c *gin.Context, userId int) int {
+func GetUserId(c *gin.Context, userId string) string {
 	claims, _ := auth.GetClaims(c)
-	if claims.ID != 0 {
-		userId = int(claims.ID)
+	if claims.ID.String() != "" {
+		userId = claims.ID.String()
 	} else {
-		id, err := strconv.Atoi(c.Request.Header.Get(global.GS_CONFIG.AUTHKey.UserId))
-		if err != nil {
-			userId = 0
-		} else {
-			userId = id
-		}
+		userId = c.Request.Header.Get(global.GS_CONFIG.AUTHKey.UserId)
 	}
 	return userId
 }

@@ -1,4 +1,4 @@
-package system
+package voyager1
 
 import (
 	"errors"
@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: getMenuTreeMap
 //@description: 获取路由总树map
 //@param: authorityId string
@@ -34,12 +33,10 @@ func (menuService *MenuService) getMenuTreeMap(authorityIds []string) (treeMap m
 	return treeMap, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetMenuTree
 //@description: 获取动态菜单树
 //@param: authorityId string
 //@return: menus []system.Vo1Menu, err error
-
 func (menuService *MenuService) GetMenuTree(authorityIds []string) (menus []system.Vo1Menu, err error) {
 	menuTree, err := menuService.getMenuTreeMap(authorityIds)
 	menus = menuTree["0"]
@@ -49,7 +46,6 @@ func (menuService *MenuService) GetMenuTree(authorityIds []string) (menus []syst
 	return menus, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: getChildrenList
 //@description: 获取子菜单
 //@param: menu *model.Vo1Menu, treeMap map[string][]model.Vo1Menu
@@ -63,7 +59,6 @@ func (menuService *MenuService) getChildrenList(menu *system.Vo1Menu, treeMap ma
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetInfoList
 //@description: 获取路由分页
 //@return: list interface{}, total int64,err error
@@ -78,7 +73,6 @@ func (menuService *MenuService) GetInfoList() (list interface{}, total int64, er
 	return menuList, total, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: getBaseChildrenList
 //@description: 获取菜单的子菜单
 //@param: menu *model.Vo1Menu, treeMap map[string][]model.Vo1Menu
@@ -92,7 +86,6 @@ func (menuService *MenuService) getBaseChildrenList(menu *system.Vo1Menu, treeMa
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: AddBaseMenu
 //@description: 添加基础路由
 //@param: menu model.Vo1Menu
@@ -105,7 +98,6 @@ func (menuService *MenuService) AddBaseMenu(menu system.Vo1Menu) error {
 	return global.GS_DB.Create(&menu).Error
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: getBaseMenuTreeMap
 //@description: 获取路由总树map
 //@return: treeMap map[string][]system.Vo1Menu, err error
@@ -120,7 +112,6 @@ func (menuService *MenuService) getBaseMenuTreeMap() (treeMap map[string][]syste
 	return treeMap, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetBaseMenuTree
 //@description: 获取基础路由树
 //@return: menus []system.Vo1Menu, err error
@@ -134,7 +125,6 @@ func (menuService *MenuService) GetBaseMenuTree() (menus []system.Vo1Menu, err e
 	return menus, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: AddMenuAuthority
 //@description: 为角色增加menu树
 //@param: menus []model.Vo1Menu, authorityId string
@@ -144,11 +134,10 @@ func (menuService *MenuService) AddMenuAuthority(menus []system.Vo1Menu, authori
 	var auth system.Vo1Role
 	auth.ID = authorityId
 	auth.Vo1Menus = menus
-	err = AuthorityServiceApp.SetMenuAuthority(&auth)
+	err = RoleServiceApp.SetMenuAuthority(&auth)
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetMenuAuthority
 //@description: 查看当前角色树
 //@param: info *request.GetAuthorityId

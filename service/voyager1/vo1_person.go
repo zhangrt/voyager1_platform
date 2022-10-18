@@ -1,4 +1,4 @@
-package system
+package voyager1
 
 import (
 	"errors"
@@ -14,15 +14,14 @@ import (
 	"gorm.io/gorm"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: Register
 //@description: 用户注册
 //@param: u model.Vo1Person
 //@return: userInter system.Vo1Person, err error
 
-type UserService struct{}
+type PersonService struct{}
 
-func (userService *UserService) Register(u system.Vo1Person) (userInter system.Vo1Person, err error) {
+func (ps *PersonService) Register(u system.Vo1Person) (userInter system.Vo1Person, err error) {
 	var user system.Vo1Person
 	if !errors.Is(global.GS_DB.Where("account = ?", u.Account).First(&user).Error, gorm.ErrRecordNotFound) { // 判断用户名是否注册
 		return userInter, errors.New("用户名已注册")
@@ -34,13 +33,12 @@ func (userService *UserService) Register(u system.Vo1Person) (userInter system.V
 	return u, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: Login
 //@description: 用户登录
 //@param: u *model.Vo1Person
 //@return: err error, userInter *model.Vo1Person
 
-func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo1Person, err error) {
+func (ps *PersonService) Login(u *system.Vo1Person) (userInter *system.Vo1Person, err error) {
 	if nil == global.GS_DB {
 		return nil, fmt.Errorf("db not init")
 	}
@@ -85,13 +83,12 @@ func (userService *UserService) Login(u *system.Vo1Person) (userInter *system.Vo
 	return &user, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: ChangePassword
 //@description: 修改用户密码
 //@param: u *model.Vo1Person, newPassword string
 //@return: userInter *model.Vo1Person,err error
 
-func (userService *UserService) ChangePassword(u *system.Vo1Person, newPassword string) (userInter *system.Vo1Person, err error) {
+func (ps *PersonService) ChangePassword(u *system.Vo1Person, newPassword string) (userInter *system.Vo1Person, err error) {
 	var user system.Vo1Person
 	err = global.GS_DB.Where("account = ?", u.Account).First(&user).Error
 	if err != nil {
@@ -106,13 +103,12 @@ func (userService *UserService) ChangePassword(u *system.Vo1Person, newPassword 
 
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetUserInfoList
 //@description: 分页获取数据
 //@param: info request.PageInfo
 //@return: err error, list interface{}, total int64
 
-func (userService *UserService) GetUserInfoList(info request.PageInfo) (list interface{}, total int64, err error) {
+func (ps *PersonService) GetUserInfoList(info request.PageInfo) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GS_DB.Model(&system.Vo1Person{})
@@ -125,13 +121,12 @@ func (userService *UserService) GetUserInfoList(info request.PageInfo) (list int
 	return userList, total, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetUserAuthorities
 //@description: 设置一个用户的权限
 //@param: id uint, authorityIds []string
 //@return: err error
 
-func (userService *UserService) SetUserAuthorities(id string, authorityIds []string) (err error) {
+func (ps *PersonService) SetUserAuthorities(id string, authorityIds []string) (err error) {
 	return global.GS_DB.Transaction(func(tx *gorm.DB) error {
 		TxErr := tx.Delete(&[]system.Vo1PersonRole{}, "vo1_person_id = ?", id).Error
 		if TxErr != nil {
@@ -156,13 +151,12 @@ func (userService *UserService) SetUserAuthorities(id string, authorityIds []str
 	})
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteUser
 //@description: 删除用户
 //@param: id float64
 //@return: err error
 
-func (userService *UserService) DeleteUser(id string) (err error) {
+func (ps *PersonService) DeleteUser(id string) (err error) {
 	var user system.Vo1Person
 	err = global.GS_DB.Where("id = ?", id).Delete(&user).Error
 	if err != nil {
@@ -172,23 +166,21 @@ func (userService *UserService) DeleteUser(id string) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetUserInfo
 //@description: 设置用户信息
 //@param: reqUser model.Vo1Person
 //@return: err error, user model.Vo1Person
 
-func (userService *UserService) SetUserInfo(req system.Vo1Person) error {
+func (ps *PersonService) SetUserInfo(req system.Vo1Person) error {
 	return global.GS_DB.Updates(&req).Error
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetUserInfo
 //@description: 获取用户信息
 //@param: uuid uuid.UUID
 //@return: err error, user system.Vo1Person
 
-func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.Vo1Person, err error) {
+func (ps *PersonService) GetUserInfo(uuid uuid.UUID) (user system.Vo1Person, err error) {
 	var reqUser system.Vo1Person
 	err = global.GS_DB.Preload("Authorities").Preload("Authority").First(&reqUser, "uuid = ?", uuid).Error
 	if err != nil {
@@ -204,7 +196,7 @@ func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.Vo1Pers
 //@param: id int
 //@return: err error, user *model.Vo1Person
 
-func (userService *UserService) FindUserById(id int) (user *system.Vo1Person, err error) {
+func (ps *PersonService) FindUserById(id int) (user *system.Vo1Person, err error) {
 	var u system.Vo1Person
 	err = global.GS_DB.Where("`id` = ?", id).First(&u).Error
 	return &u, err
@@ -216,7 +208,7 @@ func (userService *UserService) FindUserById(id int) (user *system.Vo1Person, er
 //@param: uuid string
 //@return: err error, user *model.Vo1Person
 
-func (userService *UserService) FindUserByUuid(uuid string) (user *system.Vo1Person, err error) {
+func (ps *PersonService) FindUserByUuid(uuid string) (user *system.Vo1Person, err error) {
 	var u system.Vo1Person
 	if err = global.GS_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil {
 		return &u, errors.New("用户不存在")
@@ -224,13 +216,12 @@ func (userService *UserService) FindUserByUuid(uuid string) (user *system.Vo1Per
 	return &u, nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: resetPassword
 //@description: 修改用户密码
 //@param: ID uint
 //@return: err error
 
-func (userService *UserService) ResetPassword(ID string) (err error) {
+func (ps *PersonService) ResetPassword(ID string) (err error) {
 	err = global.GS_DB.Model(&system.Vo1Person{}).Where("id = ?", ID).Update("password", utils.BcryptHash("123456")).Error
 	return err
 }

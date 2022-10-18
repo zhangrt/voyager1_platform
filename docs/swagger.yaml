@@ -43,6 +43,29 @@ definitions:
       expose-headers:
         type: string
     type: object
+  config.Cache:
+    properties:
+      addr:
+        description: 单机地址
+        type: string
+      addrs:
+        description: 集群地址
+        items:
+          type: string
+        type: array
+      master-name:
+        description: 哨兵MasterName
+        type: string
+      options:
+        description: 0(单机)1(集群)
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
   config.Casbin:
     properties:
       model-path:
@@ -263,6 +286,9 @@ definitions:
     properties:
       auth-key:
         $ref: '#/definitions/config.AUTHKey'
+      cache:
+        $ref: '#/definitions/config.Cache'
+        description: cache
       casbin:
         $ref: '#/definitions/config.Casbin'
       cockroach:
@@ -397,13 +423,13 @@ definitions:
         description: 时区
         type: string
       use-cache:
-        description: 使用redis
+        description: 使用cache
         type: boolean
       use-database:
         description: 使用数据库
         type: boolean
       use-multipoint:
-        description: 多点登录拦截
+        description: 多点登录
         type: boolean
     type: object
   config.Zap:
@@ -506,13 +532,13 @@ definitions:
     type: object
   request.AddMenuAuthorityInfo:
     properties:
-      authorityId:
-        description: 角色ID
-        type: string
       menus:
         items:
           $ref: '#/definitions/system.Vo1Menu'
         type: array
+      roleId:
+        description: 角色ID
+        type: string
     type: object
   request.ChangePasswordStruct:
     properties:
@@ -575,7 +601,14 @@ definitions:
     properties:
       id:
         description: 主键ID
-        type: integer
+        type: string
+    type: object
+  request.GetMenusByRoleIds:
+    properties:
+      roleIds:
+        items:
+          type: string
+        type: array
     type: object
   request.IdsReq:
     properties:
@@ -610,10 +643,10 @@ definitions:
     type: object
   request.Login:
     properties:
+      OrganizationId:
+        type: string
       identification:
         description: 身份：用户名|手机号|邮箱
-        type: string
-      organizationId:
         type: string
       password:
         description: 密码
@@ -655,7 +688,7 @@ definitions:
   request.SetUserAuthorities:
     properties:
       id:
-        type: integer
+        type: string
       roleIds:
         description: 角色ID
         items:
@@ -768,8 +801,48 @@ definitions:
       config:
         $ref: '#/definitions/config.Server'
     type: object
+  system.Vo1Department:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/system.Vo1Department'
+        type: array
+      createdAt:
+        description: 创建时间
+        type: string
+      creator:
+        type: string
+      creator_id:
+        type: string
+      deleted:
+        type: integer
+      description:
+        type: string
+      id:
+        description: 主键ID
+        example: ""
+        type: string
+      last_update_id:
+        type: string
+      last_updater:
+        type: string
+      name:
+        type: string
+      organId:
+        type: string
+      parentId:
+        description: 父级部门ID
+        type: string
+      serialNo:
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
   system.Vo1Dictionary:
     properties:
+      SerialNo:
+        type: string
       createdAt:
         description: 创建时间
         type: string
@@ -794,32 +867,20 @@ definitions:
         type: string
       last_updater:
         type: string
-      name:
+      nameCN:
         description: 字典名（中）
         type: string
-      parentId:
-        type: string
-      serialNo:
-        type: string
-      status:
-        description: 状态
-        type: boolean
-      type:
+      nameEN:
         description: 字典名（英）
+        type: string
+      parentId:
         type: string
       updatedAt:
         description: 更新时间
         type: string
-      value:
-        description: 字典值
-        type: string
     type: object
   system.Vo1Menu:
     properties:
-      authoritys:
-        items:
-          $ref: '#/definitions/system.Vo1Role'
-        type: array
       children:
         items:
           $ref: '#/definitions/system.Vo1Menu'
@@ -856,13 +917,13 @@ definitions:
       name:
         description: 路由name
         type: string
-      organId:
-        description: MenuId        uint                   `gorm:"column:menu_id" json:"menu_id,string"
-          form:"menu_id"` //菜单ID
-        type: string
       parentId:
         description: 父菜单ID
         type: string
+      roles:
+        items:
+          $ref: '#/definitions/system.Vo1Role'
+        type: array
       serialNo:
         description: 排序标记 0、1、2、3、4、5 ...
         type: integer
@@ -884,15 +945,25 @@ definitions:
       createdAt:
         description: 创建时间
         type: string
+      creator:
+        type: string
+      creator_id:
+        type: string
+      deleted:
+        type: integer
       error_message:
         description: 错误信息
         type: string
       id:
         description: 主键ID
-        example: "0"
+        example: ""
         type: string
       ip:
         description: 请求ip
+        type: string
+      last_update_id:
+        type: string
+      last_updater:
         type: string
       latency:
         description: 延迟
@@ -903,6 +974,11 @@ definitions:
       path:
         description: 请求路径
         type: string
+      person:
+        $ref: '#/definitions/system.Vo1Person'
+      person_id:
+        description: 用户id
+        type: string
       resp:
         description: 响应Body
         type: string
@@ -912,19 +988,63 @@ definitions:
       updatedAt:
         description: 更新时间
         type: string
-      user:
-        $ref: '#/definitions/system.Vo1Person'
-      user_id:
-        description: 用户id
+    type: object
+  system.Vo1Organization:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/system.Vo1Organization'
+        type: array
+      createdAt:
+        description: 创建时间
+        type: string
+      creator:
+        type: string
+      creator_id:
+        type: string
+      deleted:
         type: integer
+      description:
+        type: string
+      id:
+        description: 主键ID
+        example: ""
+        type: string
+      last_update_id:
+        type: string
+      last_updater:
+        type: string
+      name:
+        description: 组织机构名称
+        type: string
+      parentId:
+        description: 父级组织机构ID
+        type: string
+      serialNo:
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
     type: object
   system.Vo1Person:
     properties:
+      Organizations:
+        items:
+          $ref: '#/definitions/system.Vo1Organization'
+        type: array
       account:
-        description: 用户名
+        description: |-
+          UUID 通用的标准用户id，数据库存储为字符串在某些方面会更通用更好用
+          UUID uuid.UUID `json:"uuid" gorm:"comment:用户UUID"`
+          用户名
+        type: string
+      age:
         type: string
       avatar:
-        description: 用户头像
+        description: |-
+          用户侧边主题
+          SideMode string `json:"sideMode" gorm:"default:dark;comment:用户主题"`
+          用户头像
         type: string
       createdAt:
         description: 创建时间
@@ -937,21 +1057,27 @@ definitions:
         type: string
       deleted:
         type: integer
-      departmentId:
-        description: 部门Id
-        type: string
-      departmentName:
-        description: 部门名称
-        type: string
+      departmentIds:
+        items:
+          type: string
+        type: array
+      departments:
+        items:
+          $ref: '#/definitions/system.Vo1Department'
+        type: array
       description:
         description: 描述
         type: string
       email:
         description: 用户邮箱
         type: string
+      gender:
+        type: string
       id:
-        description: 适用于一些数据库自增性主键，数据库存储一般为数值，某些数据库可能不支持，比如cockroachdb并不会自增，这中ID在Mysql数据库中有更好的应用
-        example: "0"
+        description: |-
+          适用于一些数据库自增性主键，数据库存储一般为数值，某些数据库可能不支持，比如cockroachdb并不会自增，这中ID在Mysql数据库中有更好的应用
+          ID string `gorm:"primarykey" json:"id,string" form:"id"` // 主键ID
+        example: ""
         type: string
       last_update_id:
         description: 创建时间
@@ -966,16 +1092,16 @@ definitions:
         type: string
       locked:
         description: 用户锁定
-        type: integer
+        type: boolean
       name:
         description: 昵称
         type: string
       organizationId:
-        description: 单位Id
         type: string
-      organizationName:
-        description: 单位名称
-        type: string
+      organizationIds:
+        items:
+          type: string
+        type: array
       phone:
         description: 用户手机号
         type: string
@@ -987,22 +1113,14 @@ definitions:
         items:
           $ref: '#/definitions/system.Vo1Role'
         type: array
-      sideMode:
-        description: 用户侧边主题
+      serialNo:
         type: string
       updatedAt:
         description: 更新时间
         type: string
-      uuid:
-        description: UUID 通用的标准用户id，数据库存储为字符串在某些方面会更通用更好用
-        type: string
     type: object
   system.Vo1Role:
     properties:
-      children:
-        items:
-          $ref: '#/definitions/system.Vo1Role'
-        type: array
       createdAt:
         description: 创建时间
         type: string
@@ -1010,10 +1128,6 @@ definitions:
         type: string
       creator_id:
         type: string
-      dataRoleId:
-        items:
-          $ref: '#/definitions/system.Vo1Role'
-        type: array
       deleted:
         type: integer
       description:
@@ -1027,6 +1141,8 @@ definitions:
       last_updater:
         type: string
       menus:
+        description: Children    []Vo1Role   `json:"children,omitempty" gorm:"many2many:Vo1RoleThread;foreignkey:ID;association_foreignkey:ParentID"`
+          // 这里角色非树形结构
         items:
           $ref: '#/definitions/system.Vo1Menu'
         type: array
@@ -1164,18 +1280,33 @@ paths:
         in: query
         name: createdAt
         type: string
+      - in: query
+        name: creator
+        type: string
+      - in: query
+        name: creator_id
+        type: string
+      - in: query
+        name: deleted
+        type: integer
       - description: 错误信息
         in: query
         name: error_message
         type: string
       - description: 主键ID
-        example: "0"
+        example: ""
         in: query
         name: id
         type: string
       - description: 请求ip
         in: query
         name: ip
+        type: string
+      - in: query
+        name: last_update_id
+        type: string
+      - in: query
+        name: last_updater
         type: string
       - description: 延迟
         in: query
@@ -1189,6 +1320,10 @@ paths:
         in: query
         name: path
         type: string
+      - description: 用户id
+        in: query
+        name: person_id
+        type: string
       - description: 响应Body
         in: query
         name: resp
@@ -1201,10 +1336,6 @@ paths:
         in: query
         name: updatedAt
         type: string
-      - description: 用户id
-        in: query
-        name: user_id
-        type: integer
       produces:
       - application/json
       responses:
@@ -1242,12 +1373,21 @@ paths:
         in: query
         name: createdAt
         type: string
+      - in: query
+        name: creator
+        type: string
+      - in: query
+        name: creator_id
+        type: string
+      - in: query
+        name: deleted
+        type: integer
       - description: 错误信息
         in: query
         name: error_message
         type: string
       - description: 主键ID
-        example: "0"
+        example: ""
         in: query
         name: id
         type: string
@@ -1258,6 +1398,12 @@ paths:
       - description: 关键字 不做特定约束 根据实际接口设计选用 可用来做查询过滤、排序等，做排序时需满足param1-desc,param2-asc,param3-asc这种格式
         in: query
         name: keyword
+        type: string
+      - in: query
+        name: last_update_id
+        type: string
+      - in: query
+        name: last_updater
         type: string
       - description: 延迟
         in: query
@@ -1279,6 +1425,10 @@ paths:
         in: query
         name: path
         type: string
+      - description: 用户id
+        in: query
+        name: person_id
+        type: string
       - description: 响应Body
         in: query
         name: resp
@@ -1291,10 +1441,6 @@ paths:
         in: query
         name: updatedAt
         type: string
-      - description: 用户id
-        in: query
-        name: user_id
-        type: integer
       produces:
       - application/json
       responses:
@@ -1490,32 +1636,6 @@ paths:
       summary: 更新角色信息
       tags:
       - Authority
-  /base/login:
-    post:
-      parameters:
-      - description: 用户名, 密码, 验证码
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.Login'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 返回包括用户信息,token,过期时间
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.LoginResponse'
-                msg:
-                  type: string
-              type: object
-      summary: 用户登录
-      tags:
-      - Base
   /casbin/UpdateCasbin:
     post:
       consumes:
@@ -1635,6 +1755,9 @@ paths:
       consumes:
       - application/json
       parameters:
+      - in: query
+        name: SerialNo
+        type: string
       - description: 创建时间
         in: query
         name: createdAt
@@ -1665,29 +1788,18 @@ paths:
         type: string
       - description: 字典名（中）
         in: query
-        name: name
+        name: nameCN
+        type: string
+      - description: 字典名（英）
+        in: query
+        name: nameEN
         type: string
       - in: query
         name: parentId
         type: string
-      - in: query
-        name: serialNo
-        type: string
-      - description: 状态
-        in: query
-        name: status
-        type: boolean
-      - description: 字典名（英）
-        in: query
-        name: type
-        type: string
       - description: 更新时间
         in: query
         name: updatedAt
-        type: string
-      - description: 字典值
-        in: query
-        name: value
         type: string
       produces:
       - application/json
@@ -1714,6 +1826,9 @@ paths:
       consumes:
       - application/json
       parameters:
+      - in: query
+        name: SerialNo
+        type: string
       - description: 创建时间
         in: query
         name: createdAt
@@ -1748,7 +1863,11 @@ paths:
         type: string
       - description: 字典名（中）
         in: query
-        name: name
+        name: nameCN
+        type: string
+      - description: 字典名（英）
+        in: query
+        name: nameEN
         type: string
       - description: 页码
         in: query
@@ -1761,24 +1880,9 @@ paths:
       - in: query
         name: parentId
         type: string
-      - in: query
-        name: serialNo
-        type: string
-      - description: 状态
-        in: query
-        name: status
-        type: boolean
-      - description: 字典名（英）
-        in: query
-        name: type
-        type: string
       - description: 更新时间
         in: query
         name: updatedAt
-        type: string
-      - description: 字典值
-        in: query
-        name: value
         type: string
       produces:
       - application/json
@@ -3037,6 +3141,219 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 设置用户信息
+      tags:
+      - Vo1Person
+  /v1/voyager/auth/updateCasbin:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 权限id, 权限模型列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/luna.CasbinInReceive'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新角色api权限
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 更新角色api权限
+      tags:
+      - Casbin
+  /v1/voyager1/auth/getMenusByRoleIds:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 权限ids
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetMenusByRoleIds'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建角色,返回包括系统角色详情
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Vo1MenusResponse'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 通过用户角色信息获取菜单列表
+      tags:
+      - Authority
+  /v1/voyager1/auth/getPolicyPathByAuthorityId:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 权限id, 权限模型列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/luna.CasbinInReceive'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取权限列表,返回包括casbin详情列表
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PolicyPathResponse'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取权限列表
+      tags:
+      - Casbin
+  /v1/voyager1/auth/jsonInBlacklist:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: jwt加入黑名单
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: jwt加入黑名单
+      tags:
+      - Jwt
+  /v1/voyager1/changePassword:
+    post:
+      parameters:
+      - description: 用户名, 原密码, 新密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ChangePasswordStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户修改密码
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 用户修改密码
+      tags:
+      - Vo1Person
+  /v1/voyager1/login:
+    post:
+      parameters:
+      - description: 用户名, 密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回包括用户信息,token,过期时间
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LoginResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 用户登录
+      tags:
+      - Base
+  /v1/voyager1/register:
+    post:
+      parameters:
+      - description: 用户名, 昵称, 密码, 角色ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户注册账号,返回包括用户信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Vo1PersonResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 用户注册账号
+      tags:
+      - Vo1Person
+  /v1/voyager1/resetPassword:
+    post:
+      parameters:
+      - description: ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.Vo1Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 重置用户密码
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 重置用户密码
       tags:
       - Vo1Person
   /weather/getInfo:
