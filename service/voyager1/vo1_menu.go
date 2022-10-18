@@ -37,7 +37,6 @@ func (menuService *MenuService) getMenuTreeMap(authorityIds []string) (treeMap m
 //@description: 获取动态菜单树
 //@param: authorityId string
 //@return: menus []system.Vo1Menu, err error
-
 func (menuService *MenuService) GetMenuTree(authorityIds []string) (menus []system.Vo1Menu, err error) {
 	menuTree, err := menuService.getMenuTreeMap(authorityIds)
 	menus = menuTree["0"]
@@ -134,7 +133,7 @@ func (menuService *MenuService) GetBaseMenuTree() (menus []system.Vo1Menu, err e
 func (menuService *MenuService) AddMenuAuthority(menus []system.Vo1Menu, authorityId string) (err error) {
 	var auth system.Vo1Role
 	auth.ID = authorityId
-	auth.Vo1Menu = menus
+	auth.Vo1Menus = menus
 	err = RoleServiceApp.SetMenuAuthority(&auth)
 	return err
 }

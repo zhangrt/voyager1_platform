@@ -14,7 +14,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: Register
 //@description: 用户注册
 //@param: u model.Vo1Person
@@ -34,7 +33,6 @@ func (ps *PersonService) Register(u system.Vo1Person) (userInter system.Vo1Perso
 	return u, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: Login
 //@description: 用户登录
 //@param: u *model.Vo1Person
@@ -85,7 +83,6 @@ func (ps *PersonService) Login(u *system.Vo1Person) (userInter *system.Vo1Person
 	return &user, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: ChangePassword
 //@description: 修改用户密码
 //@param: u *model.Vo1Person, newPassword string
@@ -106,7 +103,6 @@ func (ps *PersonService) ChangePassword(u *system.Vo1Person, newPassword string)
 
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetUserInfoList
 //@description: 分页获取数据
 //@param: info request.PageInfo
@@ -125,7 +121,6 @@ func (ps *PersonService) GetUserInfoList(info request.PageInfo) (list interface{
 	return userList, total, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetUserAuthorities
 //@description: 设置一个用户的权限
 //@param: id uint, authorityIds []string
@@ -156,7 +151,6 @@ func (ps *PersonService) SetUserAuthorities(id string, authorityIds []string) (e
 	})
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteUser
 //@description: 删除用户
 //@param: id float64
@@ -172,7 +166,6 @@ func (ps *PersonService) DeleteUser(id string) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetUserInfo
 //@description: 设置用户信息
 //@param: reqUser model.Vo1Person
@@ -182,7 +175,6 @@ func (ps *PersonService) SetUserInfo(req system.Vo1Person) error {
 	return global.GS_DB.Updates(&req).Error
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetUserInfo
 //@description: 获取用户信息
 //@param: uuid uuid.UUID
@@ -224,7 +216,6 @@ func (ps *PersonService) FindUserByUuid(uuid string) (user *system.Vo1Person, er
 	return &u, nil
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: resetPassword
 //@description: 修改用户密码
 //@param: ID uint

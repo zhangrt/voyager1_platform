@@ -44,7 +44,7 @@ func (b *PersonApi) Login(c *gin.Context) {
 		},
 		OrganizationId: l.OrganizationId,
 	}
-	if user, err := userService.Login(u); err != nil {
+	if user, err := personService.Login(u); err != nil {
 		global.GS_LOG.Error("登陆失败! 用户名不存在或者密码错误!", zap.Error(err))
 		response.FailWithMessage("用户名不存在或者密码错误", c)
 	} else {
@@ -78,7 +78,7 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 		response.FailWithMessage("获取token失败", c)
 		return
 	}
-	if !global.GS_CONFIG.System.UseMultipoint {
+	if global.GS_CONFIG.System.UseMultipoint {
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
@@ -152,7 +152,7 @@ func (b *PersonApi) Register(c *gin.Context) {
 	user.Password = r.Password
 	user.Avatar = r.Avatar
 	user.RoleIds = r.RoleIds
-	userReturn, err := userService.Register(*user)
+	userReturn, err := personService.Register(*user)
 	if err != nil {
 		global.GS_LOG.Error("注册失败!", zap.Error(err))
 		response.FailWithDetailed(systemRes.Vo1PersonResponse{Person: userReturn}, "注册失败", c)
@@ -178,7 +178,7 @@ func (b *PersonApi) ChangePassword(c *gin.Context) {
 	u := &system.Vo1Person{}
 	u.Account = user.Account
 	u.Password = user.Password
-	if _, err := userService.ChangePassword(u, user.NewPassword); err != nil {
+	if _, err := personService.ChangePassword(u, user.NewPassword); err != nil {
 		global.GS_LOG.Error("修改失败!", zap.Error(err))
 		response.FailWithMessage("修改失败，原密码与当前账户不符", c)
 	} else {
@@ -201,7 +201,7 @@ func (b *PersonApi) GetUserList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, total, err := userService.GetUserInfoList(pageInfo); err != nil {
+	if list, total, err := personService.GetUserInfoList(pageInfo); err != nil {
 		global.GS_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
@@ -229,7 +229,7 @@ func (b *PersonApi) SetUserAuthorities(c *gin.Context) {
 		response.FailWithMessage(UserVerifyErr.Error(), c)
 		return
 	}
-	if err := userService.SetUserAuthorities(sua.ID, sua.RoleIds); err != nil {
+	if err := personService.SetUserAuthorities(sua.ID, sua.RoleIds); err != nil {
 		global.GS_LOG.Error("修改失败!", zap.Error(err))
 		response.FailWithMessage("修改失败", c)
 	} else {
@@ -269,7 +269,7 @@ func (b *PersonApi) DeleteUser(c *gin.Context) {
 		response.FailWithMessage("删除失败, 自杀失败", c)
 		return
 	}
-	if err := userService.DeleteUser(reqId.ID); err != nil {
+	if err := personService.DeleteUser(reqId.ID); err != nil {
 		global.GS_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -294,14 +294,14 @@ func (b *PersonApi) SetUserInfo(c *gin.Context) {
 	}
 
 	if len(user.RoleIds) != 0 {
-		err := userService.SetUserAuthorities(user.ID.String(), user.RoleIds)
+		err := personService.SetUserAuthorities(user.ID.String(), user.RoleIds)
 		if err != nil {
 			global.GS_LOG.Error("设置失败!", zap.Error(err))
 			response.FailWithMessage("设置失败", c)
 		}
 	}
 
-	if err := userService.SetUserInfo(system.Vo1Person{
+	if err := personService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
 			ID:     user.ID,
 			Name:   user.Name,
@@ -329,7 +329,7 @@ func (b *PersonApi) SetSelfInfo(c *gin.Context) {
 	var user systemReq.ChangeUserInfo
 	_ = c.ShouldBindJSON(&user)
 	user.ID = auth.GetUserUUID(c)
-	if err := userService.SetUserInfo(system.Vo1Person{
+	if err := personService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
 			ID:     user.ID,
 			Name:   user.Name,
@@ -354,7 +354,7 @@ func (b *PersonApi) SetSelfInfo(c *gin.Context) {
 // @Router /user/getUserInfo [get]
 func (b *PersonApi) GetUserInfo(c *gin.Context) {
 	uuid := auth.GetUserUUID(c)
-	if ReqUser, err := userService.GetUserInfo(uuid); err != nil {
+	if ReqUser, err := personService.GetUserInfo(uuid); err != nil {
 		global.GS_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
@@ -372,7 +372,7 @@ func (b *PersonApi) GetUserInfo(c *gin.Context) {
 func (b *PersonApi) ResetPassword(c *gin.Context) {
 	var user system.Vo1Person
 	_ = c.ShouldBindJSON(&user)
-	if err := userService.ResetPassword(user.ID.String()); err != nil {
+	if err := personService.ResetPassword(user.ID.String()); err != nil {
 		global.GS_LOG.Error("重置失败!", zap.Error(err))
 		response.FailWithMessage("重置失败"+err.Error(), c)
 	} else {

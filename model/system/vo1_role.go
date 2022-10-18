@@ -9,8 +9,8 @@ type Vo1Role struct {
 	SystemId    string `json:"systemId" gorm:"系统ID"`
 	Description string `json:"description"`
 	// Children    []Vo1Role   `json:"children,omitempty" gorm:"many2many:Vo1RoleThread;foreignkey:ID;association_foreignkey:ParentID"` // 这里角色非树形结构
-	Vo1Menu []Vo1Menu   `json:"menus,omitempty" gorm:"many2many:vo1_role_mtm_menu;"`
-	Persons []Vo1Person `json:"-" gorm:"many2many:vo1_person_mtm_role;"`
+	Vo1Menus []Vo1Menu   `json:"menus,omitempty" gorm:"many2many:vo1_role_mtm_menu;"`
+	Persons  []Vo1Person `json:"-" gorm:"many2many:vo1_person_mtm_role;"`
 }
 
 func (Vo1Role) TableName() string {
@@ -22,10 +22,10 @@ func (Vo1Role) Init() Vo1Role {
 		GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{
 			ID: "",
 		},
-		Name:    "",
-		OrganId: "",
-		Vo1Menu: []Vo1Menu{},
-		Persons: []Vo1Person{},
+		Name:     "",
+		OrganId:  "",
+		Vo1Menus: []Vo1Menu{},
+		Persons:  []Vo1Person{},
 	}
 
 	return authority

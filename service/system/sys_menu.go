@@ -143,7 +143,7 @@ func (menuService *MenuService) GetBaseMenuTree() (menus []system.Vo1Menu, err e
 func (menuService *MenuService) AddMenuAuthority(menus []system.Vo1Menu, authorityId string) (err error) {
 	var auth system.Vo1Role
 	auth.ID = authorityId
-	auth.Vo1Menu = menus
+	auth.Vo1Menus = menus
 	err = AuthorityServiceApp.SetMenuAuthority(&auth)
 	return err
 }

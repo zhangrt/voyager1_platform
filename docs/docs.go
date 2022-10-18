@@ -3463,6 +3463,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/voyager1/auth/getMenusByRoleIds": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authority"
+                ],
+                "summary": "通过用户角色信息获取菜单列表",
+                "parameters": [
+                    {
+                        "description": "权限ids",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.GetMenusByRoleIds"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "创建角色,返回包括系统角色详情",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Vo1MenusResponse"
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/v1/voyager1/auth/getPolicyPathByAuthorityId": {
             "post": {
                 "security": [
@@ -3739,59 +3792,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/voyager1/role/getMenusByRoleIds": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Authority"
-                ],
-                "summary": "通过用户角色信息获取菜单列表",
-                "parameters": [
-                    {
-                        "description": "权限ids",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.GetAuthorityId"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "创建角色,返回包括系统角色详情",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.Vo1MenusResponse"
-                                        },
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/weather/getInfo": {
             "get": {
                 "produces": [
@@ -3896,6 +3896,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "expose-headers": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.Cache": {
+            "type": "object",
+            "properties": {
+                "addr": {
+                    "description": "单机地址",
+                    "type": "string"
+                },
+                "addrs": {
+                    "description": "集群地址",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "master-name": {
+                    "description": "哨兵MasterName",
+                    "type": "string"
+                },
+                "options": {
+                    "description": "0(单机)1(集群)",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
                     "type": "string"
                 }
             }
@@ -4210,6 +4242,10 @@ const docTemplate = `{
                 "auth-key": {
                     "$ref": "#/definitions/config.AUTHKey"
                 },
+                "cache": {
+                    "description": "cache",
+                    "$ref": "#/definitions/config.Cache"
+                },
                 "casbin": {
                     "$ref": "#/definitions/config.Casbin"
                 },
@@ -4400,7 +4436,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "use-cache": {
-                    "description": "使用redis",
+                    "description": "使用cache",
                     "type": "boolean"
                 },
                 "use-database": {
@@ -4408,7 +4444,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "use-multipoint": {
-                    "description": "多点登录拦截",
+                    "description": "多点登录",
                     "type": "boolean"
                 }
             }
@@ -4650,6 +4686,17 @@ const docTemplate = `{
                 "id": {
                     "description": "主键ID",
                     "type": "string"
+                }
+            }
+        },
+        "request.GetMenusByRoleIds": {
+            "type": "object",
+            "properties": {
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

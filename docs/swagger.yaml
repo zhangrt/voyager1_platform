@@ -43,6 +43,29 @@ definitions:
       expose-headers:
         type: string
     type: object
+  config.Cache:
+    properties:
+      addr:
+        description: 单机地址
+        type: string
+      addrs:
+        description: 集群地址
+        items:
+          type: string
+        type: array
+      master-name:
+        description: 哨兵MasterName
+        type: string
+      options:
+        description: 0(单机)1(集群)
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
   config.Casbin:
     properties:
       model-path:
@@ -263,6 +286,9 @@ definitions:
     properties:
       auth-key:
         $ref: '#/definitions/config.AUTHKey'
+      cache:
+        $ref: '#/definitions/config.Cache'
+        description: cache
       casbin:
         $ref: '#/definitions/config.Casbin'
       cockroach:
@@ -397,13 +423,13 @@ definitions:
         description: 时区
         type: string
       use-cache:
-        description: 使用redis
+        description: 使用cache
         type: boolean
       use-database:
         description: 使用数据库
         type: boolean
       use-multipoint:
-        description: 多点登录拦截
+        description: 多点登录
         type: boolean
     type: object
   config.Zap:
@@ -576,6 +602,13 @@ definitions:
       id:
         description: 主键ID
         type: string
+    type: object
+  request.GetMenusByRoleIds:
+    properties:
+      roleIds:
+        items:
+          type: string
+        type: array
     type: object
   request.IdsReq:
     properties:
@@ -3138,6 +3171,36 @@ paths:
       summary: 更新角色api权限
       tags:
       - Casbin
+  /v1/voyager1/auth/getMenusByRoleIds:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 权限ids
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.GetMenusByRoleIds'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建角色,返回包括系统角色详情
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Vo1MenusResponse'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 通过用户角色信息获取菜单列表
+      tags:
+      - Authority
   /v1/voyager1/auth/getPolicyPathByAuthorityId:
     post:
       consumes:
@@ -3293,36 +3356,6 @@ paths:
       summary: 重置用户密码
       tags:
       - Vo1Person
-  /v1/voyager1/role/getMenusByRoleIds:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 权限ids
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.GetAuthorityId'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 创建角色,返回包括系统角色详情
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.Vo1MenusResponse'
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 通过用户角色信息获取菜单列表
-      tags:
-      - Authority
   /weather/getInfo:
     get:
       parameters:

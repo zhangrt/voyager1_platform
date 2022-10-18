@@ -9,6 +9,7 @@ import (
 	core "github.com/zhangrt/voyager1_core"
 	grpc "github.com/zhangrt/voyager1_core/auth/grpc"
 	"github.com/zhangrt/voyager1_core/auth/grpc/service"
+	"github.com/zhangrt/voyager1_core/cache"
 	config "github.com/zhangrt/voyager1_core/config"
 	"github.com/zhangrt/voyager1_platform/global"
 	initialize "github.com/zhangrt/voyager1_platform/initialize"
@@ -21,28 +22,6 @@ type server interface {
 }
 
 func RunServer() {
-	if global.GS_CONFIG.System.UseCache {
-		if global.GS_CONFIG.System.CacheType == "redis" {
-			if global.GS_CONFIG.Redis.ClusterMod {
-				// 初始化redis集群
-				initialize.RedisCLuster()
-			} else {
-				// 初始化单机redis服务
-				initialize.Redis()
-			}
-		}
-	}
-	if global.GS_CONFIG.System.UseDatabase {
-		// 初始化数据库
-		initialize.Gorm()
-		// 初始化自动建表
-		if global.GS_CONFIG.System.AutoMigrate {
-			initialize.AutoMigrate()
-		}
-		// 程序结束前关闭数据库链接
-		db, _ := global.GS_DB.DB()
-		defer db.Close()
-	}
 
 	// 基础组件对象初始化
 	core.New().
@@ -60,7 +39,34 @@ func RunServer() {
 		}).
 		ConfigMinio(global.GS_CONFIG.Minio).
 		ConfigZinx(global.GS_CONFIG.Zinx).
-		ConfigGrpc(global.GS_CONFIG.Grpc)
+		ConfigGrpc(global.GS_CONFIG.Grpc).
+		ConfigCache(global.GS_CONFIG.Cache)
+
+	if global.GS_CONFIG.System.UseCache {
+		// 新版 cache封装初始化
+		global.GS_CACHE = cache.CreateCache()
+		// 旧版 redis初始化
+		// if global.GS_CONFIG.System.CacheType == "redis" {
+		// 	if global.GS_CONFIG.Redis.ClusterMod {
+		// 		// 初始化redis集群
+		// 		initialize.RedisCLuster()
+		// 	} else {
+		// 		// 初始化单机redis服务
+		// 		initialize.Redis()
+		// 	}
+		// }
+	}
+	if global.GS_CONFIG.System.UseDatabase {
+		// 初始化数据库
+		initialize.Gorm()
+		// 初始化自动建表
+		if global.GS_CONFIG.System.AutoMigrate {
+			initialize.AutoMigrate()
+		}
+		// 程序结束前关闭数据库链接
+		db, _ := global.GS_DB.DB()
+		defer db.Close()
+	}
 
 	// 启动 Luan Server(Grpc/Tcp)
 	go grpc.NewServer().

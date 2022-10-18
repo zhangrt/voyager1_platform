@@ -22,12 +22,15 @@ type RoleApi struct{}
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.GetAuthorityId true "权限ids"
+// @Param data body systemReq.GetMenusByRoleIds true "权限ids"
 // @Success 200 {object} response.Response{data=systemRes.Vo1MenusResponse,msg=string} "创建角色,返回包括系统角色详情"
-// @Router /v1/voyager1/role/getMenusByRoleIds [post]
+// @Router /v1/voyager1/auth/getMenusByRoleIds [post]
 func (a *RoleApi) GetMenusByRoleIds(c *gin.Context) {
-	var req request.GetAuthorityId
-	_ = c.ShouldBindJSON(&req)
+	var req systemReq.GetMenusByRoleIds
+	err := c.ShouldBindJSON(&req)
+	if err != nil || req.RoleIds == nil || len(req.RoleIds) == 0 {
+		req.RoleIds = auth.GetUserAuthorityId(c)
+	}
 	if err := utils.Verify(req, utils.AuthorityVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

@@ -57,7 +57,7 @@ func (authorityService *AuthorityService) CopyAuthority(copyInfo response.Vo1Rol
 		v.ID = string(intNum)
 		baseMenu = append(baseMenu, v)
 	}
-	copyInfo.Role.Vo1Menu = baseMenu
+	copyInfo.Role.Vo1Menus = baseMenu
 	err = global.GS_DB.Create(&copyInfo.Role).Error
 	if err != nil {
 		return
@@ -107,8 +107,8 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.Vo1Role) 
 	if err != nil {
 		return
 	}
-	if len(auth.Vo1Menu) > 0 {
-		err = global.GS_DB.Model(auth).Association("Vo1Menus").Delete(auth.Vo1Menu)
+	if len(auth.Vo1Menus) > 0 {
+		err = global.GS_DB.Model(auth).Association("Vo1Menus").Delete(auth.Vo1Menus)
 		if err != nil {
 			return
 		}
@@ -182,7 +182,7 @@ func (authorityService *AuthorityService) SetDataAuthority(auth system.Vo1Role) 
 func (authorityService *AuthorityService) SetMenuAuthority(auth *system.Vo1Role) error {
 	var s system.Vo1Role
 	global.GS_DB.Preload("Vo1Menus").First(&s, "id = ?", auth.ID)
-	err := global.GS_DB.Model(&s).Association("Vo1Menus").Replace(&auth.Vo1Menu)
+	err := global.GS_DB.Model(&s).Association("Vo1Menus").Replace(&auth.Vo1Menus)
 	return err
 }
 

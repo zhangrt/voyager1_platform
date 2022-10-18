@@ -4,7 +4,6 @@ import (
 	"time"
 
 	luna "github.com/zhangrt/voyager1_core/auth/luna"
-	redis "github.com/zhangrt/voyager1_core/cache"
 	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_platform/global"
 	"go.uber.org/zap"
@@ -12,7 +11,6 @@ import (
 
 // JWT Service
 type JwtService struct {
-	cache redis.Cacher
 }
 
 //@function: JsonInBlacklist
@@ -48,7 +46,7 @@ func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 //@return: redisJWT string, err error
 
 func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err error) {
-	redisJWT = jwtService.cache.Get(decorateKey(userName))
+	redisJWT, err = global.GS_CACHE.Get(decorateKey(userName))
 	return redisJWT, err
 }
 
@@ -60,7 +58,7 @@ func (jwtService *JwtService) GetCacheJWT(userName string) (redisJWT string, err
 func (jwtService *JwtService) SetCacheJWT(jwt string, userName string) (err error) {
 	// 此处过期时间等于jwt过期时间
 	timer := time.Duration(global.GS_CONFIG.JWT.ExpiresTime) * time.Second
-	_ = jwtService.cache.Set(decorateKey(userName), jwt, timer)
+	_ = global.GS_CACHE.SetX(decorateKey(userName), jwt, timer)
 	return err
 }
 

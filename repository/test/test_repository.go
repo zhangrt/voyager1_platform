@@ -7,16 +7,13 @@ import (
 	"github.com/zhangrt/voyager1_platform/global"
 	"github.com/zhangrt/voyager1_platform/model/test"
 	"github.com/zhangrt/voyager1_platform/model/test/request"
-
-	redis "github.com/zhangrt/voyager1_core/cache"
 )
 
 type TestRepository struct {
-	cache redis.Cacher
 }
 
 func (t *TestRepository) TestGet(ctx context.Context, id string) (data string, err error) {
-	get_back := t.cache.Get(id)
+	get_back, err := global.GS_CACHE.Get(id)
 	return get_back, err
 }
 

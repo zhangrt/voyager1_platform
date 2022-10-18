@@ -30,7 +30,7 @@ func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 		return
 	}
 	casbin := luna.NewCasbin()
-	if err := casbin.UpdateCasbin(req.AuthorityId, req.CasbinInfos); err != nil {
+	if err := casbin.UpdateCasbin(req.RoleId, req.CasbinInfos); err != nil {
 		global.GS_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -54,6 +54,6 @@ func (cas *CasbinApi) GetPolicyPathByAuthorityId(c *gin.Context) {
 		return
 	}
 	casbin := luna.NewCasbin()
-	paths := casbin.GetPolicyPathByAuthorityId(req.AuthorityId)
+	paths := casbin.GetPolicyPathByAuthorityId(req.RoleId)
 	response.OkWithDetailed(systemRes.PolicyPathResponse{Paths: paths}, "获取成功", c)
 }

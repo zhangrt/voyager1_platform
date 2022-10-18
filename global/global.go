@@ -10,9 +10,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/zhangrt/voyager1_platform/config"
-
 	"github.com/go-redis/redis/v8"
+	"github.com/zhangrt/voyager1_core/cache"
+	"github.com/zhangrt/voyager1_platform/config"
 	"gorm.io/gorm"
 )
 
@@ -21,6 +21,7 @@ var (
 	GS_DBList              map[string]*gorm.DB
 	GS_REDIS_STANDALONE    *redis.Client
 	GS_REDIS_CLUSTER       *redis.ClusterClient
+	GS_CACHE               cache.Cacher
 	GS_CONFIG              config.Server
 	GS_VP                  *viper.Viper
 	GS_LOG                 *zap.Logger

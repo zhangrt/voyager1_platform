@@ -4,12 +4,12 @@ import (
 	"errors"
 	"strconv"
 
+	authentation "github.com/zhangrt/voyager1_core/auth/luna"
 	"github.com/zhangrt/voyager1_platform/global"
 	"github.com/zhangrt/voyager1_platform/model/common/request"
 	"github.com/zhangrt/voyager1_platform/model/system"
+	systemReq "github.com/zhangrt/voyager1_platform/model/system/request"
 	"github.com/zhangrt/voyager1_platform/model/system/response"
-
-	authentation "github.com/zhangrt/voyager1_core/auth/luna"
 
 	"gorm.io/gorm"
 )
@@ -20,12 +20,54 @@ type RoleService struct{}
 
 var RoleServiceApp = new(RoleService)
 
-func (rs *RoleService) GetMenusByRoleIds(req request.GetAuthorityId) (*response.Vo1MenusResponse, error) {
-
-	return nil, nil
+// 通过角色ID查询菜单合集
+func (rs *RoleService) GetMenusByRoleIds(req systemReq.GetMenusByRoleIds) (*response.Vo1MenusResponse, error) {
+	roles := roleRepository.GetRolesMenusByRoleIds(req.RoleIds)
+	var menus []system.Vo1Menu
+	// 去重map
+	temp := make(map[string]bool)
+	for _, role := range roles {
+		// 去重
+		for _, menu := range role.Vo1Menus {
+			_, ok := temp[menu.ID]
+			if ok {
+				continue // 已存在则跳过
+			} else {
+				// 不存在则取
+				menus = append(menus, menu)
+				temp[menu.ID] = true
+			}
+		}
+	}
+	temp = nil
+	menus, err := rs.getMenuTree(menus)
+	return &response.Vo1MenusResponse{Menus: menus}, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
+// 获取菜单数
+func (rs *RoleService) getMenuTree(menus []system.Vo1Menu) ([]system.Vo1Menu, error) {
+	var err error
+	treeMap := make(map[string][]system.Vo1Menu)
+	for _, v := range menus {
+		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)
+	}
+
+	menus = treeMap["0"]
+	for i := 0; i < len(menus); i++ {
+		err = rs.getChildrenList(&menus[i], treeMap)
+	}
+	return menus, err
+}
+
+// 递归获取菜单子树
+func (rs *RoleService) getChildrenList(menu *system.Vo1Menu, treeMap map[string][]system.Vo1Menu) (err error) {
+	menu.Children = treeMap[menu.ID]
+	for i := 0; i < len(menu.Children); i++ {
+		err = rs.getChildrenList(&menu.Children[i], treeMap)
+	}
+	return err
+}
+
 //@function: CreateAuthority
 //@description: 创建一个角色
 //@param: auth model.Vo1Role
@@ -39,7 +81,6 @@ func (rs *RoleService) CreateAuthority(auth system.Vo1Role) (authority system.Vo
 	return auth, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: CopyAuthority
 //@description: 复制一个角色
 //@param: copyInfo response.SysAuthorityCopyResponse
@@ -60,7 +101,7 @@ func (rs *RoleService) CopyAuthority(copyInfo response.Vo1RoleCopyResponse) (aut
 		v.ID = string(intNum)
 		baseMenu = append(baseMenu, v)
 	}
-	copyInfo.Role.Vo1Menu = baseMenu
+	copyInfo.Role.Vo1Menus = baseMenu
 	err = global.GS_DB.Create(&copyInfo.Role).Error
 	if err != nil {
 		return
@@ -75,7 +116,6 @@ func (rs *RoleService) CopyAuthority(copyInfo response.Vo1RoleCopyResponse) (aut
 	return copyInfo.Role, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateAuthority
 //@description: 更改一个角色
 //@param: auth model.Vo1Role
@@ -85,7 +125,6 @@ func (rs *RoleService) UpdateAuthority(auth system.Vo1Role) (authority system.Vo
 	return auth, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: DeleteRole
 //@description: 删除角色
 //@param: auth *model.Vo1Role
@@ -108,8 +147,8 @@ func (rs *RoleService) DeleteAuthority(auth *system.Vo1Role) (err error) {
 	if err != nil {
 		return
 	}
-	if len(auth.Vo1Menu) > 0 {
-		err = global.GS_DB.Model(auth).Association("Vo1Menus").Delete(auth.Vo1Menu)
+	if len(auth.Vo1Menus) > 0 {
+		err = global.GS_DB.Model(auth).Association("Vo1Menus").Delete(auth.Vo1Menus)
 		if err != nil {
 			return
 		}
@@ -130,7 +169,6 @@ func (rs *RoleService) DeleteAuthority(auth *system.Vo1Role) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetAuthorityInfoList
 //@description: 分页获取数据
 //@param: info request.PageInfo
@@ -150,7 +188,6 @@ func (rs *RoleService) GetAuthorityInfoList(info request.PageInfo) (list interfa
 	return authority, total, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetAuthorityInfo
 //@description: 获取所有角色信息
 //@param: auth model.Vo1Role
@@ -160,7 +197,6 @@ func (rs *RoleService) GetAuthorityInfo(auth system.Vo1Role) (sa system.Vo1Role,
 	return sa, err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetDataAuthority
 //@description: 设置角色资源权限
 //@param: auth model.Vo1Role
@@ -171,7 +207,6 @@ func (rs *RoleService) SetDataAuthority(auth system.Vo1Role) error {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
 //@function: SetMenuAuthority
 //@description: 菜单与角色绑定
 //@param: auth *model.Vo1Role
@@ -179,11 +214,11 @@ func (rs *RoleService) SetDataAuthority(auth system.Vo1Role) error {
 func (rs *RoleService) SetMenuAuthority(auth *system.Vo1Role) error {
 	var s system.Vo1Role
 	global.GS_DB.Preload("Vo1Menus").First(&s, "id = ?", auth.ID)
-	err := global.GS_DB.Model(&s).Association("Vo1Menus").Replace(&auth.Vo1Menu)
+	err := global.GS_DB.Model(&s).Association("Vo1Menus").Replace(&auth.Vo1Menus)
 	return err
 }
 
-// //@author: [piexlmax](https://github.com/piexlmax)
+//
 // //@function: findChildrenAuthority
 // //@description: 查询子角色
 // //@param: authority *model.Vo1Role

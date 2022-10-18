@@ -19,6 +19,9 @@ type Server struct {
 	Cockroach Cockroach       `mapstructure:"cockroach" json:"cockroach" yaml:"cockroach"`
 	DBList    []SpecializedDB `mapstructure:"db-list" json:"db-list" yaml:"db-list"`
 
+	// cache
+	Cache config.Cache `mapstructure:"cache" json:"cache" yaml:"cache"`
+
 	// oss
 	Minio config.Minio `mapstructure:"minio" json:"minio" yaml:"minio"`
 
