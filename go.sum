@@ -523,6 +523,8 @@ github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221018035117-d372dfa84f33 h1:qV9
 github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221018035117-d372dfa84f33/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
 github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221018062003-6399360a93da h1:GyoLrD6Pu6FF4ohpAts09yRSZcEcSHr+ngDywNB/f8s=
 github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221018062003-6399360a93da/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
+github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221018072147-cae723f4dc2d h1:i2x18reev7orbEc5QNvbw8S0I5X6Z4V7tqQl2wnZVMA=
+github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221018072147-cae723f4dc2d/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
