@@ -97,9 +97,9 @@ service-mesh:
 # system configuration
 system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
-  host: '192.168.19.110'
+  host: '127.0.0.1'
   port: 7777
-  db-type: 'cockroach'
+  db-type: 'pgsql'
   use-cache: true       # 使用缓存组件
   use-database: true    # 使用数据库
   auto-migrate: true    # 初始化自动建表，use-database为true时才有效
@@ -124,23 +124,6 @@ grpc:
     host: "127.0.0.1"
     port: 2567
 
-# 此处配置已迁移至./conf/zinx.json
-zinx:
- # 服务器应用名称
-  name: 'luna'
-  # 服务器IP
-  host: '127.0.0.1'
-  # 服务器监听端口
-  tcp-port: 2777
-  # 允许的客户端链接最大数量
-  max-conn: 10
-  # 工作任务池最大工作Goroutine数量
-  worker-pool-size: 120
-  # 日志文件夹
-  log-dir:
-  # 日志文件名称(如果不提供，则日志信息打印到Stderr)
-  log-file:
-
 # 定义auth用到的一些key值,用于前后端校验时获取请求响应中的token等关键信息
 auth-key:
   token: "x-token"
@@ -162,17 +145,17 @@ auth-key:
 #   log-mode: "true"
 #   log-zap: false
 
-cockroach:
-  path: '192.168.244.142'
-  port: '26257'
-  config: 'TimeZone=Asia/Shanghai'
-  db-name: 'test2'
-  username: 'root'
-  password: '123123'
-  max-idle-conns: 10
-  max-open-conns: 100
-  log-mode: "true"
-  log-zap: true
+# cockroach:
+#   path: '192.168.244.142'
+#   port: '26257'
+#   config: 'TimeZone=Asia/Shanghai'
+#   db-name: 'test2'
+#   username: 'root'
+#   password: '123123'
+#   max-idle-conns: 10
+#   max-open-conns: 100
+#   log-mode: "true"
+#   log-zap: true
 
 mysql:
   path: ''
@@ -187,16 +170,16 @@ mysql:
   log-zap: false
 
 pgsql:
-  path: ''
-  port: ''
+  path: '172.30.0.112'
+  port: '25431'
   config: ''
-  db-name: ''
-  username: ''
-  password: ''
+  db-name: 'voyager1'
+  username: 'voyager1'
+  password: 'voyager1'
   max-idle-conns: 10
   max-open-conns: 100
-  log-mode: ""
-  log-zap: false
+  log-mode: "true"
+  log-zap: true
 
 db-list:
   - disabled: false # 是否启用

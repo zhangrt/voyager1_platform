@@ -122,23 +122,6 @@ grpc:
     host: "127.0.0.1"
     port: 2567
 
-# 此处配置已迁移至./conf/zinx.json
-zinx:
- # 服务器应用名称
-  name: 'luna'
-  # 服务器IP
-  host: '127.0.0.1'
-  # 服务器监听端口
-  tcp-port: 2777
-  # 允许的客户端链接最大数量
-  max-conn: 10
-  # 工作任务池最大工作Goroutine数量
-  worker-pool-size: 120
-  # 日志文件夹
-  log-dir:
-  # 日志文件名称(如果不提供，则日志信息打印到Stderr)
-  log-file:
-
 # 定义auth用到的一些key值,用于前后端校验时获取请求响应中的token等关键信息
 auth-key:
   token: "x-token"
