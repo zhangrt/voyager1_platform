@@ -9,7 +9,7 @@ type Vo1PersonResponse struct {
 }
 
 type LoginResponse struct {
-	User      system.Vo1Person `json:"user"`
+	Person    system.Vo1Person `json:"person"`
 	Token     string           `json:"token"`
 	ExpiresAt int64            `json:"expiresAt"`
 }

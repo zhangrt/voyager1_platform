@@ -76,8 +76,10 @@ func (ps *PersonService) Login(u *system.Vo1Person) (userInter *system.Vo1Person
 
 		user.RoleIds = ids
 
+		var updateUser system.Vo1Person
+		updateUser.ID = user.ID
 		// 设置登录时间
-		global.GS_DB.Model(&user).Update("last_login_time", time.Now())
+		global.GS_DB.Model(&updateUser).Update("last_login_time", time.Now())
 
 	}
 

@@ -80,7 +80,7 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 	}
 	if global.GS_CONFIG.System.UseMultipoint {
 		response.OkWithDetailed(systemRes.LoginResponse{
-			User:      user,
+			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
 		}, "登录成功", c)
@@ -96,7 +96,7 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 			return
 		}
 		response.OkWithDetailed(systemRes.LoginResponse{
-			User:      user,
+			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
 		}, "登录成功", c)
@@ -115,7 +115,7 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 			return
 		}
 		response.OkWithDetailed(systemRes.LoginResponse{
-			User:      user,
+			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
 		}, "登录成功", c)
