@@ -296,7 +296,7 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 	}
 
 	if len(user.RoleIds) != 0 {
-		err := userService.SetUserAuthorities(user.ID.String(), user.RoleIds)
+		err := userService.SetUserAuthorities(user.ID, user.RoleIds)
 		if err != nil {
 			global.GS_LOG.Error("设置失败!", zap.Error(err))
 			response.FailWithMessage("设置失败", c)
@@ -330,7 +330,7 @@ func (b *UserApi) SetUserInfo(c *gin.Context) {
 func (b *UserApi) SetSelfInfo(c *gin.Context) {
 	var user systemReq.ChangeUserInfo
 	_ = c.ShouldBindJSON(&user)
-	user.ID = auth.GetUserUUID(c)
+	user.ID = auth.GetUserID(c)
 	if err := userService.SetUserInfo(system.Vo1Person{
 		GS_BASE_USER: core.GS_BASE_USER{
 			ID:     user.ID,
@@ -355,7 +355,7 @@ func (b *UserApi) SetSelfInfo(c *gin.Context) {
 // @Success 200 {object} response.Response{data=map[string]interface{},msg=string} "获取用户信息"
 // @Router /user/getUserInfo [get]
 func (b *UserApi) GetUserInfo(c *gin.Context) {
-	uuid := auth.GetUserUUID(c)
+	uuid := auth.GetUserID(c)
 	if ReqUser, err := userService.GetUserInfo(uuid); err != nil {
 		global.GS_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
@@ -374,7 +374,7 @@ func (b *UserApi) GetUserInfo(c *gin.Context) {
 func (b *UserApi) ResetPassword(c *gin.Context) {
 	var user system.Vo1Person
 	_ = c.ShouldBindJSON(&user)
-	if err := userService.ResetPassword(user.ID.String()); err != nil {
+	if err := userService.ResetPassword(user.ID); err != nil {
 		global.GS_LOG.Error("重置失败!", zap.Error(err))
 		response.FailWithMessage("重置失败"+err.Error(), c)
 	} else {

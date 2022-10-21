@@ -3,6 +3,7 @@ package voyager1
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/zhangrt/voyager1_platform/global"
@@ -28,7 +29,7 @@ func (ps *PersonService) Register(u system.Vo1Person) (userInter system.Vo1Perso
 	}
 	// 否则 附加uuid 密码hash加密 注册
 	u.Password = utils.BcryptHash(u.Password)
-	u.ID = uuid.NewV4()
+	u.ID = strings.ReplaceAll(uuid.NewV4().String(), "-", "")
 	err = global.GS_DB.Create(&u).Error
 	return u, err
 }
@@ -180,7 +181,7 @@ func (ps *PersonService) SetUserInfo(req system.Vo1Person) error {
 //@param: uuid uuid.UUID
 //@return: err error, user system.Vo1Person
 
-func (ps *PersonService) GetUserInfo(uuid uuid.UUID) (user system.Vo1Person, err error) {
+func (ps *PersonService) GetUserInfo(uuid string) (user system.Vo1Person, err error) {
 	var reqUser system.Vo1Person
 	err = global.GS_DB.Preload("Authorities").Preload("Authority").First(&reqUser, "uuid = ?", uuid).Error
 	if err != nil {

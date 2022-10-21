@@ -20,8 +20,8 @@ jwt:
   signing-key: 'gsafety'
   # 测试new token 可以用较小的过期时间
   # 单位 秒
-  expires-time: 180
-  buffer-time: 120
+  expires-time: 18000
+  buffer-time: 12000
   issuer: 'gsafety'
 
 # email configuration

@@ -1,7 +1,6 @@
 package request
 
 import (
-	uuid "github.com/satori/go.uuid"
 	model "github.com/zhangrt/voyager1_platform/model/system"
 )
 
@@ -45,7 +44,7 @@ type SetUserAuthorities struct {
 }
 
 type ChangeUserInfo struct {
-	ID      uuid.UUID       `gorm:"primarykey"`                                                                                                                  // 主键ID
+	ID      string          `gorm:"primarykey"`                                                                                                                  // 主键ID
 	Name    string          `json:"name" gorm:"default:系统用户;comment:用户昵称"`                                                                                       // 用户昵称
 	Phone   string          `json:"phone"  gorm:"comment:用户手机号"`                                                                                                 // 用户角色ID
 	RoleIds []string        `json:"roleIds" gorm:"-"`                                                                                                            // 角色ID

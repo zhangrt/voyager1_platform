@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"strings"
 
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
@@ -59,7 +60,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 				},
 			},
 			GS_BASE_USER: global.GS_BASE_USER{
-				ID:       uuid.NewV4(),
+				ID:       strings.ReplaceAll(uuid.NewV4().String(), "-", ""),
 				Account:  "admin",
 				Password: adminPassword,
 				Name:     "超级管理员",
@@ -77,7 +78,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 				},
 			},
 			GS_BASE_USER: global.GS_BASE_USER{
-				ID:       uuid.NewV4(),
+				ID:       strings.ReplaceAll(uuid.NewV4().String(), "-", ""),
 				Account:  "zhoujj",
 				Password: adminPassword,
 				Name:     "ZHOUJIAJUN",
@@ -95,7 +96,7 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 				},
 			},
 			GS_BASE_USER: global.GS_BASE_USER{
-				ID:       uuid.NewV4(),
+				ID:       strings.ReplaceAll(uuid.NewV4().String(), "-", ""),
 				Account:  "test",
 				Password: password,
 				Name:     "BIG Monster",
