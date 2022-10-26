@@ -19,7 +19,7 @@ type Register struct {
 type Login struct {
 	Identification string `json:"identification"` // 身份：用户名|手机号|邮箱
 	Password       string `json:"password"`       // 密码
-	OrganizationId string `json:"OrganizationId"`
+	OrganizationId string `json:"organizationId"`
 	// Captcha   string `json:"captcha"`   // 验证码
 	// CaptchaId string `json:"captchaId"` // 验证码ID
 }
