@@ -80,26 +80,26 @@ service-mesh:
         port: 9998
         prefix: /test
   - name: gsafety-test
-  loadbalance: 0.0.0.0
-  services:
-    - name: facility-service
-      host: 'facility'
-      # v0.1 subset版本预留配置,现阶段未用上
-      subset: v1
-      port: 9998
-      prefix: /gsafety
-    - name: test-service
-      host: 'test'
-      subset: v1
-      port: 9998
-      prefix: /test
+    loadbalance: 0.0.0.0
+    services:
+      - name: facility-service
+        host: 'facility'
+        # v0.1 subset版本预留配置,现阶段未用上
+        subset: v1
+        port: 9998
+        prefix: /gsafety
+      - name: test-service
+        host: 'test'
+        subset: v1
+        port: 9998
+        prefix: /test
 
 # system configuration
 system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
   host: '127.0.0.1'
   port: 7777
-  db-type: 'pgsql'
+  db-type: 'cockroach'
   use-cache: true       # 使用缓存组件
   use-database: true    # 使用数据库
   auto-migrate: true    # 初始化自动建表，use-database为true时才有效
@@ -145,17 +145,17 @@ auth-key:
 #   log-mode: "true"
 #   log-zap: false
 
-# cockroach:
-#   path: '192.168.244.142'
-#   port: '26257'
-#   config: 'TimeZone=Asia/Shanghai'
-#   db-name: 'test2'
-#   username: 'root'
-#   password: '123123'
-#   max-idle-conns: 10
-#   max-open-conns: 100
-#   log-mode: "true"
-#   log-zap: true
+cockroach:
+  path: '192.168.244.142'
+  port: '26257'
+  config: 'TimeZone=Asia/Shanghai'
+  db-name: 'test2'
+  username: 'root'
+  password: '123123'
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: "true"
+  log-zap: true
 
 mysql:
   path: ''

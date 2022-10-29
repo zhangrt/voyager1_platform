@@ -60,7 +60,7 @@ func (ps *PersonService) Login(u *system.Vo1Person) (userInter *system.Vo1Person
 		// 登录成功这里查询该用户跟组织机构相关的角色信息
 		var roles []system.Vo1Role
 		if u.OrganizationId == "" {
-			// select * from role where id in (select role_id where person_id = ?)
+			// select * from role where id in (select role_id from vo1_person_mtm_role where person_id = ?)
 			global.GS_DB.Where("id in (?)", global.GS_DB.Table("vo1_person_mtm_role").Select("vo1_role_id").Where("vo1_person_id = ?", user.ID)).Find(&roles)
 		} else {
 			// select * from role where organ_id = ?
