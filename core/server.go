@@ -7,8 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	core "github.com/zhangrt/voyager1_core"
-	grpc "github.com/zhangrt/voyager1_core/auth/grpc"
-	"github.com/zhangrt/voyager1_core/auth/grpc/service"
 	"github.com/zhangrt/voyager1_core/cache"
 	config "github.com/zhangrt/voyager1_core/config"
 	"github.com/zhangrt/voyager1_platform/global"
@@ -69,9 +67,9 @@ func RunServer() {
 	}
 
 	// 启动 Luan Server(Grpc/Tcp)
-	go grpc.NewServer().
-		RegisterAuthServiceServer(new(service.AuthService)).
-		LunchGrpcServer()
+	// go grpc.NewServer().
+	// 	RegisterAuthServiceServer(new(service.AuthService)).
+	// 	LunchGrpcServer()
 
 	// 时区
 	time.LoadLocation(global.GS_CONFIG.System.TimeZone)

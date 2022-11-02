@@ -98,11 +98,11 @@ service-mesh:
 system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
   host: '127.0.0.1'
-  port: 7777
-  db-type: 'cockroach'
-  use-cache: true       # 使用缓存组件
+  port: 5555
+  db-type: 'pgsql'
+  use-cache: false       # 使用缓存组件
   use-database: true    # 使用数据库
-  auto-migrate: true    # 初始化自动建表，use-database为true时才有效
+  auto-migrate: false    # 初始化自动建表，use-database为true时才有效
   cache-type: 'redis'   # 缓存组件类型
   oss-type: 'minio'
   root-path: ""
@@ -116,13 +116,23 @@ system:
   iplimit-time: 3600
 
 grpc:
+# gRPC自定义配置与golang版本一致
+  j-server:
+    network: tcp
+    host: 127.0.0.1
+    port: 2568
+  j-client:
+    host: 127.0.0.1
+    port: 2568
+# 兼容 springboot 集成 gRPC的配置，若采用springboot集成，必不可少
   server:
-    network: "tcp"
-    host: "127.0.0.1"
     port: 2567
+    address: 127.0.0.1
   client:
-    host: "127.0.0.1"
-    port: 2567
+    # 定义一个gRpc的连接信息auth-service，与注解@GrpcClient(name)的name保持一致
+    auth-service:
+      negotiationType: PLAINTEXT
+      address: static://127.0.0.1:2567
 
 # 定义auth用到的一些key值,用于前后端校验时获取请求响应中的token等关键信息
 auth-key:
@@ -132,6 +142,7 @@ auth-key:
   refresh-expires-at: "new-expires-at"
   user: "clims"
   user-id: "x-user-id"
+  reload: "reload"
 
 # cockroach:
 #   path: '172.30.0.105'
@@ -174,8 +185,8 @@ pgsql:
   port: '25431'
   config: ''
   db-name: 'voyager1'
-  username: 'voyager1'
-  password: 'voyager1'
+  username: 'postgres'
+  password: 'postgres'
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: "true"
