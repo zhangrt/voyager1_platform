@@ -132,8 +132,8 @@ func ReadAll(c *gin.Context, body []byte) []byte {
 
 func GetUserId(c *gin.Context, userId string) string {
 	claims, _ := auth.GetClaims(c)
-	if claims.ID.String() != "" {
-		userId = claims.ID.String()
+	if claims.ID != "" {
+		userId = claims.ID
 	} else {
 		userId = c.Request.Header.Get(global.GS_CONFIG.AUTHKey.UserId)
 	}

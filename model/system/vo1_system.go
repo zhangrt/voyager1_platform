@@ -10,3 +10,7 @@ type Vo1System struct {
 	SerialNo    string `json:"serial_no" gorm:"comment:排序"`
 	Description string `json:"description" gorm:"comment:描述"`
 }
+
+func (Vo1System) TableName() string {
+	return "vo1_system"
+}

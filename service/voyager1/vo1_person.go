@@ -3,6 +3,7 @@ package voyager1
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/zhangrt/voyager1_platform/global"
@@ -28,7 +29,7 @@ func (ps *PersonService) Register(u system.Vo1Person) (userInter system.Vo1Perso
 	}
 	// 否则 附加uuid 密码hash加密 注册
 	u.Password = utils.BcryptHash(u.Password)
-	u.ID = uuid.NewV4()
+	u.ID = strings.ReplaceAll(uuid.NewV4().String(), "-", "")
 	err = global.GS_DB.Create(&u).Error
 	return u, err
 }
@@ -59,7 +60,7 @@ func (ps *PersonService) Login(u *system.Vo1Person) (userInter *system.Vo1Person
 		// 登录成功这里查询该用户跟组织机构相关的角色信息
 		var roles []system.Vo1Role
 		if u.OrganizationId == "" {
-			// select * from role where id in (select role_id where person_id = ?)
+			// select * from role where id in (select role_id from vo1_person_mtm_role where person_id = ?)
 			global.GS_DB.Where("id in (?)", global.GS_DB.Table("vo1_person_mtm_role").Select("vo1_role_id").Where("vo1_person_id = ?", user.ID)).Find(&roles)
 		} else {
 			// select * from role where organ_id = ?
@@ -75,8 +76,10 @@ func (ps *PersonService) Login(u *system.Vo1Person) (userInter *system.Vo1Person
 
 		user.RoleIds = ids
 
+		var updateUser system.Vo1Person
+		updateUser.ID = user.ID
 		// 设置登录时间
-		global.GS_DB.Model(&user).Update("last_login_time", time.Now())
+		global.GS_DB.Model(&updateUser).Update("last_login_time", time.Now())
 
 	}
 
@@ -180,7 +183,7 @@ func (ps *PersonService) SetUserInfo(req system.Vo1Person) error {
 //@param: uuid uuid.UUID
 //@return: err error, user system.Vo1Person
 
-func (ps *PersonService) GetUserInfo(uuid uuid.UUID) (user system.Vo1Person, err error) {
+func (ps *PersonService) GetUserInfo(uuid string) (user system.Vo1Person, err error) {
 	var reqUser system.Vo1Person
 	err = global.GS_DB.Preload("Authorities").Preload("Authority").First(&reqUser, "uuid = ?", uuid).Error
 	if err != nil {

@@ -9,7 +9,7 @@ type Vo1Organization struct {
 	SerialNo    int               `json:"serialNo"`
 	Description string            `json:"description"`
 	Children    []Vo1Organization `json:"children,omitempty" gorm:"-"`
-	Users       []Vo1Person       `json:"-" gorm:"many2many:sys_user_organization;"`
+	Departments []Vo1Department   `json:"departments" gorm:"-"`
 }
 
 func (Vo1Organization) TableName() string {

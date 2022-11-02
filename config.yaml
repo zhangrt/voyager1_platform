@@ -20,8 +20,8 @@ jwt:
   signing-key: 'gsafety'
   # 测试new token 可以用较小的过期时间
   # 单位 秒
-  expires-time: 180
-  buffer-time: 120
+  expires-time: 18000
+  buffer-time: 12000
   issuer: 'gsafety'
 
 # email configuration
@@ -80,29 +80,29 @@ service-mesh:
         port: 9998
         prefix: /test
   - name: gsafety-test
-  loadbalance: 0.0.0.0
-  services:
-    - name: facility-service
-      host: 'facility'
-      # v0.1 subset版本预留配置,现阶段未用上
-      subset: v1
-      port: 9998
-      prefix: /gsafety
-    - name: test-service
-      host: 'test'
-      subset: v1
-      port: 9998
-      prefix: /test
+    loadbalance: 0.0.0.0
+    services:
+      - name: facility-service
+        host: 'facility'
+        # v0.1 subset版本预留配置,现阶段未用上
+        subset: v1
+        port: 9998
+        prefix: /gsafety
+      - name: test-service
+        host: 'test'
+        subset: v1
+        port: 9998
+        prefix: /test
 
 # system configuration
 system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
-  host: '192.168.19.110'
-  port: 7777
-  db-type: 'cockroach'
-  use-cache: true       # 使用缓存组件
+  host: '127.0.0.1'
+  port: 5555
+  db-type: 'pgsql'
+  use-cache: false       # 使用缓存组件
   use-database: true    # 使用数据库
-  auto-migrate: true    # 初始化自动建表，use-database为true时才有效
+  auto-migrate: false    # 初始化自动建表，use-database为true时才有效
   cache-type: 'redis'   # 缓存组件类型
   oss-type: 'minio'
   root-path: ""
@@ -116,30 +116,23 @@ system:
   iplimit-time: 3600
 
 grpc:
+# gRPC自定义配置与golang版本一致
+  j-server:
+    network: tcp
+    host: 127.0.0.1
+    port: 2568
+  j-client:
+    host: 127.0.0.1
+    port: 2568
+# 兼容 springboot 集成 gRPC的配置，若采用springboot集成，必不可少
   server:
-    network: "tcp"
-    host: "127.0.0.1"
     port: 2567
+    address: 127.0.0.1
   client:
-    host: "127.0.0.1"
-    port: 2567
-
-# 此处配置已迁移至./conf/zinx.json
-zinx:
- # 服务器应用名称
-  name: 'luna'
-  # 服务器IP
-  host: '127.0.0.1'
-  # 服务器监听端口
-  tcp-port: 2777
-  # 允许的客户端链接最大数量
-  max-conn: 10
-  # 工作任务池最大工作Goroutine数量
-  worker-pool-size: 120
-  # 日志文件夹
-  log-dir:
-  # 日志文件名称(如果不提供，则日志信息打印到Stderr)
-  log-file:
+    # 定义一个gRpc的连接信息auth-service，与注解@GrpcClient(name)的name保持一致
+    auth-service:
+      negotiationType: PLAINTEXT
+      address: static://127.0.0.1:2567
 
 # 定义auth用到的一些key值,用于前后端校验时获取请求响应中的token等关键信息
 auth-key:
@@ -149,6 +142,7 @@ auth-key:
   refresh-expires-at: "new-expires-at"
   user: "clims"
   user-id: "x-user-id"
+  reload: "reload"
 
 # cockroach:
 #   path: '172.30.0.105'
@@ -187,16 +181,16 @@ mysql:
   log-zap: false
 
 pgsql:
-  path: ''
-  port: ''
+  path: '172.30.0.112'
+  port: '25431'
   config: ''
-  db-name: ''
-  username: ''
-  password: ''
+  db-name: 'voyager1'
+  username: 'postgres'
+  password: 'postgres'
   max-idle-conns: 10
   max-open-conns: 100
-  log-mode: ""
-  log-zap: false
+  log-mode: "true"
+  log-zap: true
 
 db-list:
   - disabled: false # 是否启用
