@@ -491,12 +491,8 @@ github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9dec
 github.com/yusufpapurcu/wmi v1.2.2 h1:KBNDSne4vP5mbSWnJbO+51IMOXJB67QiYCSBrubbPRg=
 github.com/yusufpapurcu/wmi v1.2.2/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
-github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221101083501-3658415cdf2f h1:GLZxZyPH+SFKc8dXMouq6aIi5l15Ji2ILJpoDLJhT8w=
-github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221101083501-3658415cdf2f/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
-github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221102005957-9ac99c2722a2 h1:r7V0rfW46SREIRiTDxr7uTK4GWn/DA4XBTq4bKF8x0I=
-github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221102005957-9ac99c2722a2/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
-github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221102015547-ab89d825b0fb h1:54WYgInyae5zjiTHjzEiHcg+Dh1Cm4VEPSgZ3Wg+uyc=
-github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221102015547-ab89d825b0fb/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
+github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221102024658-1a511f3048b8 h1:SjYD7mDXvVE3rLqyBdCNbt85fwPd1ZERLgkKwRO9HW8=
+github.com/zhangrt/voyager1_core v0.1.9-dev.0.20221102024658-1a511f3048b8/go.mod h1:bEG2C1yMJfTITwkdGA+cPZXBkolMXiH08PmKLSYt+iM=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
