@@ -58,9 +58,9 @@ cache:
   - '172.30.0.105:10305'
   - '172.30.0.105:10306'
   username: ''
-  password: ''
+  password: 'gsafety.2022'
   master-name: ''
-  options: '0' # 0单机 1集群
+  options: '1' # 0单机 1集群
 
 # service-mesh 核心配置 host & port
 service-mesh:
@@ -100,9 +100,9 @@ system:
   host: '127.0.0.1'
   port: 5555
     # luna - platform/ star - business
-  role: star
+  role: luna
   db-type: 'pgsql'
-  use-cache: false       # 使用缓存组件
+  use-cache: true       # 使用缓存组件
   use-database: true    # 使用数据库
   auto-migrate: false    # 初始化自动建表，use-database为true时才有效
   cache-type: 'redis'   # 缓存组件类型

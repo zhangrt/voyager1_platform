@@ -89,8 +89,8 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 
 	var jwtService = auth.NewJWT()
 
-	if jwtStr, err := jwtService.GetCacheJWT(user.Account); err == redis.Nil {
-		if err := jwtService.SetCacheJWT(token, user.Account); err != nil {
+	if jwtStr, err := jwtService.GetCacheJWT(user.ID); err == redis.Nil {
+		if err := jwtService.SetCacheJWT(token, user.ID); err != nil {
 			global.GS_LOG.Error("设置登录状态失败!", zap.Error(err))
 			response.FailWithMessage("设置登录状态失败", c)
 			return

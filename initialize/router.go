@@ -93,6 +93,8 @@ func Routers() *gin.Engine {
 			PrivateGroup.Use(starHandler.JWTAuthJ(constant.GRPCJ)) // 注入star拦截器
 		}
 
+	} else {
+		luna.RegisterJwt(&service.JwtService{}) // 注入Jwt实现类用于登录
 	}
 
 	{
