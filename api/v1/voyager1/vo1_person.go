@@ -79,11 +79,11 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 		return
 	}
 	if global.GS_CONFIG.System.UseMultipoint {
-		response.OkWithDetailed(systemRes.LoginResponse{
+		response.OkWithDetailedModel(systemRes.LoginResponse{
 			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, c)
 		return
 	}
 
@@ -95,11 +95,11 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 			response.FailWithMessage("设置登录状态失败", c)
 			return
 		}
-		response.OkWithDetailed(systemRes.LoginResponse{
+		response.OkWithDetailedModel(systemRes.LoginResponse{
 			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, c)
 	} else if err != nil {
 		global.GS_LOG.Error("设置登录状态失败!", zap.Error(err))
 		response.FailWithMessage("设置登录状态失败", c)
@@ -114,11 +114,11 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 			response.FailWithMessage("设置登录状态失败", c)
 			return
 		}
-		response.OkWithDetailed(systemRes.LoginResponse{
+		response.OkWithDetailedModel(systemRes.LoginResponse{
 			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, c)
 	}
 }
 

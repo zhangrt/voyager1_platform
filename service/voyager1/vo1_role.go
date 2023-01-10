@@ -24,6 +24,35 @@ var RoleServiceApp = new(RoleService)
 func (rs *RoleService) GetMenusByRoleIds(req systemReq.GetMenusByRoleIds) (*response.Vo1MenusResponse, error) {
 	roles := roleRepository.GetRolesMenusByRoleIds(req.RoleIds)
 	var menus []system.Vo1Menu
+
+	roles1 := roleRepository.GetRolesSystemByRoleIds(req.RoleIds)
+
+	var systems []system.Vo1System
+	// 去重map
+	temp1 := make(map[string]bool)
+	for _, role := range roles1 {
+		// 去重
+		for _, system := range role.Systems {
+			_, ok := temp1[system.ID]
+			if ok {
+				continue // 已存在则跳过
+			} else {
+				// 不存在则取
+				systems = append(systems, system)
+				temp1[system.ID] = true
+			}
+		}
+	}
+
+	for _, system1 := range systems {
+		var menus1 = new(system.Vo1Menu)
+		menus1.ID = system1.ID
+		menus1.Name = system1.Name
+		menus1.SystemId = system1.ID
+		menus1.Description = system1.Description
+		menus = append(menus, *menus1)
+	}
+
 	// 去重map
 	temp := make(map[string]bool)
 	for _, role := range roles {
@@ -52,7 +81,7 @@ func (rs *RoleService) getMenuTree(menus []system.Vo1Menu) ([]system.Vo1Menu, er
 		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)
 	}
 
-	menus = treeMap["0"]
+	menus = treeMap[""]
 	for i := 0; i < len(menus); i++ {
 		err = rs.getChildrenList(&menus[i], treeMap)
 	}

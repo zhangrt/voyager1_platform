@@ -51,8 +51,8 @@ func (baseMenuService *BaseMenuService) UpdateBaseMenu(menu system.Vo1Menu) (err
 	upDateMap["parent_id"] = menu.ParentId
 	upDateMap["url"] = menu.Url
 	upDateMap["name"] = menu.Name
-	upDateMap["hidden"] = menu.Hidden
-	upDateMap["component"] = menu.Component
+	/*upDateMap["hidden"] = menu.Hidden
+	upDateMap["component"] = menu.Component*/
 	upDateMap["description"] = menu.Description
 	upDateMap["icon"] = menu.Icon
 	upDateMap["serial_no"] = menu.SerialNo

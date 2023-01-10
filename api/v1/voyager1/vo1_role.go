@@ -39,7 +39,7 @@ func (a *RoleApi) GetMenusByRoleIds(c *gin.Context) {
 		global.GS_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败"+err.Error(), c)
 	} else {
-		response.OkWithDetailed(menus, "获取成功", c)
+		response.OkWithDetailedModel(menus.Menus, c)
 	}
 }
 

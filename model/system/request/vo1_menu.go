@@ -17,9 +17,9 @@ func DefaultMenu() []system.Vo1Menu {
 		ParentId:                "0",
 		Url:                     "dashboard",
 		Name:                    "仪表盘",
-		Component:               "pages/dashboard/dashboard_view.dart",
-		SerialNo:                1,
-		Description:             "仪表盘",
-		Icon:                    "dashboard",
+		/*Component:               "pages/dashboard/dashboard_view.dart",*/
+		SerialNo:    1,
+		Description: "仪表盘",
+		Icon:        "dashboard",
 	}}
 }
