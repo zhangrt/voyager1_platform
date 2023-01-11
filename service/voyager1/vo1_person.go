@@ -230,11 +230,8 @@ func (ps *PersonService) ResetPassword(ID string) (err error) {
 }
 
 func (ps *PersonService) GetDepartmentsByAccountOrPhoneOrEmail(value string) (departments []system.Vo1Department, err error) {
-	var u []system.Vo1Department
 
-	person := personRepository.GetDepartmentsByPersonAccount(value)
+	department, err := personRepository.GetDepartmentsByPersonAccount(value)
 
-	u = person.Departments
-
-	return *&u, err
+	return *&department, err
 }
