@@ -9,5 +9,6 @@ type ServiceGroup struct {
 }
 
 var (
-	roleRepository = repository.RepositoryGroupApp.Voyager1Repository.Vo1RoleRepository
+	roleRepository   = repository.RepositoryGroupApp.Voyager1Repository.Vo1RoleRepository
+	personRepository = repository.RepositoryGroupApp.Voyager1Repository.Vo1PersonRepository
 )

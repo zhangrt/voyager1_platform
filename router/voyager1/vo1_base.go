@@ -16,6 +16,7 @@ func (s *Vo1BaseRouter) InitVo1BaseRouter(Router *gin.RouterGroup) {
 		v1VoyagerRouter.POST("register", personApi.Register)
 		v1VoyagerRouter.POST("changePassword", personApi.ChangePassword)
 		v1VoyagerRouter.POST("resetPassword", personApi.ResetPassword)
+		v1VoyagerRouter.GET("person/departments/accountorphoneoremail/:value", personApi.GetDepartmentsByAccountOrPhoneOrEmail)
 	}
 
 }

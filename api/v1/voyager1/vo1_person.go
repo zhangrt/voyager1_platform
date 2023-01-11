@@ -379,3 +379,22 @@ func (b *PersonApi) ResetPassword(c *gin.Context) {
 		response.OkWithMessage("重置成功", c)
 	}
 }
+
+// @Tags Vo1Person
+// @Summary 根据账号或手机号或email获取部门信息
+// @Security ApiKeyAuth
+// @Produce  application/json
+// @Param data body
+// @Success 200 {object}
+// @Routerperson/departments/accountorphoneoremail/:value [get]
+func (b *PersonApi) GetDepartmentsByAccountOrPhoneOrEmail(c *gin.Context) {
+	value := c.Param("value")
+
+	if Departments, err := personService.GetDepartmentsByAccountOrPhoneOrEmail(value); err != nil {
+		global.GS_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败"+err.Error(), c)
+	} else {
+
+		response.OkWithDetailedModel(Departments, c)
+	}
+}
