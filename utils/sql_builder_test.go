@@ -33,6 +33,7 @@ func CraeteDB() *gorm.DB {
 		return db
 	}
 }
+
 func TestSQLBuilder(t *testing.T) {
 
 	dbtest = CraeteDB()
@@ -42,12 +43,12 @@ func TestSQLBuilder(t *testing.T) {
 		Where("test", "id", "=", nil).
 		Where("test", "name", "-like", "_1 or ^3=3%").
 		Where("test", "age", "like-", "").
-		Where("test", "gender", "in", []string{"1", "2", "5"}).
-		Where("test", "last_login_lime", "<=", time.Now()).
-		Where("test", "last_login_lime", ">=", time.Time{}).
+		Where("test", "email", "in", []string{"1", "2", "5"}).
+		Where("test", "create_time", "<=", time.Now()).
+		Where("test", "create_time", ">=", time.Time{}).
 		Where("test", "phone", "in", "0,1").
 		Page("test", 1, 10).
-		Order("test", "code-desc,type-asc").
+		Order("test", "name-desc,age-asc").
 		Go("test")
 	var personList []system.Vo1Person
 	var total int64
@@ -65,17 +66,17 @@ func TestSQLBuilder(t *testing.T) {
 func TestSQLBuilderSafety(t *testing.T) {
 
 	dbsafetytest = CraeteDB()
-	db := builder.Adapter("test", dbsafetytest).
+	db := SQLAdapterObj.Adapter("test", dbsafetytest).
 		Model("test", &system.Vo1Person{}).
 		Where("test", "id", "=", nil).
 		Where("test", "name", "-like", "_1 or ^3=3%").
 		Where("test", "age", "like-", "").
-		Where("test", "gender", "in", []string{"1", "2", "5"}).
-		Where("test", "last_login_lime", "<=", time.Now()).
-		Where("test", "last_login_lime", ">=", time.Time{}).
+		Where("test", "email", "in", []string{"1", "2", "5"}).
+		Where("test", "create_time", "<=", time.Now()).
+		Where("test", "create_time", ">=", time.Time{}).
 		Where("test", "phone", "in", "0,1").
 		Page("test", 1, 10).
-		Order("test", "code-desc,type-asc").
+		Order("test", "name-desc,age-asc").
 		Go("test")
 	var personList []system.Vo1Person
 	var total int64
