@@ -50,7 +50,7 @@ func AutoMigrate() {
 		&SystemModels.Vo1PersonDepartment{},
 		&SystemModels.Vo1PersonRole{},
 		&SystemModels.Vo1RoleMenu{},
-		&SystemModels.Vo1PersonSystem{},
+		&SystemModels.Vo1RoleSystem{},
 
 		&SystemModels.Vo1Notice{},
 		&SystemModels.Vo1OperationRecord{},
