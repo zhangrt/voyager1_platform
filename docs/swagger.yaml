@@ -1173,6 +1173,41 @@ definitions:
         description: 更新时间
         type: string
     type: object
+system.Vo1System:
+  properties:
+    createdAt:
+      description: 创建时间
+      type: string
+    creator:
+      type: string
+    creator_id:
+      type: string
+    deleted:
+      type: integer
+    id:
+      description: 主键ID
+      example: ""
+      type: string
+    last_update_id:
+      type: string
+    last_updater:
+      type: string
+    name:
+      description: 名称
+      type: string
+    homePage:
+      description: 主页
+      type: string
+    serialNo:
+      description: 排序
+      type: string
+    description:
+      description: 描述
+      type: string
+    updatedAt:
+      description: 更新时间
+      type: string
+  type: object
 info:
   contact: {}
   description: Platform demo golang 后端服务api
@@ -3278,6 +3313,27 @@ paths:
       summary: 用户修改密码
       tags:
       - Vo1Person
+  /system/getSystemModel:
+    post:
+      parameters:
+      - id: 子系统唯一标识
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回子系统唯一模型
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LoginResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 根据子系统Id获取子系统信息
+      tags:
+      - Vo1System
   /v1/voyager1/login:
     post:
       parameters:
