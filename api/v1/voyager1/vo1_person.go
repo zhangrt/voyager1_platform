@@ -79,27 +79,27 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 		return
 	}
 	if global.GS_CONFIG.System.UseMultipoint {
-		response.OkWithDetailed(systemRes.LoginResponse{
+		response.OkWithDetailedModel(systemRes.LoginResponse{
 			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, c)
 		return
 	}
 
 	var jwtService = auth.NewJWT()
 
-	if jwtStr, err := jwtService.GetCacheJWT(user.Account); err == redis.Nil {
-		if err := jwtService.SetCacheJWT(token, user.Account); err != nil {
+	if jwtStr, err := jwtService.GetCacheJWT(user.ID); err == redis.Nil {
+		if err := jwtService.SetCacheJWT(token, user.ID); err != nil {
 			global.GS_LOG.Error("设置登录状态失败!", zap.Error(err))
 			response.FailWithMessage("设置登录状态失败", c)
 			return
 		}
-		response.OkWithDetailed(systemRes.LoginResponse{
+		response.OkWithDetailedModel(systemRes.LoginResponse{
 			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, c)
 	} else if err != nil {
 		global.GS_LOG.Error("设置登录状态失败!", zap.Error(err))
 		response.FailWithMessage("设置登录状态失败", c)
@@ -114,11 +114,11 @@ func (b *PersonApi) tokenNext(c *gin.Context, user system.Vo1Person) {
 			response.FailWithMessage("设置登录状态失败", c)
 			return
 		}
-		response.OkWithDetailed(systemRes.LoginResponse{
+		response.OkWithDetailedModel(systemRes.LoginResponse{
 			Person:    user,
 			Token:     token,
 			ExpiresAt: claims.StandardClaims.ExpiresAt * 1000,
-		}, "登录成功", c)
+		}, c)
 	}
 }
 
@@ -377,5 +377,24 @@ func (b *PersonApi) ResetPassword(c *gin.Context) {
 		response.FailWithMessage("重置失败"+err.Error(), c)
 	} else {
 		response.OkWithMessage("重置成功", c)
+	}
+}
+
+// @Tags Vo1Person
+// @Summary 根据账号或手机号或email获取部门信息
+// @Security ApiKeyAuth
+// @Produce  application/json
+// @Param data body
+// @Success 200 {object}
+// @Routerperson/departments/accountorphoneoremail/:value [get]
+func (b *PersonApi) GetDepartmentsByAccountOrPhoneOrEmail(c *gin.Context) {
+	value := c.Param("value")
+
+	if Departments, err := personService.GetDepartmentsByAccountOrPhoneOrEmail(value); err != nil {
+		global.GS_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败"+err.Error(), c)
+	} else {
+
+		response.OkWithDetailedModel(Departments, c)
 	}
 }

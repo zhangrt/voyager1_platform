@@ -3655,6 +3655,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/system/getSystemModel": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vo1System"
+                ],
+                "summary": "根据子系统Id获取子系统信息",
+                "parameters": [
+                    {
+                        "id": "子系统唯一标识"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "返回子系统唯一模型",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LoginResponse"
+                                        },
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/v1/voyager1/login": {
             "post": {
                 "produces": [
@@ -5491,6 +5530,55 @@ const docTemplate = `{
                     "example": "0"
                 },
                 "testName": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "system.Vo1System": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "creator_id": {
+                    "type": "string"
+                },
+                "deleted": {
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "string",
+                    "example": ""
+                },
+                "last_update_id": {
+                    "type": "string"
+                },
+                "last_updater": {
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "homePage": {
+                    "description": "主页",
+                    "type": "string"
+                },
+                "serialNo": {
+                    "description": "排序",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "描述",
                     "type": "string"
                 },
                 "updatedAt": {

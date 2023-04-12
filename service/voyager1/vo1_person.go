@@ -228,3 +228,10 @@ func (ps *PersonService) ResetPassword(ID string) (err error) {
 	err = global.GS_DB.Model(&system.Vo1Person{}).Where("id = ?", ID).Update("password", utils.BcryptHash("123456")).Error
 	return err
 }
+
+func (ps *PersonService) GetDepartmentsByAccountOrPhoneOrEmail(value string) (departments []system.Vo1Department, err error) {
+
+	department, err := personRepository.GetDepartmentsByPersonAccount(value)
+
+	return *&department, err
+}

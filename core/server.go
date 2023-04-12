@@ -7,8 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	core "github.com/zhangrt/voyager1_core"
+	"github.com/zhangrt/voyager1_core/auth/grpc"
+	"github.com/zhangrt/voyager1_core/auth/grpc/service"
 	"github.com/zhangrt/voyager1_core/cache"
 	config "github.com/zhangrt/voyager1_core/config"
+	"github.com/zhangrt/voyager1_core/constant"
 	"github.com/zhangrt/voyager1_platform/global"
 	initialize "github.com/zhangrt/voyager1_platform/initialize"
 
@@ -65,11 +68,12 @@ func RunServer() {
 		db, _ := global.GS_DB.DB()
 		defer db.Close()
 	}
-
-	// 启动 Luan Server(Grpc/Tcp)
-	// go grpc.NewServer().
-	// 	RegisterAuthServiceServer(new(service.AuthService)).
-	// 	LunchGrpcServer()
+	if global.GS_CONFIG.System.Role == constant.LUNA {
+		// 启动 Luan Server(Grpc/Tcp)
+		go grpc.NewServerJ().
+			RegisterAuthServiceServer(new(service.AuthServiceJ)).
+			LunchGrpcServerJ()
+	}
 
 	// 时区
 	time.LoadLocation(global.GS_CONFIG.System.TimeZone)

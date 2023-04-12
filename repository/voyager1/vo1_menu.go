@@ -17,3 +17,12 @@ func (t *Vo1RoleRepository) GetRolesMenusByRoleIds(ids []string) (_ []system.Vo1
 	}).Where("id in ?", ids).Find(&roles)
 	return roles
 }
+
+func (t *Vo1RoleRepository) GetRolesSystemByRoleIds(ids []string) (_ []system.Vo1Role) {
+	var roles []system.Vo1Role
+	// 自定义sql预加载
+	global.GS_DB.Preload("Systems", func(db *gorm.DB) *gorm.DB {
+		return db.Order("serial_no")
+	}).Where("id in ?", ids).Find(&roles)
+	return roles
+}

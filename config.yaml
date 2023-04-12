@@ -17,7 +17,7 @@ casbin:
 
 # jwt configuration
 jwt:
-  signing-key: 'gsafety'
+  signing-key: 'gsafety-auth-key-1024'
   # 测试new token 可以用较小的过期时间
   # 单位 秒
   expires-time: 18000
@@ -58,9 +58,9 @@ cache:
   - '172.30.0.105:10305'
   - '172.30.0.105:10306'
   username: ''
-  password: ''
+  password: 'gsafety.2022'
   master-name: ''
-  options: '0' # 0单机 1集群
+  options: '1' # 0单机 1集群
 
 # service-mesh 核心配置 host & port
 service-mesh:
@@ -99,8 +99,10 @@ system:
   application: '/gsafety' # 与main.go中 @BasePath 值保持一致
   host: '127.0.0.1'
   port: 5555
+    # luna - platform/ star - business
+  role: luna
   db-type: 'pgsql'
-  use-cache: false       # 使用缓存组件
+  use-cache: true       # 使用缓存组件
   use-database: true    # 使用数据库
   auto-migrate: false    # 初始化自动建表，use-database为true时才有效
   cache-type: 'redis'   # 缓存组件类型
@@ -123,7 +125,7 @@ grpc:
     port: 2568
   j-client:
     host: 127.0.0.1
-    port: 2568
+    port: 2567
 # 兼容 springboot 集成 gRPC的配置，若采用springboot集成，必不可少
   server:
     port: 2567

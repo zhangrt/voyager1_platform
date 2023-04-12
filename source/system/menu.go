@@ -3,7 +3,6 @@ package system
 import (
 	"context"
 
-	"github.com/zhangrt/voyager1_core/global"
 	. "github.com/zhangrt/voyager1_platform/model/system"
 	"github.com/zhangrt/voyager1_platform/service/system"
 
@@ -49,7 +48,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		return ctx, system.ErrMissingDBContext
 	}
 	entities := []Vo1Menu{
-		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "1"}, MenuLevel: 0, Hidden: false, ParentId: "0", Url: "dashboard", Name: "dashboard", Component: "view/dashboard/index.vue", SerialNo: 1, Description: "仪表盘", Icon: "odometer"},
+		/*{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "1"}, MenuLevel: 0, Hidden: false, ParentId: "0", Url: "dashboard", Name: "dashboard", Component: "view/dashboard/index.vue", SerialNo: 1, Description: "仪表盘", Icon: "odometer"},
 		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "2"}, MenuLevel: 0, Hidden: false, ParentId: "0", Url: "about", Name: "about", Component: "view/about/index.vue", SerialNo: 7, Description: "关于我们", Icon: "info-filled"},
 		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "3"}, MenuLevel: 0, Hidden: false, ParentId: "0", Url: "admin", Name: "superAdmin", Component: "view/superAdmin/index.vue", SerialNo: 3, Description: "超级管理员", Icon: "user"},
 		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "4"}, MenuLevel: 0, Hidden: false, ParentId: "3", Url: "authority", Name: "authority", Component: "view/superAdmin/authority/authority.vue", SerialNo: 1, Description: "角色管理", Icon: "avatar"},
@@ -71,7 +70,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "20"}, MenuLevel: 0, Hidden: false, ParentId: "3", Url: "operation", Name: "operation", Component: "view/superAdmin/operation/sysOperationRecord.vue", SerialNo: 6, Description: "操作历史", Icon: "pie-chart"},
 		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "21"}, MenuLevel: 0, Hidden: false, ParentId: "9", Url: "simpleUploader", Name: "simpleUploader", Component: "view/example/simpleUploader/simpleUploader", SerialNo: 6, Description: "断点续传（插件版）", Icon: "upload"},
 		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "22"}, MenuLevel: 0, Hidden: false, ParentId: "0", Url: "http://www.github.com/zhangrt/voyager1_platform.com", Name: "http://www.github.com/zhangrt/voyager1_platform.com", Component: "/", SerialNo: 0, Description: "官方网站", Icon: "home-filled"},
-		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "23"}, MenuLevel: 0, Hidden: false, ParentId: "0", Url: "state", Name: "state", Component: "view/system/state.vue", SerialNo: 6, Description: "服务器状态", Icon: "cloudy"},
+		{GS_BASE_MODEL_ID_STRING: global.GS_BASE_MODEL_ID_STRING{ID: "23"}, MenuLevel: 0, Hidden: false, ParentId: "0", Url: "state", Name: "state", Component: "view/system/state.vue", SerialNo: 6, Description: "服务器状态", Icon: "cloudy"},*/
 	}
 	if err = db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, Vo1Menu{}.TableName()+"表数据初始化失败!")

@@ -26,6 +26,11 @@ func Result(code int, data interface{}, msg string, c *gin.Context) {
 	})
 }
 
+func ResultModel(data interface{}, c *gin.Context) {
+	// 开始时间
+	c.JSON(http.StatusOK, data)
+}
+
 func Ok(c *gin.Context) {
 	Result(SUCCESS, map[string]interface{}{}, "操作成功", c)
 }
@@ -40,6 +45,10 @@ func OkWithData(data interface{}, c *gin.Context) {
 
 func OkWithDetailed(data interface{}, message string, c *gin.Context) {
 	Result(SUCCESS, data, message, c)
+}
+
+func OkWithDetailedModel(data interface{}, c *gin.Context) {
+	ResultModel(data, c)
 }
 
 func Fail(c *gin.Context) {

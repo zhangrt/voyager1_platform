@@ -24,6 +24,35 @@ var RoleServiceApp = new(RoleService)
 func (rs *RoleService) GetMenusByRoleIds(req systemReq.GetMenusByRoleIds) (*response.Vo1MenusResponse, error) {
 	roles := roleRepository.GetRolesMenusByRoleIds(req.RoleIds)
 	var menus []system.Vo1Menu
+
+	roles1 := roleRepository.GetRolesSystemByRoleIds(req.RoleIds)
+
+	var systems []system.Vo1System
+	// 去重map
+	temp1 := make(map[string]bool)
+	for _, role := range roles1 {
+		// 去重
+		for _, system := range role.Systems {
+			_, ok := temp1[system.ID]
+			if ok {
+				continue // 已存在则跳过
+			} else {
+				// 不存在则取
+				systems = append(systems, system)
+				temp1[system.ID] = true
+			}
+		}
+	}
+
+	for _, system1 := range systems {
+		var menus1 = new(system.Vo1Menu)
+		menus1.ID = system1.ID
+		menus1.Name = system1.Name
+		menus1.SystemId = system1.ID
+		menus1.Description = system1.Description
+		menus = append(menus, *menus1)
+	}
+
 	// 去重map
 	temp := make(map[string]bool)
 	for _, role := range roles {
@@ -52,7 +81,7 @@ func (rs *RoleService) getMenuTree(menus []system.Vo1Menu) ([]system.Vo1Menu, er
 		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)
 	}
 
-	menus = treeMap["0"]
+	menus = treeMap[""]
 	for i := 0; i < len(menus); i++ {
 		err = rs.getChildrenList(&menus[i], treeMap)
 	}
@@ -68,10 +97,10 @@ func (rs *RoleService) getChildrenList(menu *system.Vo1Menu, treeMap map[string]
 	return err
 }
 
-//@function: CreateAuthority
-//@description: 创建一个角色
-//@param: auth model.Vo1Role
-//@return: authority system.Vo1Role, err error
+// @function: CreateAuthority
+// @description: 创建一个角色
+// @param: auth model.Vo1Role
+// @return: authority system.Vo1Role, err error
 func (rs *RoleService) CreateAuthority(auth system.Vo1Role) (authority system.Vo1Role, err error) {
 	var authorityBox system.Vo1Role
 	if !errors.Is(global.GS_DB.Where("id = ?", auth.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
@@ -81,10 +110,10 @@ func (rs *RoleService) CreateAuthority(auth system.Vo1Role) (authority system.Vo
 	return auth, err
 }
 
-//@function: CopyAuthority
-//@description: 复制一个角色
-//@param: copyInfo response.SysAuthorityCopyResponse
-//@return: authority system.Vo1Role, err error
+// @function: CopyAuthority
+// @description: 复制一个角色
+// @param: copyInfo response.SysAuthorityCopyResponse
+// @return: authority system.Vo1Role, err error
 func (rs *RoleService) CopyAuthority(copyInfo response.Vo1RoleCopyResponse) (authority system.Vo1Role, err error) {
 	var authorityBox system.Vo1Role
 	if !errors.Is(global.GS_DB.Where("id = ?", copyInfo.Role.ID).First(&authorityBox).Error, gorm.ErrRecordNotFound) {
@@ -98,7 +127,7 @@ func (rs *RoleService) CopyAuthority(copyInfo response.Vo1RoleCopyResponse) (aut
 	var baseMenu []system.Vo1Menu
 	for _, v := range menus {
 		intNum, _ := strconv.Atoi(v.ID)
-		v.ID = string(intNum)
+		v.ID = string(rune(intNum))
 		baseMenu = append(baseMenu, v)
 	}
 	copyInfo.Role.Vo1Menus = baseMenu
@@ -116,19 +145,19 @@ func (rs *RoleService) CopyAuthority(copyInfo response.Vo1RoleCopyResponse) (aut
 	return copyInfo.Role, err
 }
 
-//@function: UpdateAuthority
-//@description: 更改一个角色
-//@param: auth model.Vo1Role
-//@return: authority system.Vo1Role, err error
+// @function: UpdateAuthority
+// @description: 更改一个角色
+// @param: auth model.Vo1Role
+// @return: authority system.Vo1Role, err error
 func (rs *RoleService) UpdateAuthority(auth system.Vo1Role) (authority system.Vo1Role, err error) {
 	err = global.GS_DB.Where("id = ?", auth.ID).First(&system.Vo1Role{}).Updates(&auth).Error
 	return auth, err
 }
 
-//@function: DeleteRole
-//@description: 删除角色
-//@param: auth *model.Vo1Role
-//@return: err error
+// @function: DeleteRole
+// @description: 删除角色
+// @param: auth *model.Vo1Role
+// @return: err error
 func (rs *RoleService) DeleteAuthority(auth *system.Vo1Role) (err error) {
 	if errors.Is(global.GS_DB.Debug().Preload("Persons").First(&auth).Error, gorm.ErrRecordNotFound) {
 		return errors.New("该角色不存在")
@@ -169,10 +198,10 @@ func (rs *RoleService) DeleteAuthority(auth *system.Vo1Role) (err error) {
 	return err
 }
 
-//@function: GetAuthorityInfoList
-//@description: 分页获取数据
-//@param: info request.PageInfo
-//@return: list interface{}, total int64, err error
+// @function: GetAuthorityInfoList
+// @description: 分页获取数据
+// @param: info request.PageInfo
+// @return: list interface{}, total int64, err error
 func (rs *RoleService) GetAuthorityInfoList(info request.PageInfo) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
@@ -188,29 +217,29 @@ func (rs *RoleService) GetAuthorityInfoList(info request.PageInfo) (list interfa
 	return authority, total, err
 }
 
-//@function: GetAuthorityInfo
-//@description: 获取所有角色信息
-//@param: auth model.Vo1Role
-//@return: sa system.Vo1Role, err error
+// @function: GetAuthorityInfo
+// @description: 获取所有角色信息
+// @param: auth model.Vo1Role
+// @return: sa system.Vo1Role, err error
 func (rs *RoleService) GetAuthorityInfo(auth system.Vo1Role) (sa system.Vo1Role, err error) {
 	err = global.GS_DB.Preload("DataAuthorityId").Where("id = ?", auth.ID).First(&sa).Error
 	return sa, err
 }
 
-//@function: SetDataAuthority
-//@description: 设置角色资源权限
-//@param: auth model.Vo1Role
-//@return: error
+// @function: SetDataAuthority
+// @description: 设置角色资源权限
+// @param: auth model.Vo1Role
+// @return: error
 func (rs *RoleService) SetDataAuthority(auth system.Vo1Role) error {
 	var s system.Vo1Role
 	err := global.GS_DB.Model(&s).First(&system.Vo1Role{}).Updates(auth).Error
 	return err
 }
 
-//@function: SetMenuAuthority
-//@description: 菜单与角色绑定
-//@param: auth *model.Vo1Role
-//@return: error
+// @function: SetMenuAuthority
+// @description: 菜单与角色绑定
+// @param: auth *model.Vo1Role
+// @return: error
 func (rs *RoleService) SetMenuAuthority(auth *system.Vo1Role) error {
 	var s system.Vo1Role
 	global.GS_DB.Preload("Vo1Menus").First(&s, "id = ?", auth.ID)

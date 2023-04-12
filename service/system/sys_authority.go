@@ -54,7 +54,7 @@ func (authorityService *AuthorityService) CopyAuthority(copyInfo response.Vo1Rol
 	var baseMenu []system.Vo1Menu
 	for _, v := range menus {
 		intNum, _ := strconv.Atoi(v.ID)
-		v.ID = string(intNum)
+		v.ID = string(rune(intNum))
 		baseMenu = append(baseMenu, v)
 	}
 	copyInfo.Role.Vo1Menus = baseMenu

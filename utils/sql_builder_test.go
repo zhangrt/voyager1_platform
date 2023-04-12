@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zhangrt/voyager1_platform/model/demo"
+	"github.com/zhangrt/voyager1_platform/model/system"
 
 	"gorm.io/driver/postgres"
 
@@ -21,7 +21,7 @@ var (
 func CraeteDB() *gorm.DB {
 
 	pgsqlConfig := postgres.Config{
-		DSN:                  "host=" + "192.168.244.142" + " user=" + "root" + " password=" + "123123" + " dbname=" + "test" + " port=" + "26257" + " " + "TimeZone=Asia/Shanghai", // DSN data source name
+		DSN:                  "host=" + "172.30.0.112" + " user=" + "postgres" + " password=" + "postgres" + " dbname=" + "voyager1" + " port=" + "25431" + " " + "TimeZone=Asia/Shanghai", // DSN data source name
 		PreferSimpleProtocol: false,
 	}
 	if db, err := gorm.Open(postgres.New(pgsqlConfig)); err != nil {
@@ -33,26 +33,27 @@ func CraeteDB() *gorm.DB {
 		return db
 	}
 }
+
 func TestSQLBuilder(t *testing.T) {
 
 	dbtest = CraeteDB()
 	t.Log(dbtest)
 	db := SQLAdapterObj.Adapter("test", dbtest).
-		Model("test", &demo.Facility{}).
+		Model("test", &system.Vo1Person{}).
 		Where("test", "id", "=", nil).
 		Where("test", "name", "-like", "_1 or ^3=3%").
-		Where("test", "code", "like-", "").
-		Where("test", "type", "in", []string{"1", "2", "5"}).
-		Where("test", "alarm_time", "<=", time.Now()).
-		Where("test", "alarm_time", ">=", time.Time{}).
-		Where("test", "status", "in", "0,1").
+		Where("test", "age", "like-", "").
+		Where("test", "email", "in", []string{"1", "2", "5"}).
+		Where("test", "create_time", "<=", time.Now()).
+		Where("test", "create_time", ">=", time.Time{}).
+		Where("test", "phone", "in", "0,1").
 		Page("test", 1, 10).
-		Order("test", "code-desc,type-asc").
+		Order("test", "name-desc,age-asc").
 		Go("test")
-	var facilityList []demo.Facility
+	var personList []system.Vo1Person
 	var total int64
 
-	err := db.Count(&total).Find(&facilityList).Error
+	err := db.Count(&total).Find(&personList).Error
 	if err != nil {
 		t.Error(err)
 	}
@@ -65,22 +66,22 @@ func TestSQLBuilder(t *testing.T) {
 func TestSQLBuilderSafety(t *testing.T) {
 
 	dbsafetytest = CraeteDB()
-	db := builder.Adapter("test", dbsafetytest).
-		Model("test", &demo.Facility{}).
+	db := SQLAdapterObj.Adapter("test", dbsafetytest).
+		Model("test", &system.Vo1Person{}).
 		Where("test", "id", "=", nil).
-		Where("test", "name", "like", "2").
-		Where("test", "code", "-like-", "1").
-		Where("test", "type", "in", []string{"1", "2", "5"}).
-		Where("test", "alarm_time", "<=", time.Now()).
-		Where("test", "alarm_time", ">=", time.Time{}).
-		Where("test", "status", "in", "0,1").
+		Where("test", "name", "-like", "_1 or ^3=3%").
+		Where("test", "age", "like-", "").
+		Where("test", "email", "in", []string{"1", "2", "5"}).
+		Where("test", "create_time", "<=", time.Now()).
+		Where("test", "create_time", ">=", time.Time{}).
+		Where("test", "phone", "in", "0,1").
 		Page("test", 1, 10).
-		Order("test", "code-desc,type-asc").
+		Order("test", "name-desc,age-asc").
 		Go("test")
-	var facilityList []demo.Facility
+	var personList []system.Vo1Person
 	var total int64
 
-	err := db.Count(&total).Find(&facilityList).Error
+	err := db.Count(&total).Find(&personList).Error
 	if err != nil {
 		t.Error(err)
 	}
