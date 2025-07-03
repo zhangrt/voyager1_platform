@@ -2,7 +2,7 @@
 # zap logger configuration
 zap:
   level: 'info'
-  prefix: '[gsafety]'
+  prefix: '[voyager1]'
   format: 'console'
   director: 'log'
   encode-level: 'LowercaseColorLevelEncoder'
@@ -17,10 +17,10 @@ casbin:
 
 # jwt configuration
 jwt:
-  signing-key: 'gsafety'
+  signing-key: 'voyager1'
   expires-time: 180
   buffer-time: 120
-  issuer: 'gsafety'
+  issuer: 'voyager1'
 
 # email configuration
 email:
@@ -71,13 +71,13 @@ service-mesh:
         # v0.1 subset版本预留配置,现阶段未用上
         subset: v1
         port: 9998
-        prefix: /gsafety
+        prefix: /voyager1
       - name: test-service
         host: 'test'
         subset: v1
         port: 9998
         prefix: /test
-  - name: gsafety-test
+  - name: voyager1-test
   loadbalance: 0.0.0.0
   services:
     - name: facility-service
@@ -85,7 +85,7 @@ service-mesh:
       # v0.1 subset版本预留配置,现阶段未用上
       subset: v1
       port: 9998
-      prefix: /gsafety
+      prefix: /voyager1
     - name: test-service
       host: 'test'
       subset: v1
@@ -94,7 +94,7 @@ service-mesh:
 
 # system configuration
 system:
-  application: '/gsafety' # 与main.go中 @BasePath 值保持一致
+  application: '/voyager1' # 与main.go中 @BasePath 值保持一致
   host: '0.0.0.0'
   port: 9998
   db-type: 'cockroach'
@@ -136,8 +136,8 @@ auth-key:
 #   port: '10322'
 #   config: 'TimeZone=Asia/Shanghai'
 #   db-name: 'wisdompark'
-#   username: 'gsafety'
-#   password: 'gsafety.2022'
+#   username: 'voyager1'
+#   password: 'voyager1.2022'
 #   max-idle-conns: 10
 #   max-open-conns: 100
 #   log-mode: "true"
