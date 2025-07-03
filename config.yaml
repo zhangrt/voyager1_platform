@@ -2,7 +2,7 @@
 # zap logger configuration
 zap:
   level: 'info'
-  prefix: '[gsafety]'
+  prefix: '[voyager1]'
   format: 'console'
   director: 'log'
   encode-level: 'LowercaseColorLevelEncoder'
@@ -17,12 +17,12 @@ casbin:
 
 # jwt configuration
 jwt:
-  signing-key: 'gsafety-auth-key-1024'
+  signing-key: 'voyager1-auth-key-1024'
   # 测试new token 可以用较小的过期时间
   # 单位 秒
   expires-time: 18000
   buffer-time: 12000
-  issuer: 'gsafety'
+  issuer: 'voyager1'
 
 # email configuration
 email:
@@ -58,7 +58,7 @@ cache:
   - '172.30.0.105:10305'
   - '172.30.0.105:10306'
   username: ''
-  password: 'gsafety.2022'
+  password: 'voyager1.2022'
   master-name: ''
   options: '1' # 0单机 1集群
 
@@ -73,13 +73,13 @@ service-mesh:
         # v0.1 subset版本预留配置,现阶段未用上
         subset: v1
         port: 9998
-        prefix: /gsafety
+        prefix: /voyager1
       - name: test-service
         host: 'test'
         subset: v1
         port: 9998
         prefix: /test
-  - name: gsafety-test
+  - name: voyager1-test
     loadbalance: 0.0.0.0
     services:
       - name: facility-service
@@ -87,7 +87,7 @@ service-mesh:
         # v0.1 subset版本预留配置,现阶段未用上
         subset: v1
         port: 9998
-        prefix: /gsafety
+        prefix: /voyager1
       - name: test-service
         host: 'test'
         subset: v1
@@ -96,7 +96,7 @@ service-mesh:
 
 # system configuration
 system:
-  application: '/gsafety' # 与main.go中 @BasePath 值保持一致
+  application: '/voyager1' # 与main.go中 @BasePath 值保持一致
   host: '127.0.0.1'
   port: 5555
     # luna - platform/ star - business
@@ -151,8 +151,8 @@ auth-key:
 #   port: '10322'
 #   config: 'TimeZone=Asia/Shanghai'
 #   db-name: 'wisdompark'
-#   username: 'gsafety'
-#   password: 'gsafety.2022'
+#   username: 'voyager1'
+#   password: 'voyager1.2022'
 #   max-idle-conns: 10
 #   max-open-conns: 100
 #   log-mode: "true"
